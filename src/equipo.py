@@ -8,7 +8,7 @@ class Equipo:
     def __init__(self, usuario):
         self.usuario: Usuario = usuario
         self.valor: int = 0
-        self.jugadores: list[Jugador] = []
+        self.jugadores: list[Jugador] = [] # titulares y suplentes
         self.presupuesto = PRESUPUESTO - self.valor
         self.formacion: tuple[int] = Formacion.CUATRO_CUATRO_DOS # ??
         self.puntaje: int = 0
