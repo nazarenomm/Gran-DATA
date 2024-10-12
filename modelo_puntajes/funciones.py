@@ -2,6 +2,14 @@ import pandas as pd
 import numpy as np
 from functools import reduce
 from sklearn.base import BaseEstimator
+import time
+import warnings
+warnings.filterwarnings("ignore")
+
+# TODO: que considere el resultado, habria que entrenar el modelo de nuevo
+# TODO: si un jugador juega menos de x minutos dejar puntaje en nan
+# TODO: guardar la data de los rendimientos en la base de datos
+# TODO: guardar puntajes en la base de datos
 
 def limpiar_tabla(tabla, nombre_tabla):
     to_keep_as_is_dict = {
@@ -151,3 +159,37 @@ def generar_predicciones(url: str, match: str, modelo: BaseEstimator) -> pd.Data
     predicciones = df_merged[['Player', 'team', 'Rating']].sort_values('Rating', ascending=False).reset_index(drop=True)
     
     return predicciones
+
+
+def computar_fecha(fecha: int, modelo: BaseEstimator):
+    # Tabla de todos los partidos
+    df = pd.read_html('https://fbref.com/en/comps/21/horario/Resultados-y-partidos-en-Liga-Profesional-Argentina')[0]
+
+    # Tabla de todos los partidos con links
+    links = pd.read_html('https://fbref.com/en/comps/21/horario/Resultados-y-partidos-en-Liga-Profesional-Argentina', extract_links= 'body')[0]
+
+    fbref = 'https://fbref.com'
+
+    df_fecha = df[df['Wk'] == fecha]
+
+    for i in range(len(df_fecha)):
+        df_fecha['Match Report'].iloc[i] = fbref + links['Match Report'].iloc[i][1]
+
+    df_fecha['match'] = df_fecha['Home'] + ' - ' + df_fecha['Away']
+    df_fecha = df_fecha[['match', 'Match Report']]
+
+    predicciones = []
+    for index, row in df_fecha.iterrows():
+        url = row['Match Report']
+        match = row['match']
+        predicciones.append(generar_predicciones(url, match, modelo))
+        time.sleep(10)
+    
+    df_fecha_concat = pd.concat(predicciones, ignore_index=True)
+
+    df_fecha_concat['fecha'] = fecha
+
+    df_fecha_concat = df_fecha_concat[['fecha', 'Player', 'team', 'Rating']]
+
+    df_fecha_concat.rename(columns={'team': 'equipo', 'Rating': 'puntaje', 'Player': 'jugador'}, inplace=True)
+    return df_fecha_concat
