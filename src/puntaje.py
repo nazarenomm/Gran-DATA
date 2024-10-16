@@ -1,7 +1,5 @@
 from app import app, db
-import pandas as pd
-from funciones import computar_fecha
-import joblib
+from modelo_puntajes import ModeloPuntajes
 
 class Puntaje(db.Model):
     __tablename__ = 'puntajes'
@@ -12,9 +10,12 @@ class Puntaje(db.Model):
     fecha = db.Column(db.Integer, nullable=False)
 
 if __name__ == '__main__':
-    modelo = joblib.load('modelo_puntajes/modelos/primer_modelo.pkl')
-    # df_fecha = computar_fecha(1, modelo)
+    modelo = ModeloPuntajes()
+    # df_fecha = modelo.computar_fecha(1)
+    
+    import pandas as pd
     df_fecha = pd.read_csv('modelo_puntajes/data/predicciones/predicciones_fecha_1.csv')
+
     with app.app_context():
         db.create_all()
         for index, row in df_fecha.iterrows():
