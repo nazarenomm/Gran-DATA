@@ -1,9 +1,29 @@
-class Usuario:
-    def __init__(self, nombre, apellido, email):
-        self.nombre = nombre
-        self.apellido = apellido
-        self.email = email
-        self.cambios_disp = 30 # cambios para todo el torneo
+from db import db
+from flask_login import UserMixin
+from werkzeug.security import generate_password_hash, check_password_hash
+
+
+class User(db.Model):
+    __tablename__ = 'users'
+
+    id = db.Column(db.Integer, primary_key=True)
+    nombre = db.Column(db.String(80), nullable=False)
+    apellido = db.Column(db.String(80), nullable=False)
+    mail = db.Column(db.String(256), unique=True, nullable=False)
+    contraseña = db.Column(db.String(256), nullable=False)
+    telefono = db.Column(db.Integer, unique=True)
     
-    def comprar_cambios(self, cambios):
-        self.cambios_disp += cambios
+    def set_password(self, contraseña):
+        self.contraseña = generate_password_hash(contraseña)
+
+    def check_password(self, contraseña): 
+        return check_password_hash(self.contraseña, contraseña)
+    
+    def agregar_a_db(self):
+        db.session.add(self)
+        db.session.commit()
+
+    def __repr__(self):
+        return f'<User {self.nombre} {self.apellido}>'
+
+    
