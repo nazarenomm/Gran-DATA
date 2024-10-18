@@ -12,6 +12,7 @@ warnings.filterwarnings("ignore")
 # TODO: si un jugador juega menos de x minutos dejar puntaje en nan
 # TODO: guardar la data de los rendimientos en la base de datos
 # TODO: singleton ??? en lugar de cargarlo con joblib
+# TODO: si un jugador no está en la base de datos, agregarlo
 
 URL = 'https://fbref.com/en/comps/21/horario/Resultados-y-partidos-en-Liga-Profesional-Argentina'
 TRAINING_DATA = 'modelo_puntajes/data/training_data.csv'
