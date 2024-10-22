@@ -1,5 +1,5 @@
 from abc import ABC, abstractmethod
-from estado import Estado
+from Jugador.estado import Estado
 
 class Jugador(ABC):
     def __init__(self, nombre: str, apellido: str, valor: int):

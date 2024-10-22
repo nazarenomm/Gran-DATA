@@ -1,7 +1,7 @@
 from flask import Flask
 from flask_restful import Api, Resource
 from db import db
-from usuario import Usuario
+from Usuario.usuario import Usuario
 
 app = Flask(__name__)
 api = Api(app)

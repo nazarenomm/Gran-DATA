@@ -1,5 +1,5 @@
 from app import app, db
-from modelo_puntajes import ModeloPuntajes
+from Puntaje.modelo_puntajes import ModeloPuntajes
 
 class Puntaje(db.Model):
     __tablename__ = 'puntajes'
