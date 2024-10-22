@@ -8,7 +8,6 @@ import time
 import warnings
 warnings.filterwarnings("ignore")
 
-# TODO: que considere el resultado, habria que entrenar el modelo de nuevo
 # TODO: si un jugador juega menos de x minutos dejar puntaje en nan
 # TODO: guardar la data de los rendimientos en la base de datos
 # TODO: singleton ??? en lugar de cargarlo con joblib
@@ -59,18 +58,20 @@ class ModeloPuntajes:
         fbref = 'https://fbref.com'
 
         df_fecha = df[df['Wk'] == fecha]
+        links_fecha = links[links['Wk'] == (f"{fecha}", None)]
 
         for i in range(len(df_fecha)):
-            df_fecha['Match Report'].iloc[i] = fbref + links['Match Report'].iloc[i][1]
+            df_fecha['Match Report'].iloc[i] = fbref + links_fecha['Match Report'].iloc[i][1]
 
         df_fecha['match'] = df_fecha['Home'] + ' - ' + df_fecha['Away']
-        df_fecha = df_fecha[['match', 'Match Report']]
+        df_fecha = df_fecha[['match', 'Match Report', 'Score']]
 
         predicciones = []
         for index, row in df_fecha.iterrows():
             url = row['Match Report']
             match = row['match']
-            predicciones.append(self._predict(url, match))
+            score = row['Score']
+            predicciones.append(self._predict(url, match, score))
             time.sleep(10)
         
         df_fecha_concat = pd.concat(predicciones, ignore_index=True)
@@ -134,7 +135,7 @@ class ModeloPuntajes:
         
         return tabla
 
-    def _predict(self, url: str, match: str) -> pd.DataFrame:
+    def _predict(self, url: str, match: str, score: str) -> pd.DataFrame:
         # Leer las tablas de la URL
         dfs = pd.read_html(url)
         
@@ -153,8 +154,17 @@ class ModeloPuntajes:
             # Asignar el equipo
             if 'home' in nombre_tabla:
                 tabla_limpia['team'] = match.split(' - ')[0]
+                tabla_limpia['team_goals'] = int(score.split('–')[0])
+                tabla_limpia['conceded_goals'] = int(score.split('–')[1])
+                tabla_limpia['win'] = int(score.split('–')[0]) > int(score.split('–')[1])
+                tabla_limpia['tie'] = int(score.split('–')[0]) == int(score.split('–')[1])
             else:
                 tabla_limpia['team'] = match.split(' - ')[1]
+                tabla_limpia['team_goals'] = int(score.split('–')[1])
+                tabla_limpia['conceded_goals'] = int(score.split('–')[0])
+                tabla_limpia['win'] = int(score.split('–')[1]) > int(score.split('–')[0])
+                tabla_limpia['tie'] = int(score.split('–')[1]) == int(score.split('–')[0])
+
             # Eliminar la última fila si no es GK
             if nombre_tabla not in ['home_gk', 'away_gk']:
                 tabla_limpia.drop(tabla_limpia.index[-1], inplace=True)
