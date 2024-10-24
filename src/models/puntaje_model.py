@@ -14,7 +14,7 @@ if __name__ == '__main__':
     # df_fecha = modelo.computar_fecha(1)
     
     import pandas as pd
-    df_fecha = pd.read_csv('modelo_puntajes/data/predicciones/predicciones_fecha_1.csv')
+    df_fecha = pd.read_csv('modelo_puntajes/data/predicciones/predicciones_fecha_18.csv')
 
     with app.app_context():
         db.create_all()
