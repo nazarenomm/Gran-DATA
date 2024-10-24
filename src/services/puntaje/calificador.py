@@ -16,7 +16,7 @@ warnings.filterwarnings("ignore")
 URL = 'https://fbref.com/en/comps/21/horario/Resultados-y-partidos-en-Liga-Profesional-Argentina'
 TRAINING_DATA = 'modelo_puntajes/data/training_data.csv'
 
-class ModeloPuntajes:
+class Calificador:
     NUM_MODELO = 1
 
     def __init__(self, modelo_path: Optional[str]='modelo_puntajes/modelos/primer_modelo.pkl'):

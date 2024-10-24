@@ -1,13 +1,13 @@
-from Usuario.usuario import Usuario
-from Equipo.formacion import Formacion
-from Jugador.jugador import Jugador
-from exceptions import JugadoresMaximosException, PresupuestoInsuficienteException, JugadorNoEncontradoException
+from models.usuario_model import UsuarioModel
+from equipo.formacion import Formacion
+from jugador.jugador import Jugador
+from exceptions.exceptions import JugadoresMaximosException, PresupuestoInsuficienteException, JugadorNoEncontradoException
 
 PRESUPUESTO = 100_000_000
 
 class Equipo:
     def __init__(self, usuario):
-        self.usuario: Usuario = usuario
+        self.usuario: UsuarioModel = usuario
         self.valor: int = 0
         self.jugadores: list[Jugador] = [] # titulares y suplentes
         self.presupuesto = PRESUPUESTO - self.valor
