@@ -1,0 +1,432 @@
+id,jugador,equipo,puntaje,fecha
+1,"Jonathan Herrera","Deportivo Riestra",8,18
+2,"Nicolás Benegas","Deportivo Riestra",8,18
+3,"Ignacio Arce","Deportivo Riestra",8,18
+4,"Alexander Díaz","Deportivo Riestra",7,18
+5,"Jonatan Goitía","Deportivo Riestra",7,18
+6,"Nicolás Caro","Deportivo Riestra",7,18
+7,"Pedro Ramírez","Deportivo Riestra",7,18
+8,"Nicolás Sansotre","Deportivo Riestra",7,18
+9,"Cristian Paz","Deportivo Riestra",7,18
+10,"Mateo Coronel","Atlé Tucumán",7,18
+11,"Jonathan Goya","Deportivo Riestra",7,18
+12,"Antony Alonso","Deportivo Riestra",7,18
+13,"Rodrigo Sayavedra","Deportivo Riestra",6,18
+14,"Rodrigo Cavallera","Deportivo Riestra",6,18
+15,"Brían Sánchez","Deportivo Riestra",6,18
+16,"Nicolás Romero","Atlé Tucumán",6,18
+17,"Gianluca Ferrari","Atlé Tucumán",6,18
+18,"Juan Infante","Atlé Tucumán",6,18
+19,"Renzo Tesuri","Atlé Tucumán",6,18
+20,"Mario Sanabria","Deportivo Riestra",6,18
+21,"Tomás Villoldo","Deportivo Riestra",6,18
+22,"Mateo Bajamich","Atlé Tucumán",6,18
+23,"Guillermo Acosta","Atlé Tucumán",6,18
+24,"Adrián Guillermo Sánchez","Atlé Tucumán",6,18
+25,"Néstor Breitenbruch","Atlé Tucumán",6,18
+26,"Marcelo Estigarribia","Atlé Tucumán",6,18
+27,"Franco Nicola","Atlé Tucumán",6,18
+28,"Tomás Durso","Atlé Tucumán",6,18
+29,"Francisco Bonfiglio","Atlé Tucumán",6,18
+30,"Moisés Brandán","Atlé Tucumán",6,18
+31,"Luis Miguel Rodríguez","Atlé Tucumán",6,18
+32,"Justo Giani","Atlé Tucumán",6,18
+33,"Franco Troyansky",Gimnasia–LP,7,18
+34,"Nicolás Gaitán",Sarmiento,7,18
+35,"Gustavo Canto",Gimnasia–LP,7,18
+36,"Franco Paredes",Sarmiento,7,18
+37,"Elías López",Sarmiento,7,18
+38,"Rodrigo Gallo",Gimnasia–LP,7,18
+39,"Juan Manuel Insaurralde",Sarmiento,7,18
+40,"Lucas Acosta",Sarmiento,7,18
+41,"Joaquín Gho",Sarmiento,7,18
+42,"Yonathan Cabral",Gimnasia–LP,6,18
+43,"Fabricio Corbalan",Gimnasia–LP,6,18
+44,"David Zalazar",Gimnasia–LP,6,18
+45,"Nicolás Garayalde",Gimnasia–LP,6,18
+46,"Emiliano Méndez",Sarmiento,6,18
+47,"Valentín Burgoa",Sarmiento,6,18
+48,"Augusto Max",Gimnasia–LP,6,18
+49,"Lucas Castro",Gimnasia–LP,6,18
+50,"Gabriel Díaz",Sarmiento,6,18
+51,"Juan Pintado",Gimnasia–LP,6,18
+52,"Rodrigo Castillo",Gimnasia–LP,6,18
+53,"Yair Ezequiel Arismendi",Sarmiento,6,18
+54,"Manuel Mónaco",Sarmiento,6,18
+55,"Manuel García",Sarmiento,6,18
+56,"Ezequiel Naya",Sarmiento,6,18
+57,"Gastón Sauro",Sarmiento,6,18
+58,"Matías Abaldo",Gimnasia–LP,6,18
+59,"Leandro Mamut",Gimnasia–LP,6,18
+60,"Iván Morales Bravo",Sarmiento,6,18
+61,"Nelson Insfrán",Gimnasia–LP,6,18
+62,"Lisandro López",Sarmiento,6,18
+63,"Pablo de Blasis",Gimnasia–LP,6,18
+64,"Valentín Rodríguez",Gimnasia–LP,6,18
+65,"Jose Florentín","Cen. Córdoba–SdE",8,18
+66,"Fernando Benítez","Cen. Córdoba–SdE",8,18
+67,"Lucas Varaldo","Cen. Córdoba–SdE",7,18
+68,"Juan Meli","Cen. Córdoba–SdE",7,18
+69,"Rodrigo Atencio","Cen. Córdoba–SdE",7,18
+70,"Luis Ingolotti","Cen. Córdoba–SdE",7,18
+71,"Lucas Abascia","Cen. Córdoba–SdE",7,18
+72,"Alexis Segovia","Cen. Córdoba–SdE",7,18
+73,"Yonatthan Rak","Cen. Córdoba–SdE",7,18
+74,"Rafael Barrios","Cen. Córdoba–SdE",7,18
+75,"Sebastián Valdez","Cen. Córdoba–SdE",7,18
+76,"Kevin Vázquez","Cen. Córdoba–SdE",6,18
+77,"Agustín Morales","Cen. Córdoba–SdE",6,18
+78,"Sebastián Villa","Independiente Rivadavia",6,18
+79,"Elías Cabrera","Cen. Córdoba–SdE",6,18
+80,"Favio Cabral","Cen. Córdoba–SdE",6,18
+81,"Luis Sequeira","Independiente Rivadavia",6,18
+82,"Franco Romero","Independiente Rivadavia",6,18
+83,"Iván Villalba","Independiente Rivadavia",6,18
+84,"Bruno Bianchi","Independiente Rivadavia",6,18
+85,"Juan Cavallaro","Independiente Rivadavia",6,18
+86,"Tobías Ostchega","Independiente Rivadavia",6,18
+87,"Jorge Sanguina","Independiente Rivadavia",6,18
+88,"Matías Ruíz Díaz","Independiente Rivadavia",6,18
+89,"Ezequiel Ham","Independiente Rivadavia",6,18
+90,"Sheyko Studer","Independiente Rivadavia",6,18
+91,"Federico Milo","Independiente Rivadavia",6,18
+92,"Lautaro Ríos","Independiente Rivadavia",6,18
+93,"Ezequiel Centurión","Independiente Rivadavia",6,18
+94,"Gonzalo Ríos","Independiente Rivadavia",6,18
+95,"Gonzalo Álvez","Independiente Rivadavia",6,18
+96,"Gabriel Ávalos",Independiente,8,18
+97,"Federico Mancuello",Independiente,7,18
+98,"Santiago Montiel",Independiente,7,18
+99,"Iván Marcone",Independiente,7,18
+100,"Kevin Lomónaco",Independiente,7,18
+101,"Rodrigo Rey",Independiente,7,18
+102,"Adrián Sporle",Independiente,7,18
+103,"Felipe Loyola",Independiente,7,18
+104,"Federico Vera",Independiente,7,18
+105,"Marco Pellegrino",Independiente,7,18
+106,"Juan Cáceres",Lanús,7,18
+107,"Diego Tarzia",Independiente,6,18
+108,"Santiago Salle",Independiente,6,18
+109,"Marcelino Moreno",Lanús,6,18
+110,"Ignacio Maestro Puch",Independiente,6,18
+111,"Jhonny Quiñónez",Independiente,6,18
+112,"Santiago López",Independiente,6,18
+113,"Felipe Peña",Lanús,6,18
+114,"Eduardo Salvio",Lanús,6,18
+115,"Rubén Martínez",Independiente,6,18
+116,"Gonzalo Pérez",Lanús,6,18
+117,"Carlos Izquierdoz",Lanús,6,18
+118,"Leonardo Jara",Lanús,6,18
+119,"Walter Bou",Lanús,6,18
+120,"Julio Soler",Lanús,6,18
+121,"Leandro Díaz",Lanús,6,18
+122,"Dylan Aquino",Lanús,6,18
+123,"Ramiro Carrera",Lanús,6,18
+124,"Nahuel Losada",Lanús,5,18
+125,"Luciano Boggio",Lanús,4,18
+126,"Ronaldo Martínez",Platense,7,18
+127,"Sasha Marcich",Platense,7,18
+128,"Leonel Picco",Platense,7,18
+129,"Mariano Troilo",Belgrano,7,18
+130,"Gastón Suso",Platense,7,18
+131,"Carlos Villalba",Platense,7,18
+132,"Bautista Barros Schelotto",Platense,7,18
+133,"Ignacio Vázquez",Platense,7,18
+134,"Mateo Pellegrino",Platense,7,18
+135,"Guido Mainero",Platense,7,18
+136,"Juan Velazquez",Belgrano,7,18
+137,"Lucas Ocampo",Platense,7,18
+138,"Nicolás Fernández",Belgrano,7,18
+139,"Vicente Taborda",Platense,7,18
+140,"Juan Cozzani",Platense,7,18
+141,"Rafael Marcelo Delgado",Belgrano,6,18
+142,"Ignacio Schor",Platense,6,18
+143,"Tobías Cervera",Platense,6,18
+144,"Facundo Quignon",Belgrano,6,18
+145,"Franco Baldassarra",Platense,6,18
+146,"Gabriel Compagnucci",Belgrano,6,18
+147,"Anibal Leguizamón",Belgrano,6,18
+148,"Francisco González",Belgrano,6,18
+149,"Juan Espínola",Belgrano,6,18
+150,"Pablo Chavarría",Belgrano,6,18
+151,"Matías Suárez",Belgrano,6,18
+152,"Bryan Reyna",Belgrano,6,18
+153,"Lucas Menossi",Belgrano,6,18
+154,"Esteban Rolón",Belgrano,6,18
+155,"Gerónimo Heredia",Belgrano,6,18
+156,"Jeremías Lucco",Belgrano,6,18
+157,"Gastón Martirena","Racing Club",8,18
+158,"Adrián Martínez","Racing Club",8,18
+159,"Matías Ramírez","Defensa y Just",8,18
+160,"Aaron Nicolás Molinas","Defensa y Just",8,18
+161,"Santiago Solari","Racing Club",8,18
+162,"Maximiliano Salas","Racing Club",7,18
+163,"Bruno Zuculini","Racing Club",7,18
+164,"Gabriel Arias","Racing Club",7,18
+165,"Nazareno Colombo","Racing Club",7,18
+166,"Juan Nardoni","Racing Club",7,18
+167,"Luciano Vietto","Racing Club",7,18
+168,"Agustín García Basso","Racing Club",7,18
+169,"Agustín Almendra","Racing Club",7,18
+170,"Facundo Mura","Racing Club",7,18
+171,"Tobías Rubio","Defensa y Just",7,18
+172,"Alexis Soto","Defensa y Just",7,18
+173,"Abiel Osorio","Defensa y Just",6,18
+174,"Juan Quintero","Racing Club",6,18
+175,"Gabriel Alanís","Defensa y Just",6,18
+176,"Leonardo Sigali","Racing Club",6,18
+177,"Santi Ramos Mingo","Defensa y Just",6,18
+178,"Baltasar Gallego","Racing Club",6,18
+179,"Emanuel Aguilera","Defensa y Just",6,18
+180,"Kevin Facundo Gutiérrez","Defensa y Just",6,18
+181,"Juan Miritello","Defensa y Just",6,18
+182,"Enrique Bologna","Defensa y Just",6,18
+183,"Benjamín Schamine","Defensa y Just",6,18
+184,"Rodrigo Bogarín","Defensa y Just",6,18
+185,"Kevin Lopez","Defensa y Just",6,18
+186,"Luciano Ramón Herrera","Defensa y Just",5,18
+187,"César Pérez","Defensa y Just",5,18
+188,"Nehuén Paz",Tigre,8,18
+189,"Blas Armoa",Tigre,8,18
+190,"Agustín Cardozo",Tigre,8,18
+191,"Sebastián Medina",Tigre,8,18
+192,"Felipe Zenobio",Tigre,7,18
+193,"Martín Garay",Tigre,7,18
+194,"Ramón Arias",Tigre,7,18
+195,"Lorenzo Scipioni",Tigre,7,18
+196,"Valentín Moreno",Tigre,7,18
+197,"Tomás Galván",Tigre,7,18
+198,"Santiago González",Tigre,7,18
+199,"Ezequiel Forclaz",Tigre,7,18
+200,"Eric Ramírez",Tigre,7,18
+201,"Brian Aguirre","Boca Juniors",6,18
+202,"Florián Monzón",Tigre,6,18
+203,"Gian Nardelli",Tigre,6,18
+204,"Gonzalo Maroni",Tigre,6,18
+205,"Edinson Cavani","Boca Juniors",6,18
+206,"Lautaro Blanco","Boca Juniors",6,18
+207,"Luis Advíncula","Boca Juniors",6,18
+208,"Ignacio Miramon","Boca Juniors",6,18
+209,"Marcos Rojo","Boca Juniors",6,18
+210,"Sergio Romero","Boca Juniors",6,18
+211,"Exequiel Zeballos","Boca Juniors",6,18
+212,"Aaron Anselmino","Boca Juniors",6,18
+213,"Cristian Medina","Boca Juniors",6,18
+214,"Guillermo Matías Fernández","Boca Juniors",6,18
+215,"Kevin Zenon","Boca Juniors",6,18
+216,"Miguel Merentiel","Boca Juniors",6,18
+217,"Milton Giménez","Boca Juniors",5,18
+218,"Claudio Aquino","Vélez Sarsfield",7,18
+219,"Braian Romero","Vélez Sarsfield",7,18
+220,"Santiago Simón","River Plate",7,18
+221,"Thiago Fernández","Vélez Sarsfield",7,18
+222,"Miguel Borja","River Plate",7,18
+223,"Enzo Díaz","River Plate",6,18
+224,"Christian Ordoñez","Vélez Sarsfield",6,18
+225,"Joaquín García","Vélez Sarsfield",6,18
+226,"Valentín Gómez","Vélez Sarsfield",6,18
+227,"Pablo Solari","River Plate",6,18
+228,"Franco Armani","River Plate",6,18
+229,"Ignacio Fernández","River Plate",6,18
+230,"Francisco Pizzini","Vélez Sarsfield",6,18
+231,"Franco Mastantuono","River Plate",6,18
+232,"Maximiliano Meza","River Plate",6,18
+233,"Germán Pezzella","River Plate",6,18
+234,"Marcos Acuña","River Plate",6,18
+235,"Agustín Bouzat","Vélez Sarsfield",6,18
+236,"Paulo Díaz","River Plate",6,18
+237,"Matías Kranevitter","River Plate",6,18
+238,"Emanuel Mammana","Vélez Sarsfield",6,18
+239,"Damián Fernández","Vélez Sarsfield",6,18
+240,"Aaron Quirós","Vélez Sarsfield",6,18
+241,"Milton Casco","River Plate",6,18
+242,"Claudio Echeverri","River Plate",6,18
+243,"Tomás Marchiori","Vélez Sarsfield",6,18
+244,"Elías Gómez","Vélez Sarsfield",6,18
+245,"Rodrigo Villagra","River Plate",6,18
+246,"Facundo Colidio","River Plate",6,18
+247,"Jalil Elías","Vélez Sarsfield",6,18
+248,"Maher Carrizo","Vélez Sarsfield",6,18
+249,"Francisco Álvarez","Arg Juniors",8,18
+250,"Maximiliano Romero","Arg Juniors",8,18
+251,"Kevin Coronel","Arg Juniors",8,18
+252,"Alan Lescano","Arg Juniors",7,18
+253,"José Herrera","Arg Juniors",7,18
+254,"Ariel Gamarra","Arg Juniors",7,18
+255,"Román Vega","Arg Juniors",7,18
+256,"Tobías Palacio","Arg Juniors",7,18
+257,"Nicolás Oróz","Arg Juniors",7,18
+258,"Tomás Molina","Arg Juniors",7,18
+259,"Diego Matías Rodríguez","Arg Juniors",7,18
+260,"Alan Rodríguez","Arg Juniors",7,18
+261,"Francis Mac Allister","Arg Juniors",7,18
+262,"Santiago Rodriguez","Arg Juniors",7,18
+263,"Lucas Gómez","Arg Juniors",7,18
+264,"Jonathan Galván","Arg Juniors",6,18
+265,"Juan Portillo",Talleres,6,18
+266,"Gastón Benavídez",Talleres,6,18
+267,"Juan Rodríguez",Talleres,6,18
+268,"Blas Riveros",Talleres,6,18
+269,"Matías Galarza",Talleres,6,18
+270,"Diego Ortegoza",Talleres,6,18
+271,"Rubén Botta",Talleres,6,18
+272,"Federico Girotti",Talleres,6,18
+273,"Juan Camilo Portilla",Talleres,6,18
+274,"Alejandro Martínez",Talleres,6,18
+275,"Matías Esquivel",Talleres,6,18
+276,"Valentín Depietri",Talleres,6,18
+277,"Bruno Barticciotto",Talleres,6,18
+278,"Ramiro Ruiz",Talleres,5,18
+279,"Cristian Tarragona",Talleres,5,18
+280,"Guido Herrera",Talleres,5,18
+281,"Jaminton Campaz","Rosario Central",7,18
+282,"Víctor Malcorra","Rosario Central",7,18
+283,"Franco Ibarra","Rosario Central",7,18
+284,"Emanuel Coronel","Rosario Central",7,18
+285,"Carlos Quintana","Rosario Central",7,18
+286,"Cristian Núñez",Banfield,7,18
+287,"Agustín Sández","Rosario Central",6,18
+288,"Alexis Maldonado",Banfield,6,18
+289,"Facundo Sanguinetti",Banfield,6,18
+290,"Luciano Recalde",Banfield,6,18
+291,"Ezequiel Cañete",Banfield,6,18
+292,"Mathías De Ritis",Banfield,6,18
+293,"Braian Galván",Banfield,6,18
+294,"Juan Iribarren",Banfield,6,18
+295,"Marco Ruben","Rosario Central",6,18
+296,"Facundo Mallo","Rosario Central",6,18
+297,"Enzo Copetti","Rosario Central",6,18
+298,"Kevin Ortíz","Rosario Central",6,18
+299,"Alejandro Maciel",Banfield,6,18
+300,"Leandro Garate",Banfield,6,18
+301,"Lautaro Gómez",Banfield,6,18
+302,"Juan Bisanz",Banfield,6,18
+303,"Jonathan David Gómez","Rosario Central",6,18
+304,"Gaspar Duarte","Rosario Central",6,18
+305,"Bruno Sepúlveda",Banfield,6,18
+306,"Ramiro Di Luciano",Banfield,6,18
+307,"Geronimo Rivera",Banfield,6,18
+308,"Augusto Solari","Rosario Central",6,18
+309,"Jorge Broun","Rosario Central",6,18
+310,"Alexis Manyoma",Estudiantes,8,18
+311,"Santiago Ascacíbar",Estudiantes,8,18
+312,"Facundo Rodríguez",Estudiantes,7,18
+313,"Gastón Benedetti",Estudiantes,7,18
+314,"Damián Puebla",Instituto,7,18
+315,"Enzo Pérez",Estudiantes,7,18
+316,"José Sosa",Estudiantes,7,18
+317,"Eric Meza",Estudiantes,7,18
+318,"Sebastián Boselli",Estudiantes,7,18
+319,"Fernando Alarcón",Instituto,7,18
+320,"Gabriel Neves",Estudiantes,7,18
+321,"Giuliano Cerato",Instituto,6,18
+322,"Joaquín Burgos",Estudiantes,6,18
+323,"Luciano Lollo",Estudiantes,6,18
+324,"Jonathan Bay",Instituto,6,18
+325,"Fabricio Pérez",Estudiantes,6,18
+326,"Bautista Kociubinski",Estudiantes,6,18
+327,"Gonzalo Requena",Instituto,6,18
+328,"Facundo Suárez",Instituto,6,18
+329,"Luciano Giménez",Estudiantes,6,18
+330,"Gastón Lodico",Instituto,6,18
+331,"Damián Batallini",Instituto,6,18
+332,"Matías Mansilla",Estudiantes,6,18
+333,"Gregorio Rodríguez",Instituto,6,18
+334,"Jonás Acevedo",Instituto,6,18
+335,"Nicolás Dubersarsky",Instituto,6,18
+336,"Lautaro Carrera",Instituto,6,18
+337,"Stéfano Moreyra",Instituto,6,18
+338,"Ignacio Russo",Instituto,6,18
+339,"Miguel Brizuela",Instituto,6,18
+340,"Manuel Roffo",Instituto,5,18
+341,"Alexis Cuello","San Lorenzo",8,18
+342,"Eric Remedi","San Lorenzo",7,18
+343,"Ezequiel Cerutti","San Lorenzo",7,18
+344,"Elian Irala","San Lorenzo",7,18
+345,"Elías Báez","San Lorenzo",7,18
+346,"Fabricio López","San Lorenzo",7,18
+347,"Gastón Campi","San Lorenzo",7,18
+348,"Jhohan Romaña","San Lorenzo",7,18
+349,"Carlos Sánchez","Barracas Central",6,18
+350,"Nahuel Barrios","San Lorenzo",6,18
+351,"Nahuel Bustos","San Lorenzo",6,18
+352,"Gonzalo Goñi","Barracas Central",6,18
+353,"Andrés Vombergar","San Lorenzo",6,18
+354,"Iker Muniain","San Lorenzo",6,18
+355,"Ivan Leguizamon","San Lorenzo",6,18
+356,"Nicolás Demartini","Barracas Central",6,18
+357,"Alan Cantero","Barracas Central",6,18
+358,"Gastón Gómez","San Lorenzo",6,18
+359,"Rodrigo Herrera","Barracas Central",6,18
+360,"Siro Rosane","Barracas Central",6,18
+361,"Alexis Dominguez","Barracas Central",6,18
+362,"Rafael Ferrario","Barracas Central",6,18
+363,"Dardo Miloc","Barracas Central",6,18
+364,"Rodrigo Insúa","Barracas Central",6,18
+365,"Lucas Brochero","Barracas Central",6,18
+366,"Javier Ruiz","Barracas Central",6,18
+367,"Iván Tapia","Barracas Central",6,18
+368,"Alex Juárez","Barracas Central",6,18
+369,"Jhonatan Candia","Barracas Central",6,18
+370,"Maximiliano Zalazar","Barracas Central",6,18
+371,"Santino Andino","Godoy Cruz",8,18
+372,"Gonzalo Abrego","Godoy Cruz",8,18
+373,"Franco Petroli","Godoy Cruz",7,18
+374,"Salomón Rodríguez","Godoy Cruz",7,18
+375,"Matko Miljevic","Newell's OB",7,18
+376,"Pier Barrios","Godoy Cruz",7,18
+377,"Federico Rasmussen","Godoy Cruz",7,18
+378,"Roberto Nicolás Fernández","Godoy Cruz",7,18
+379,"Facundo Altamira","Godoy Cruz",7,18
+380,"Mateo Silvetti","Newell's OB",7,18
+381,"Bruno Leyes","Godoy Cruz",7,18
+382,"Saúl Salcedo","Newell's OB",7,18
+383,"Elías Pereyra","Godoy Cruz",7,18
+384,"Ángelo Martino","Newell's OB",7,18
+385,"Armando Méndez","Newell's OB",6,18
+386,"Gustavo Velásquez","Newell's OB",6,18
+387,"Lucas Arce","Godoy Cruz",6,18
+388,"Mateo Mendoza","Godoy Cruz",6,18
+389,"Daniel Barrea","Godoy Cruz",6,18
+390,"Martín Pino","Godoy Cruz",6,18
+391,"Vicente Poggi","Godoy Cruz",6,18
+392,"Tomás Pérez","Newell's OB",6,18
+393,"Ramiro Macagno","Newell's OB",6,18
+394,"Juan Manuel García","Newell's OB",6,18
+395,"Juan Ignacio Ramírez","Newell's OB",6,18
+396,"Fernando David Cardozo","Newell's OB",6,18
+397,"Agustín Juárez","Newell's OB",6,18
+398,"Francisco González","Newell's OB",6,18
+399,"Valentino Acuña","Newell's OB",6,18
+400,"Pablo Altamirano","Newell's OB",6,18
+401,"Hernán Galíndez",Huracán,7,18
+402,"Fabio Pereyra",Huracán,7,18
+403,"Federico Fattori",Huracán,7,18
+404,"Lucas Carrizo",Huracán,7,18
+405,"Guillermo Benítez",Huracán,7,18
+406,"Fernando Tobio",Huracán,7,18
+407,"Joaquín Mosqueira",Unión,7,18
+408,"Eric Ramírez",Huracán,7,18
+409,"Franco Pardo",Unión,7,18
+410,"Rodrigo Echeverría",Huracán,7,18
+411,"Héctor Fértoli",Huracán,7,18
+412,"Lautaro Vargas",Unión,7,18
+413,"Adrián Balboa",Unión,7,18
+414,"Alan Soñora",Huracán,6,18
+415,"Mauro Pittón",Unión,6,18
+416,"Rodrigo Cabral",Huracán,6,18
+417,"Nicolás Orsini",Unión,6,18
+418,"Bruno Pittón",Unión,6,18
+419,"Sebastián Ramírez",Huracán,6,18
+420,"Hernán De La Fuente",Huracán,6,18
+421,"Miguel Ángel Torrén",Unión,6,18
+422,"Ramón Ábila",Huracán,6,18
+423,"Lucas Souto",Huracán,6,18
+424,"Claudio Corvalán",Unión,6,18
+425,"Enzo Martín Roldán",Unión,6,18
+426,"Javier Morales",Unión,6,18
+427,"Thiago Cardozo",Unión,6,18
+428,"Lucas Gamba",Unión,6,18
+429,"Francisco Gerometta",Unión,6,18
+430,"Mateo Del Blanco",Unión,6,18
+431,"Simón Rivero",Unión,5,18
