@@ -1,8 +1,8 @@
 from flask import Flask
-from flask_restful import Api, Resource
-from config.db import db
-from config.config import Config
-from models.usuario_model import UsuarioModel
+from flask_restful import Api
+from db import db
+from config import Config
+from models import UsuarioModel
 
 app = Flask(__name__)
 
