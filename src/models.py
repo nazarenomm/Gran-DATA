@@ -2,9 +2,9 @@ from db import db
 from werkzeug.security import generate_password_hash, check_password_hash
 
 class UsuarioModel(db.Model):
-    __tablename__ = 'usuario'
+    __tablename__ = 'usuarios'
 
-    id = db.Column(db.Integer, primary_key=True)
+    usuario_id = db.Column(db.Integer, primary_key=True)
     nombre = db.Column(db.String(80), nullable=False)
     apellido = db.Column(db.String(80), nullable=False)
     mail = db.Column(db.String(256), unique=True, nullable=False)
@@ -26,8 +26,8 @@ class UsuarioModel(db.Model):
 
 class PuntajeModel(db.Model):
     __tablename__ = 'puntajes'
-    id = db.Column(db.Integer, primary_key=True)
-    jugador = db.Column(db.String(100), nullable=False) #deberia ser id jugador
+    puntaje_id = db.Column(db.Integer, primary_key=True)
+    jugador_id = db.Column(db.Integer, nullable=False) # foreign key
     equipo = db.Column(db.String(100), nullable=False)
     puntaje = db.Column(db.Float)
     fecha = db.Column(db.Integer, nullable=False)
