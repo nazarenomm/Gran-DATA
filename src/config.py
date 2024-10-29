@@ -10,5 +10,5 @@ class Config:
     #SQLALCHEMY_DATABASE_URI = 'mysql+pymysql://root:Odisea123@localhost:3306/gran_data_test'
     
     # db Naza 
-    #SQLALCHEMY_DATABASE_URI = 'mysql+pymysql://root:@localhost:3308/gran_data_test'
+    SQLALCHEMY_DATABASE_URI = 'mysql+pymysql://root:@localhost:3308/gran_data_test'
     

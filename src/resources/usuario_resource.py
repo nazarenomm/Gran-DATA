@@ -6,8 +6,8 @@ user_post_args = reqparse.RequestParser()
 user_post_args.add_argument("nombre", type=str, help="Nombre Requerido", required=True)
 user_post_args.add_argument("apellido", type=str, help="Apellido Requerido", required=True)
 user_post_args.add_argument('mail', type=str, help='Correo Electrónico Requerido', required=True)
-user_post_args.add_argument('contraseña', type=str, help='Contraseña Requerida')
-user_post_args.add_argument('telefono', type=int, help='Número de Teléfono Requerido')
+user_post_args.add_argument('contraseña', type=str, help='Contraseña Requerida', required=True)
+user_post_args.add_argument('telefono', type=int)
 
 user_fields = {
     'id': fields.Integer,
@@ -18,7 +18,7 @@ user_fields = {
     'telefono': fields.Integer
     }
 
-class User(Resource):
+class UsuarioResource(Resource):
     @marshal_with(user_fields)
     def get(self, user_id):
         result = UsuarioModel.query.filter_by(id=user_id).first()
@@ -29,7 +29,7 @@ class User(Resource):
     @marshal_with(user_fields)
     def post(self):
         args = user_post_args.parse_args()  # Extrae los datos de la solicitud
-        if UsuarioModel.query.filter_by(username=args['mail']).first():
+        if UsuarioModel.query.filter_by(mail=args['mail']).first(): # mail es unique
             return {"message": "Usuario ya registrado"}, 409
         usuario = UsuarioModel(nombre=args['nombre'], apellido=args['apellido'], mail=args['mail'],
                             contraseña=args['contraseña'], telefono=args['telefono'])
