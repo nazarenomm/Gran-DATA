@@ -12,7 +12,7 @@ api = Api(app)
 
 db.init_app(app)
 
-api.add_resource(UsuarioResource, '/usuario/', '/usuario/<int:user_id>')
+api.add_resource(UsuarioResource, '/usuario/', '/usuario/<int:usuario_id>')
 
 if __name__ == '__main__':
     app.run(debug=True)

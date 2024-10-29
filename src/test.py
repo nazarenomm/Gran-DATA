@@ -3,11 +3,11 @@ import requests
 BASE = "http://127.0.0.1:5000/"
 
 response = requests.post(BASE + "usuario", json={
-    "nombre": "jose",
-    "apellido": "pereyra",
-    "mail": "jpereyra@gmail.com",
-    "contraseña": "1234",
-    "telefono": 1234
+    "nombre": "pedro",
+    "apellido": "herrera",
+    "mail": "pedroh@gmail.com",
+    "contraseña": "1234pehe",
+    "telefono": 1234329923
 })
 
 print("Status Code:", response.status_code)
@@ -19,7 +19,7 @@ except requests.exceptions.JSONDecodeError:
 
 input()
 
-response = requests.get(BASE + "usuario/1")
+response = requests.get(BASE + "usuario/2")
 print("Status Code:", response.status_code)
 print("Response Text:", response.text)
 try:

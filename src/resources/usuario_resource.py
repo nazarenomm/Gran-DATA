@@ -10,7 +10,7 @@ user_post_args.add_argument('contraseña', type=str, help='Contraseña Requerida
 user_post_args.add_argument('telefono', type=int)
 
 user_fields = {
-    'id': fields.Integer,
+    'usuario_id': fields.Integer,
     'nombre': fields.String,
     'apellido': fields.String,
     'mail': fields.String,
@@ -20,8 +20,8 @@ user_fields = {
 
 class UsuarioResource(Resource):
     @marshal_with(user_fields)
-    def get(self, user_id):
-        result = UsuarioModel.query.filter_by(id=user_id).first()
+    def get(self, usuario_id):
+        result = UsuarioModel.query.filter_by(usuario_id=usuario_id).first()
         if not result:
             abort(404, message="Usuario no encontrado")
         return result
@@ -37,8 +37,8 @@ class UsuarioResource(Resource):
         db.session.commit()
         return usuario, 201
     
-    def delete(self, user_id):
-        usuario = UsuarioModel.query.filter_by(id=user_id).first()
+    def delete(self, usuario_id):
+        usuario = UsuarioModel.query.filter_by(usuario_id=usuario_id).first()
         if not usuario:
             abort(404, message="Usuario no encontrado")
         db.session.delete(usuario)
