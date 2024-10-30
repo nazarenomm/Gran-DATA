@@ -32,7 +32,8 @@ class UsuarioResource(Resource):
         if UsuarioModel.query.filter_by(mail=args['mail']).first(): # mail es unique
             return {"message": "Usuario ya registrado"}, 409
         usuario = UsuarioModel(nombre=args['nombre'], apellido=args['apellido'], mail=args['mail'],
-                            contraseña=args['contraseña'], telefono=args['telefono'])
+                               telefono=args['telefono'])
+        usuario.set_contraseña(args['contraseña'])
         db.session.add(usuario)
         db.session.commit()
         return usuario, 201
