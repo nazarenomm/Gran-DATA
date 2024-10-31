@@ -38,6 +38,7 @@ class EquipoModel(db.Model):
     usuario_id = db.Column(db.Integer, db.ForeignKey('usuarios.usuario_id'), nullable=False)
     valor = db.Column(db.Integer, nullable=False) # cotización
     formacion = db.Column(db.String(100), db.ForeignKey('formaciones.formacion'), nullable=False)
+    jugadores_id = db.Column(db.JSON, nullable=False)
 
 class ClubModel(db.Model):
     __tablename__ = 'clubes'

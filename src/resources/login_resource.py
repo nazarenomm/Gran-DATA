@@ -1,4 +1,4 @@
-from flask_restful import Resource, reqparse
+from flask_restful import Resource, reqparse, abort
 from models import UsuarioModel
 
 login_post_args = reqparse.RequestParser()
@@ -10,7 +10,7 @@ class LoginResource(Resource):
         args = login_post_args.parse_args()
         usuario = UsuarioModel.query.filter_by(mail=args['mail']).first()
         if not usuario:
-            return {"message": "Usuario no registrado"}, 404
+            abort(404, message="Usuario no registrado")
         if not usuario.verificar_contraseña(args['contraseña']):
-            return {"message": "Contraseña incorrecta"}, 401
+            abort(401, message="Contraseña incorrecta")
         return {"message": "Login exitoso"}, 200
