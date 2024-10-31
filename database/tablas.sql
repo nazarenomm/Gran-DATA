@@ -51,15 +51,9 @@ CREATE TABLE equipos (
     usuario_id INT NOT NULL,
     valor INT NOT NULL,
     formacion VARCHAR(100) NOT NULL,
+    jugadores_id JSON NOT NULL,
     Foreign Key (usuario_id) REFERENCES usuarios(usuario_id),
     FOREIGN KEY (formacion) REFERENCES formaciones(formacion)
-);
-
-CREATE TABLE jugadores_equipos (
-    jugador_id INT NOT NULL,
-    equipo_id INT NOT NULL,
-    FOREIGN KEY (jugador_id) REFERENCES jugadores(jugador_id),
-    FOREIGN KEY (equipo_id) REFERENCES equipos(equipo_id)
 );
 
 CREATE TABLE partidos (
