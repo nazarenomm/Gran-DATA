@@ -20,7 +20,23 @@ class UsuarioModel(db.Model):
 class PuntajeModel(db.Model):
     __tablename__ = 'puntajes'
     puntaje_id = db.Column(db.Integer, primary_key=True)
-    jugador_id = db.Column(db.Integer, nullable=False) # foreign key
+    jugador_id = db.Column(db.Integer, db.ForeignKey('jugadores.jugador_id'), nullable=False)
     equipo = db.Column(db.String(100), nullable=False)
     puntaje = db.Column(db.Float)
     fecha = db.Column(db.Integer, nullable=False)
+
+class FormacionModel(db.Model):
+    __tablename__ = 'formaciones'
+    formacion = db.Column(db.String(100), primary_key=True)
+    defensores = db.Column(db.Integer, nullable=False)
+    mediocampistas = db.Column(db.Integer, nullable=False)
+    delanteros = db.Column(db.Integer, nullable=False)
+
+class EquipoModel(db.Model):
+    equipo_id = db.Column(db.Integer, primary_key=True)
+    usuario_id = db.Column(db.Integer, db.ForeignKey('usuarios.usuario_id'), nullable=False)
+    valor = db.Column(db.Integer, nullable=False) # cotización
+    formacion = db.Column(db.String(100), db.ForeignKey('formaciones.formacion'), nullable=False)
+
+class JugadorModel(db.Model):
+    

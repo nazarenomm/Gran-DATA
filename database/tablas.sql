@@ -41,12 +41,20 @@ create table puntajes (
     foreign key (jugador_id) references jugadores(jugador_id)
 );
 
+CREATE Table formaciones (
+    formacion VARCHAR(100) PRIMARY KEY,
+    defensores INT NOT NULL,
+    mediocampistas INT NOT NULL,
+    delanteros INT NOT NULL
+);
+
 CREATE TABLE equipos (
     equipo_id INT AUTO_INCREMENT PRIMARY KEY,
     usuario_id INT NOT NULL,
     valor INT NOT NULL,
     formacion VARCHAR(100) NOT NULL,
-    Foreign Key (usuario_id) REFERENCES usuarios(usuario_id)
+    Foreign Key (usuario_id) REFERENCES usuarios(usuario_id),
+    FOREIGN KEY (formacion) REFERENCES formaciones(formacion)
 );
 
 CREATE TABLE jugadores_equipos (

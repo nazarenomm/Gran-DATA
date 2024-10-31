@@ -1,6 +1,5 @@
 from flask_restful import Resource, reqparse
 from models import UsuarioModel
-from db import db
 
 login_post_args = reqparse.RequestParser()
 login_post_args.add_argument('mail', type=str, help='Correo Electrónico Requerido', required=True)
