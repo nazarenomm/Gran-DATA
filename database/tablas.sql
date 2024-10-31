@@ -12,9 +12,7 @@ create table usuarios (
 );
 
 CREATE TABLE clubes (
-    club_id INT AUTO_INCREMENT PRIMARY KEY,
-    nombre VARCHAR(100) NOT NULL,
-    valor INT NOT NULL,
+    nombre VARCHAR(100) PRIMARY KEY,
     puntos INT NOT NULL,
     partidos_jugados INT NOT NULL,
     partidos_ganados INT NOT NULL,
@@ -26,11 +24,11 @@ CREATE TABLE clubes (
 
 CREATE TABLE jugadores (
     jugador_id INT AUTO_INCREMENT PRIMARY KEY,
-    club_id INT NOT NULL,
+    club VARCHAR(100) NOT NULL,
     nombre VARCHAR(100) NOT NULL,
     precio INT NOT NULL,
     posicion VARCHAR(100) NOT NULL,
-    FOREIGN KEY (club_id) REFERENCES clubes(club_id)
+    FOREIGN KEY (club) REFERENCES clubes(nombre)
 );
 
 create table puntajes (

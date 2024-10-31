@@ -33,10 +33,27 @@ class FormacionModel(db.Model):
     delanteros = db.Column(db.Integer, nullable=False)
 
 class EquipoModel(db.Model):
+    __tablename__ = 'equipos'
     equipo_id = db.Column(db.Integer, primary_key=True)
     usuario_id = db.Column(db.Integer, db.ForeignKey('usuarios.usuario_id'), nullable=False)
     valor = db.Column(db.Integer, nullable=False) # cotización
     formacion = db.Column(db.String(100), db.ForeignKey('formaciones.formacion'), nullable=False)
 
+class ClubModel(db.Model):
+    __tablename__ = 'clubes'
+    nombre = db.Column(db.String(100), primary_key=True)
+    puntos = db.Column(db.Integer, nullable=False)
+    partidos_jugados = db.Column(db.Integer, nullable=False)
+    partidos_ganados = db.Column(db.Integer, nullable=False)
+    partidos_empatados = db.Column(db.Integer, nullable=False)
+    partidos_perdidos = db.Column(db.Integer, nullable=False)
+    goles_favor = db.Column(db.Integer, nullable=False)
+    goles_contra = db.Column(db.Integer, nullable=False)
+
 class JugadorModel(db.Model):
-    
+    __tablename__ = 'jugadores'
+    jugador_id = db.Column(db.Integer, primary_key=True)
+    club = db.Column(db.String, db.ForeignKey('clubes.nombre'), nullable=False)
+    nombre = db.Column(db.String(100), nullable=False)
+    precio = db.Column(db.Integer, nullable=False)
+    posicion = db.Column(db.String(100), nullable=False)
