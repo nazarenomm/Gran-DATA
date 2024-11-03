@@ -1,6 +1,6 @@
 from flask_restful import Resource, reqparse, fields, marshal_with, abort
 from models import EquipoModel, FormacionModel, JugadorModel
-from db import db
+from extensiones import db
 
 equipo_post_args = reqparse.RequestParser()
 equipo_post_args.add_argument("usuario_id", type=int, help="Usuario ID Requerido", required=True)

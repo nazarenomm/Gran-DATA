@@ -1,6 +1,6 @@
 from flask_restful import Resource, reqparse, abort, fields, marshal_with
 from models import UsuarioModel
-from db import db
+from extensiones import db
 
 user_post_args = reqparse.RequestParser()
 user_post_args.add_argument("nombre", type=str, help="Nombre Requerido", required=True)

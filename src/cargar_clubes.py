@@ -1,4 +1,4 @@
-from db import db
+from extensiones import db
 from models import ClubModel
 from app import app
 import pandas as pd
