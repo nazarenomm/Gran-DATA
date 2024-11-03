@@ -1,4 +1,4 @@
-from db import db
+from extensiones import db
 from models import FormacionModel
 from app import app
 
