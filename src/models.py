@@ -17,13 +17,25 @@ class UsuarioModel(db.Model):
     def verificar_contraseña(self, contraseña):
         return check_password_hash(self.contraseña, contraseña)
 
-class PuntajeModel(db.Model):
-    __tablename__ = 'puntajes'
-    puntaje_id = db.Column(db.Integer, primary_key=True)
-    jugador_id = db.Column(db.Integer, db.ForeignKey('jugadores.jugador_id'), nullable=False)
-    equipo = db.Column(db.String(100), nullable=False)
-    puntaje = db.Column(db.Float)
-    fecha = db.Column(db.Integer, nullable=False)
+class ClubModel(db.Model):
+    __tablename__ = 'clubes'
+    club_id = db.Column(db.Integer, primary_key=True)
+    nombre = db.Column(db.String(100))
+    puntos = db.Column(db.Integer, nullable=False)
+    partidos_jugados = db.Column(db.Integer, nullable=False)
+    partidos_ganados = db.Column(db.Integer, nullable=False)
+    partidos_empatados = db.Column(db.Integer, nullable=False)
+    partidos_perdidos = db.Column(db.Integer, nullable=False)
+    goles_favor = db.Column(db.Integer, nullable=False)
+    goles_contra = db.Column(db.Integer, nullable=False)
+
+class JugadorModel(db.Model):
+    __tablename__ = 'jugadores'
+    jugador_id = db.Column(db.Integer, primary_key=True)
+    club_id = db.Column(db.Integer, db.ForeignKey('clubes.club_id'), nullable=False)
+    nombre = db.Column(db.String(100), nullable=False)
+    precio = db.Column(db.Integer, nullable=False)
+    posicion = db.Column(db.String(100), nullable=False)
 
 class FormacionModel(db.Model):
     __tablename__ = 'formaciones'
@@ -40,21 +52,34 @@ class EquipoModel(db.Model):
     formacion = db.Column(db.String(100), db.ForeignKey('formaciones.formacion'), nullable=False)
     jugadores_id = db.Column(db.JSON, nullable=False)
 
-class ClubModel(db.Model):
-    __tablename__ = 'clubes'
-    nombre = db.Column(db.String(100), primary_key=True)
-    puntos = db.Column(db.Integer, nullable=False)
-    partidos_jugados = db.Column(db.Integer, nullable=False)
-    partidos_ganados = db.Column(db.Integer, nullable=False)
-    partidos_empatados = db.Column(db.Integer, nullable=False)
-    partidos_perdidos = db.Column(db.Integer, nullable=False)
-    goles_favor = db.Column(db.Integer, nullable=False)
-    goles_contra = db.Column(db.Integer, nullable=False)
+class PuntajeModel(db.Model):
+    __tablename__ = 'puntajes'
+    puntaje_id = db.Column(db.Integer, primary_key=True)
+    equipo_id = db.Column(db.Integer, db.ForeignKey('equipos.equipo_id'), nullable=False)
+    fecha = db.Column(db.Integer, nullable=False)
+    puntaje = db.Column(db.Integer)
 
-class JugadorModel(db.Model):
-    __tablename__ = 'jugadores'
-    jugador_id = db.Column(db.Integer, primary_key=True)
-    club = db.Column(db.String, db.ForeignKey('clubes.nombre'), nullable=False)
+class PartidoModel(db.Model):
+    __tablename__ = 'partidos'
+    partido_id = db.Column(db.Integer, primary_key=True)
+    local_id = db.Column(db.Integer, db.ForeignKey('clubes.club_id'), nullable=False)
+    visitante_id = db.Column(db.Integer, db.ForeignKey('clubes.club_id'), nullable=False)
+    goles_local = db.Column(db.Integer, nullable=False)
+    goles_visitante = db.Column(db.Integer, nullable=False)
+    fecha = db.Column(db.Integer, nullable=False)
+
+class TorneoModel(db.Model):
+    __tablename__ = 'torneos'
+    torneo_id = db.Column(db.Integer, primary_key=True)
     nombre = db.Column(db.String(100), nullable=False)
-    precio = db.Column(db.Integer, nullable=False)
-    posicion = db.Column(db.String(100), nullable=False)
+    tipo = db.Column(db.String(100), nullable=False)
+
+class TorneoUsuarioModel(db.Model):
+    __tablename__ = 'torneo_usuario'
+    torneo_usuario_id = db.Column(db.Integer, primary_key=True)
+    torneo_id = db.Column(db.Integer, db.ForeignKey('torneos.torneo_id'), nullable=False)
+    usuario_id = db.Column(db.Integer, db.ForeignKey('usuarios.usuario_id'), nullable=False)
+    es_admin = db.Column(db.Boolean, nullable=False)
+    victorias = db.Column(db.Integer, nullable=False)
+    empates = db.Column(db.Integer, nullable=False)
+    derrotas = db.Column(db.Integer, nullable=False)
