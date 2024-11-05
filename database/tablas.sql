@@ -12,7 +12,8 @@ create table usuarios (
 );
 
 CREATE TABLE clubes (
-    nombre VARCHAR(100) PRIMARY KEY,
+    club_id INT AUTO_INCREMENT PRIMARY KEY,
+    nombre VARCHAR(100),
     puntos INT NOT NULL,
     partidos_jugados INT NOT NULL,
     partidos_ganados INT NOT NULL,
@@ -24,19 +25,11 @@ CREATE TABLE clubes (
 
 CREATE TABLE jugadores (
     jugador_id INT AUTO_INCREMENT PRIMARY KEY,
-    club VARCHAR(100) NOT NULL,
+    club_id INT NOT NULL,
     nombre VARCHAR(100) NOT NULL,
     precio INT NOT NULL,
     posicion VARCHAR(100) NOT NULL,
-    FOREIGN KEY (club) REFERENCES clubes(nombre)
-);
-
-create table puntajes (
-	puntaje_id int auto_increment primary key,
-    jugador_id int not null,
-    puntaje decimal, # se redondea
-    fecha int not null,
-    foreign key (jugador_id) references jugadores(jugador_id)
+    FOREIGN KEY (club_id) REFERENCES clubes(club_id)
 );
 
 CREATE Table formaciones (
@@ -46,6 +39,7 @@ CREATE Table formaciones (
     delanteros INT NOT NULL
 );
 
+# TODO: no usar json, usar una tabla aparte
 CREATE TABLE equipos (
     equipo_id INT AUTO_INCREMENT PRIMARY KEY,
     usuario_id INT NOT NULL,
@@ -56,18 +50,44 @@ CREATE TABLE equipos (
     FOREIGN KEY (formacion) REFERENCES formaciones(formacion)
 );
 
+create table puntajes (
+	puntaje_id int auto_increment primary key,
+    equipo_id int not null,
+    fecha int not null,
+    puntaje int,
+    foreign key (equipo_id) references equipos(equipo_id)
+);
+
 CREATE TABLE partidos (
     partido_id INT AUTO_INCREMENT PRIMARY KEY,
-    equipo_local INT NOT NULL,
-    equipo_visitante INT NOT NULL,
+    local_id INT NOT NULL,
+    visitante_id INT NOT NULL,
     goles_local INT NOT NULL,
     goles_visitante INT NOT NULL,
     fecha INT NOT NULL,
-    FOREIGN KEY (equipo_local) REFERENCES equipos(equipo_id),
-    FOREIGN KEY (equipo_visitante) REFERENCES equipos(equipo_id)
+    FOREIGN KEY (local_id) REFERENCES equipos(equipo_id),
+    FOREIGN KEY (visitante_id) REFERENCES equipos(equipo_id)
 );
 
-# despues cambiar lo nombres para mayor claridad, si es que se puede
+CREATE TABLE torneos (
+    torneo_id INT AUTO_INCREMENT PRIMARY KEY,
+    nombre VARCHAR(100) NOT NULL,
+    tipo VARCHAR(100) NOT NULL,
+);
+
+CREATE TABLE torneo_usuario (
+    torneo_usuario_id INT AUTO_INCREMENT PRIMARY KEY,
+    torneo_id INT NOT NULL,
+    usuario_id INT NOT NULL,
+    es_admin BOOLEAN NOT NULL,
+    victorias INT NOT NULL,
+    empates INT NOT NULL,
+    derrotas INT NOT NULL,
+    FOREIGN KEY (torneo_id) REFERENCES torneos(torneo_id),
+    FOREIGN KEY (usuario_id) REFERENCES usuarios(usuario_id)
+);
+
+# TODO: cambiar lo nombres para mayor claridad, si es que se puede
 CREATE TABLE rendimientos (
     rendimiento_id INT AUTO_INCREMENT PRIMARY KEY,
     jugador_id INT NOT NULL,
