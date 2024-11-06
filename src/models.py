@@ -73,6 +73,7 @@ class TorneoModel(db.Model):
     torneo_id = db.Column(db.Integer, primary_key=True)
     nombre = db.Column(db.String(100), nullable=False)
     tipo = db.Column(db.String(100), nullable=False)
+    fecha_creacion = db.Column(db.Date, nullable=False)
 
 class TorneoUsuarioModel(db.Model):
     __tablename__ = 'torneo_usuario'
@@ -80,6 +81,6 @@ class TorneoUsuarioModel(db.Model):
     torneo_id = db.Column(db.Integer, db.ForeignKey('torneos.torneo_id'), nullable=False)
     usuario_id = db.Column(db.Integer, db.ForeignKey('usuarios.usuario_id'), nullable=False)
     es_admin = db.Column(db.Boolean, nullable=False)
-    victorias = db.Column(db.Integer, nullable=False)
-    empates = db.Column(db.Integer, nullable=False)
-    derrotas = db.Column(db.Integer, nullable=False)
+    victorias = db.Column(db.Integer)
+    empates = db.Column(db.Integer)
+    derrotas = db.Column(db.Integer)
