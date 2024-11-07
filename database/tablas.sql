@@ -73,6 +73,7 @@ CREATE TABLE torneos (
     torneo_id INT AUTO_INCREMENT PRIMARY KEY,
     nombre VARCHAR(100) NOT NULL,
     tipo VARCHAR(100) NOT NULL,
+    fecha_creacion DATE NOT NULL
 );
 
 CREATE TABLE torneo_usuario (
@@ -80,9 +81,9 @@ CREATE TABLE torneo_usuario (
     torneo_id INT NOT NULL,
     usuario_id INT NOT NULL,
     es_admin BOOLEAN NOT NULL,
-    victorias INT NOT NULL,
-    empates INT NOT NULL,
-    derrotas INT NOT NULL,
+    victorias INT,
+    empates INT,
+    derrotas INT,
     FOREIGN KEY (torneo_id) REFERENCES torneos(torneo_id),
     FOREIGN KEY (usuario_id) REFERENCES usuarios(usuario_id)
 );

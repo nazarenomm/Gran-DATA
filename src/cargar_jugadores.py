@@ -1,11 +1,13 @@
 import pandas as pd
 from extensiones import db
-from models import JugadorModel
+from models import JugadorModel, ClubModel
 from app import app
 
 def cargar_jugador(jugador):
-    if not JugadorModel.query.filter_by(nombre=jugador['Jugador'], club=jugador['Equipo']).first():
-        jugador_model = JugadorModel(club=jugador['Equipo'], nombre=jugador['Jugador'],
+    club = ClubModel.query.filter_by(nombre=jugador['Equipo']).first()
+    club_id = club.club_id if club else None
+    if not JugadorModel.query.filter_by(nombre=jugador['Jugador'], club_id=club_id).first():
+        jugador_model = JugadorModel(club_id=club_id, nombre=jugador['Jugador'],
                                      precio=jugador['Precio'], posicion=jugador['Pos'])
         db.session.add(jugador_model)
     db.session.commit()
