@@ -3,6 +3,8 @@ from exceptions.exceptions import JugadorNoEncontradoException
 from models import EquipoModel, FormacionModel, JugadorModel
 from extensiones import db
 
+PRESUPUESTO = 70_000_000
+
 equipo_post_args = reqparse.RequestParser()
 equipo_post_args.add_argument("usuario_id", type=int, help="Usuario ID Requerido", required=True)
 equipo_post_args.add_argument("formacion", type=str, help="Formación Requerida", required=True)
@@ -107,10 +109,15 @@ class EquipoResource(Resource):
                     abort(404, message=f"Jugador con ID {jugador_id} no encontrado")
                 if jugador.posicion != codigo_posicion:
                     abort(400, message=f"El jugador {jugador_id} no es un {posicion}")
+        
+        # Verificar que el usuario no pase el presupuesto
+        valor_total = sum(jugador.precio for jugador in jugadores_db)
+        if valor_total > PRESUPUESTO:
+            abort(400, message="El valor total del equipo supera el presupuesto")
 
         nuevo_equipo = EquipoModel(
             usuario_id=args['usuario_id'],
-            valor=15_000_000,  # TODO: Calcular el valor del equipo
+            valor=valor_total,
             formacion=formacion,
             jugadores_id=jugadores
         )
