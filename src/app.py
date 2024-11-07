@@ -32,9 +32,9 @@ def login():
 def register():
     return render_template('register.html')
 
-# @app.route('/home')
-# def register():
-#     return render_template('home.html')
+@app.route('/menu')
+def menu():
+    return render_template('menu.html')
 
 if __name__ == '__main__':
     app.run(debug=True)

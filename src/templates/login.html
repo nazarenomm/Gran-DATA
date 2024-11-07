@@ -12,12 +12,12 @@
         <h2>Iniciar Sesión</h2>
         <form action="/login" method="post" id="loginForm">
             <div class="mb-3">
-                <label for="email" class="form-label">Email</label>
-                <input type="email" class="form-control" id="email" name="email" required>
+                <label for="mail" class="form-label">Mail</label>
+                <input type="mail" class="form-control" id="mail" name="mail" required>
             </div>
             <div class="mb-3">
-                <label for="password" class="form-label">Contraseña</label>
-                <input type="password" class="form-control" id="password" name="password" required>
+                <label for="contraseña" class="form-label">Contraseña</label>
+                <input type="contraseña" class="form-control" id="contraseña" name="contraseña" required>
             </div>
             <button type="submit" class="btn btn-primary">Iniciar Sesión</button>
             <a href="/register">Crear cuenta</a>
@@ -29,8 +29,8 @@
         document.getElementById("loginForm").addEventListener("submit", async function(event) {
             event.preventDefault();
 
-            const email = document.getElementById("email").value;
-            const password = document.getElementById("password").value;
+            const formData = new FormData(event.target);
+            const data = Object.fromEntries(formData.entries());
 
             try {
                 const response = await fetch("/login", {
@@ -38,14 +38,14 @@
                     headers: {
                         "Content-Type": "application/json"
                     },
-                    body: JSON.stringify({ email, password })
+                    body: JSON.stringify(data)
                 });
 
                 const result = await response.json();
                 
                 if (response.ok) {
                     // Redirige a la página de creación de equipo o dashboard
-                    window.location.href = "/create-team";
+                    window.location.href = "/menu";
                 } else {
                     document.getElementById("message").innerText = result.message || "Error al iniciar sesión";
                 }
