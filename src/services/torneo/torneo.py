@@ -1,5 +1,5 @@
 from abc import ABC, abstractmethod
-from usuario import Usuario
+from usuario.usuario import Usuario
 
 class Torneo(ABC):
     def __init__(self, creador: Usuario) -> None:

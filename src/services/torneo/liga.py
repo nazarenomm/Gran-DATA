@@ -1,5 +1,5 @@
-from torneo import Torneo
-from usuario import Usuario
+from torneo.torneo import Torneo
+from usuario.usuario import Usuario
 
 class Liga(Torneo):
     def __init__(self, creador: Usuario) -> None:
