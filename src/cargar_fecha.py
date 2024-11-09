@@ -78,6 +78,7 @@ def rendimientos_partido(url, match, score, modelo) -> pd.DataFrame:
         # Asignar el equipo
         if 'home' in nombre_tabla:
             tabla_limpia['match'] = match
+            tabla_limpia['score'] = score
             tabla_limpia['team'] = match.split(' - ')[0]
             tabla_limpia['team_goals'] = int(score.split('–')[0])
             tabla_limpia['conceded_goals'] = int(score.split('–')[1])
@@ -85,6 +86,7 @@ def rendimientos_partido(url, match, score, modelo) -> pd.DataFrame:
             tabla_limpia['tie'] = int(score.split('–')[0]) == int(score.split('–')[1])
         else:
             tabla_limpia['match'] = match
+            tabla_limpia['score'] = score
             tabla_limpia['team'] = match.split(' - ')[1]
             tabla_limpia['team_goals'] = int(score.split('–')[1])
             tabla_limpia['conceded_goals'] = int(score.split('–')[0])
@@ -133,7 +135,7 @@ def rendimientos_partido(url, match, score, modelo) -> pd.DataFrame:
     df_merged.fillna(0, inplace=True)
 
     X_test = df_merged.copy()
-    X_test.drop(columns=['Player', '#', 'Nation', 'team', 'Age'], inplace=True, errors='ignore')
+    X_test.drop(columns=['Player', '#', 'Nation', 'team', 'Age', 'match', 'score'], inplace=True, errors='ignore')
     X_test = pd.get_dummies(X_test, columns=['Pos'], dtype=int)
     
     # Asegurar que todas las columnas del entrenamiento estén presentes (esto es porque hay algunas posiciones que no aparecen en todos los partidos)
@@ -227,36 +229,49 @@ def cargar_fecha(fecha:int, modelo) -> pd.DataFrame:
 if __name__ == '__main__':
 
     modelo = joblib.load('modelo_puntajes/modelos/primer_modelo.pkl')
+    fecha = 1
     with app.app_context():
-        rendimientos = cargar_fecha(1, modelo)
-        for partido in rendimientos['match'].unique():
-            local = partido.split(' - ')[0]
-            visitante = partido.split(' - ')[1]
-            local_id = ClubModel.query.filter_by(nombre=local).first().club_id
-            visitante_id = ClubModel.query.filter_by(nombre=visitante).first().club_id
-            goles_local = rendimientos[rendimientos['match'] == partido]['team_goals'].iloc[0]
-            goles_visitante = rendimientos[rendimientos['match'] == partido]['conceded_goals'].iloc[0]
-            fecha = rendimientos[rendimientos['match'] == partido]['fecha'].iloc[0]
-            nuevo_partido = PartidoModel(local_id=local_id, visitante_id=visitante_id, goles_local=goles_local, goles_visitante=goles_visitante, fecha=fecha)
-            db.session.add(nuevo_partido)
-            db.session.commit()
+        try:
+            rendimientos = pd.read_csv(f'modelo_puntajes/data/predicciones/rendimientos_fecha_{fecha}.csv')
+        except FileNotFoundError:
+            rendimientos = cargar_fecha(fecha, modelo)
+            rendimientos.to_csv(f'modelo_puntajes/data/predicciones/rendimientos_fecha_{fecha}.csv', index=False)
+
         for _, row in rendimientos.iterrows():
+            # cargamos partido, lo agregamos si no esta en db
+            local = row['match'].split(' - ')[0]
+            visitante = row['match'].split(' - ')[1]            
+            partido = PartidoModel.query.filter_by(
+                local_id=ClubModel.query.filter_by(nombre=local).first().club_id,
+                visitante_id=ClubModel.query.filter_by(nombre=visitante).first().club_id
+                ).first()
+            if not partido:
+                local_id = ClubModel.query.filter_by(nombre=local).first().club_id
+                visitante_id = ClubModel.query.filter_by(nombre=visitante).first().club_id
+                goles_local = row['score'].split('–')[0]
+                goles_visitante = row['score'].split('–')[1]
+                fecha = row['fecha']
+                nuevo_partido = PartidoModel(local_id=local_id, visitante_id=visitante_id, goles_local=goles_local, goles_visitante=goles_visitante, fecha=fecha)
+                db.session.add(nuevo_partido)
+                db.session.commit()
+                partido = PartidoModel.query.filter_by(
+                    local_id=local_id,
+                    visitante_id=visitante_id
+                    ).first()
+            partido_id = partido.partido_id
+            
+            # cargamos club
             club_id = ClubModel.query.filter_by(nombre=row['team']).first().club_id
+
+            # cargamos jugador, lo agregamos si no esta en la db
             jugador = JugadorModel.query.filter_by(nombre=row['Player'], club_id=club_id).first()
-            # guardar jugador si no esta en la db
             if not jugador:
                 posicion = row['Posicion']
                 nuevo_jugador = JugadorModel(nombre=row['Player'], club_id=club_id, precio=300_000, posicion=posicion)
                 db.session.add(nuevo_jugador)
                 db.session.commit()
-            # guardar rendimiento
-            jugador_id = JugadorModel.query.filter_by(nombre=row['Player']).first().jugador_id
-
-            # TODO: agregar el campeonato a la db
-            partido_id = PartidoModel.query.filter_by(
-                local_id=ClubModel.query.filter_by(nombre=row['team']).first().club_id,
-                visitante_id=ClubModel.query.filter_by(nombre=row['team']).first().club_id
-                ).first().partido_id
+                jugador = JugadorModel.query.filter_by(nombre=row['Player'], club_id=club_id).first()
+            jugador_id = jugador.jugador_id
             
             nuevo_rendimiento = RendimientoModel(
                 jugador_id=jugador_id,
@@ -274,12 +289,12 @@ if __name__ == '__main__':
                 goles_creados=row['GCA'],
                 # distancia_pases=row['Total_TotDist'],
                 # distancia_pases_progresivos=row['Total_PrgDist'],
-                pases_cortos_completados=row['Short_Cmp'],
-                pases_cortos_intentados=row['Short_Att'],
-                pases_medios_completados=row['Medium_Cmp'],
-                pases_medios_intentados=row['Medium_Att'],
-                pases_largos_completados=row['Long_Cmp'],
-                pases_largos_intentados=row['Long_Att'],
+                pases_cortos_completados=row['Short-Cmp'],
+                pases_cortos_intentados=row['Short-Att'],
+                pases_medios_completados=row['Medium-Cmp'],
+                pases_medios_intentados=row['Medium-Att'],
+                pases_largos_completados=row['Long-Cmp'],
+                pases_largos_intentados=row['Long-Att'],
                 xAG = row['xAG'],
                 xA = row['xA'],
                 pases_clave=row['KP'],
@@ -296,14 +311,14 @@ if __name__ == '__main__':
                 centros=row['Crs'],
                 # laterales_ejecutados = row['TI']
                 corners_ejecutados=row['CK'],
-                entradas=row['Tackles_Tkl'],
-                entradas_ganadas=row['Tackles_TklW'],
+                entradas=row['Tackles-Tkl'],
+                entradas_ganadas=row['Tackles-TklW'],
                 # duelos_defensivos_ganados = row['Challenges_Tkl']
                 # duelos_defensivos = row['Challenges_Att']
                 # duelos_defensivos_perdidos = row['Challenges_Lost']
-                bloqueos=row['Blocks_Blocks'],
-                remates_bloqueados=row['Blocks_Sh'],
-                pases_bloqueados=row['Blocks_Pass'],
+                bloqueos=row['Blocks-Blocks'],
+                remates_bloqueados=row['Blocks-Sh'],
+                pases_bloqueados=row['Blocks-Pass'],
                 intercepciones=row['Int'],
                 despejes=row['Clr'],
                 errores_graves=row['Err'],
@@ -312,12 +327,12 @@ if __name__ == '__main__':
                 # toques_tercio_med = row['Touches_Mid_3rd']
                 # toques_tercio_ata = row['Touches_Att_3rd']
                 # toques_area_rival = row['Touches_Att_Pen']
-                gambetas_intentadas=row['Take_Ons_Att'],
-                gambetas_completadas=row['Take_Ons_Succ'],
-                traslados=row['Carries_Carries'],
+                gambetas_intentadas=row['Take-Ons-Att'],
+                gambetas_completadas=row['Take-Ons-Succ'],
+                traslados=row['Carries-Carries'],
                 # traslados_distancia = row['Carries_TotDist']
                 # traslados_progresivos_distancia = row['Carries_PrgDist']
-                traslados_progresivos=row['Carries_PrgC'],
+                traslados_progresivos=row['Carries-PrgC'],
                 # traslados_ultimo_tercio = row['Carries_1_3']
                 # traslados_al_area = row['Carries_CPA']
                 # malos_controles = row['Carries_Mis']
@@ -326,7 +341,7 @@ if __name__ == '__main__':
                 # pases_progresivos_recibidos = row['Receiving_PrgR']
                 tarjetas_amarillas=row['CrdY'],
                 tarjetas_rojas=row['CrdR'],
-                doble_amarilla=row['Crd2Y'],
+                doble_amarilla=row['2CrdY'],
                 faltas=row['Fls'],
                 faltas_ganadas=row['Fld'],
                 # Offsides = row['Off']
@@ -334,8 +349,8 @@ if __name__ == '__main__':
                 penales_concedidos=row['PKcon'],
                 goles_en_contra=row['OG'],
                 recuperaciones=row['Recov'],
-                duelos_aereos_ganados=row['Aerial_Duels_Won'],
-                duelos_aereos_perdidos=row['Aerial_Duels_Lost'],
+                duelos_aereos_ganados=row['Aerial Duels-Won'],
+                duelos_aereos_perdidos=row['Aerial Duels-Lost'],
                 remates_arco_recibidos=row['SoTA'],
                 goles_recibidos=row['GA'],
                 atajadas=row['Saves'],
@@ -347,12 +362,12 @@ if __name__ == '__main__':
                 # distancia_promedio_saques = row['Passes_AvgLen']
                 # saques_arco = row['Goal_Kicks_Att']
                 # distancia_promedio_saques_arco = row['Goal_Kicks_AvgLen']
-                centros_enfrentados=row['Crosses_Opp'],
-                centros_atajados=row['Crosses_Stp'],
+                centros_enfrentados=row['Crosses-Opp'],
+                centros_atajados=row['Crosses-Stp'],
                 # acciones_def_fuera_area = row['Sweeper_OPA']
                 # acciones_def_fuera_area_dist_promedio = row['Sweeper_AvgDist']
-                puntaje=row['puntaje'],
-                puntaje_total=row['puntaje_total']
+                puntaje=row['puntaje_modelo'],
+                puntaje_total=row['puntaje']
                 )
             db.session.add(nuevo_rendimiento)
             db.session.commit()
