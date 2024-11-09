@@ -64,8 +64,8 @@ class PartidoModel(db.Model):
     partido_id = db.Column(db.Integer, primary_key=True)
     local_id = db.Column(db.Integer, db.ForeignKey('clubes.club_id'), nullable=False)
     visitante_id = db.Column(db.Integer, db.ForeignKey('clubes.club_id'), nullable=False)
-    goles_local = db.Column(db.Integer, nullable=False)
-    goles_visitante = db.Column(db.Integer, nullable=False)
+    goles_local = db.Column(db.Integer)
+    goles_visitante = db.Column(db.Integer)
     fecha = db.Column(db.Integer, nullable=False)
 
 class TorneoModel(db.Model):
