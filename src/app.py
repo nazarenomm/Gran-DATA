@@ -7,6 +7,8 @@ from resources.login_resource import LoginResource
 from resources.equipo_resource import EquipoResource
 from resources.torneo_resource import TorneoResource
 from resources.jugador_resource import JugadorResource
+from resources.tabla_posiciones_resource import TablaPosiciones
+from resources.fixture_resource import Fixture
 
 app = Flask(__name__)
 
@@ -22,6 +24,8 @@ api.add_resource(LoginResource, '/login')
 api.add_resource(EquipoResource, '/equipo', '/equipo/<int:equipo_id>')
 api.add_resource(TorneoResource, '/torneo', '/torneo/<int:torneo_id>')
 api.add_resource(JugadorResource, '/jugador/<int:jugador_id>')
+api.add_resource(TablaPosiciones, '/posiciones')
+api.add_resource(Fixture, '/fixture')
 
 if __name__ == '__main__':
     app.run(debug=True)
