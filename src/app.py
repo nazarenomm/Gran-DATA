@@ -7,6 +7,7 @@ from resources.login_resource import LoginResource
 from resources.equipo_resource import EquipoResource
 from resources.torneo_resource import TorneoResource
 from resources.jugador_resource import JugadorResource
+from resources.menu_resource import MenuResource
 
 app = Flask(__name__)
 
@@ -22,6 +23,7 @@ api.add_resource(LoginResource, '/login')
 api.add_resource(EquipoResource, '/equipo', '/equipo/<int:equipo_id>')
 api.add_resource(TorneoResource, '/torneo', '/torneo/<int:torneo_id>')
 api.add_resource(JugadorResource, '/jugador/<int:jugador_id>')
+api.add_resource(MenuResource, '/menu','/menu/<int:usuario_id>')
 
 # Rutas del Frontend
 @app.route('/')
@@ -36,9 +38,9 @@ def login():
 def register():
     return render_template('register.html')
 
-@app.route('/menu')
-def menu():
-    return render_template('menu.html')
+@app.route('/menu/<int:usuario_id>')
+def menu(usuario_id):
+    return render_template('menu.html', usuario_id=usuario_id)
 
 if __name__ == '__main__':
     app.run(debug=True)

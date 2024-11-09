@@ -1,0 +1,39 @@
+body {
+    background: linear-gradient(135deg, #1f1c2c, #928dab);
+    color: #fff;
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.container {
+    background-color: rgba(0, 0, 0, 0.8);
+    padding: 30px;
+    border-radius: 15px;
+    text-align: center;
+    box-shadow: 0 0 15px rgba(0, 0, 0, 0.5);
+}
+h2 {
+    font-size: 2rem;
+    margin-bottom: 20px;
+}
+.btn {
+    margin-top: 10px;
+    font-size: 1.2rem;
+    width: 100%;
+}
+.form-label {
+    color: #ddd;
+}
+#message {
+    margin-top: 10px;
+    color: red;
+}
+a {
+    display: block;
+    margin-top: 15px;
+    color: #ccc;
+}
+a:hover {
+    color: #fff;
+}

@@ -1,6 +1,7 @@
 from flask_restful import Resource, reqparse, fields, marshal_with, abort
+from flask_jwt_extended import jwt_required, get_jwt_identity
 from exceptions.exceptions import JugadorNoEncontradoException
-from models import EquipoModel, FormacionModel, JugadorModel
+from models import EquipoModel, FormacionModel, JugadorModel, UsuarioModel
 from extensiones import db
 
 PRESUPUESTO = 70_000_000
@@ -19,13 +20,23 @@ equipo_fields = {
 }
 
 class EquipoResource(Resource):
+    @jwt_required
     @marshal_with(equipo_fields)
     def get(self, equipo_id):
-        result = EquipoModel.query.filter_by(equipo_id=equipo_id).first()
-        if not result:
+        usuario_mail = get_jwt_identity()
+        usuario = UsuarioModel.query.filter_by(mail=usuario_mail).first()
+        if not usuario:
+            return {"message": "Usuario no encontrado"}, 404
+        
+        equipo = EquipoModel.query.filter_by(equipo_id=equipo_id).first()
+        if not equipo:
             abort(404, message="Equipo no encontrado")
-        return result
+        return {
+            "usuario_nombre": usuario.nombre,  # o como almacenes el nombre
+            "equipo": equipo is not None       # True si hay equipo, False si no hay
+        }, 200
     
+    @jwt_required
     def delete(self, equipo_id):
         equipo = EquipoModel.query.filter_by(equipo_id=equipo_id).first()
         if not equipo:
@@ -34,8 +45,15 @@ class EquipoResource(Resource):
         db.session.commit()
         return {"message": "Equipo eliminado"}, 200
     
+    @jwt_required
     @marshal_with(equipo_fields)
     def post(self):
+        usuario_mail = get_jwt_identity()
+        usuario = UsuarioModel.query.filter_by(mail=usuario_mail).first()
+        if not usuario:
+            abort(404, message="Usuario no encontrado")
+
+        usuario_id = usuario.usuario_id
         args = equipo_post_args.parse_args()
         usuario_id = args['usuario_id']
         equipo_existente = EquipoModel.query.filter_by(usuario_id=usuario_id).first() #revisar si ya tiene un equipo, en tal caso borrarlo
