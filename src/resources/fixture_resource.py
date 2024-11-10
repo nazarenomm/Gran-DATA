@@ -13,7 +13,8 @@ class Fixture(Resource):
                 )
             SELECT fecha, local, goles_local, goles_visitante, clubes.nombre AS visitante
             FROM cte
-            JOIN clubes ON cte.visitante_id = clubes.club_id;
+            JOIN clubes ON cte.visitante_id = clubes.club_id
+            ORDER BY fecha;
 
         ''')
         result = db.session.execute(query)

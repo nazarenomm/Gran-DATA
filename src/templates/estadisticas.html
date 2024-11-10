@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tablas de Estadísticas</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.13.4/css/jquery.dataTables.min.css">
+</head>
+<body class="container">
+
+    <h1 class="mt-4">Tablas de Estadísticas</h1>
+
+    <!-- Botones para cambiar entre tablas de posiciones -->
+    <div class="btn-group mb-3" role="group">
+        <button id="btn-posiciones" class="btn btn-primary">Tabla General</button>
+        <button id="btn-local" class="btn btn-secondary">Tabla Local</button>
+        <button id="btn-visitante" class="btn btn-secondary">Tabla Visitante</button>
+    </div>
+
+    <!-- Tabla de posiciones -->
+    <table id="tabla-posiciones" class="table table-striped">
+        <thead id="tabla-head"></thead>
+        <tbody id="tabla-body"></tbody>
+    </table>
+
+    <hr>
+
+    <!-- Tabla de jugadores -->
+    <h2>Estadísticas de Jugadores</h2>
+    <table id="tabla-jugadores" class="table table-striped display">
+        <thead>
+            <tr>
+                <th>Jugador</th>
+                <th>Equipo</th>
+                <th>Posición</th>
+                <th>Partidos Jugados</th>
+                <th>Goles</th>
+                <th>Asistencias</th>
+                <th>Vallas Invictas</th>
+                <th>Tarjetas Amarillas</th>
+                <th>Tarjetas Rojas</th>
+                <th>Puntaje Promedio</th>
+            </tr>
+        </thead>
+        <tbody></tbody>
+    </table>
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.datatables.net/1.13.4/js/jquery.dataTables.min.js"></script>
+    <script>
+        // URLs de los recursos de la API
+        const urlPosiciones = "/posiciones";
+        const urlPosicionesLocal = "/posiciones/local";
+        const urlPosicionesVisitante = "/posiciones/visitante";
+        const urlJugadores = "/estadisticas-principales";
+
+        // Función para cargar la tabla de posiciones
+        async function cargarTabla(url, tipo) {
+            const response = await fetch(url);
+            const data = await response.json();
+            const thead = document.querySelector("#tabla-head");
+            const tbody = document.querySelector("#tabla-body");
+            tbody.innerHTML = "";
+            thead.innerHTML = "";
+
+            // Encabezado de la tabla de posiciones
+            thead.innerHTML = `
+                <tr>
+                    <th>Equipo</th>
+                    <th>Puntos</th>
+                    <th>Partidos Jugados</th>
+                    <th>Ganados</th>
+                    <th>Empatados</th>
+                    <th>Perdidos</th>
+                    <th>Goles a Favor</th>
+                    <th>Goles en Contra</th>
+                    <th>Diferencia de Goles</th>
+                </tr>
+            `;
+
+            // Datos de la tabla de posiciones
+            data.forEach((equipo) => {
+                const row = document.createElement("tr");
+                row.innerHTML = `
+                    <td>${equipo.equipo}</td>
+                    <td>${equipo.puntos}</td>
+                    <td>${equipo.partidos_jugados}</td>
+                    <td>${equipo.ganados}</td>
+                    <td>${equipo.empatados}</td>
+                    <td>${equipo.perdidos}</td>
+                    <td>${equipo.goles_favor}</td>
+                    <td>${equipo.goles_contra}</td>
+                    <td>${equipo.diferencia_goles}</td>
+                `;
+                tbody.appendChild(row);
+            });
+        }
+
+        // Función para cargar la tabla de jugadores
+        async function cargarTablaJugadores() {
+            const response = await fetch(urlJugadores);
+            const data = await response.json();
+            const tbody = document.querySelector("#tabla-jugadores tbody");
+            tbody.innerHTML = "";
+
+            // Reemplazar `null` por `0` antes de cargar los datos
+            const cleanedData = data.map(jugador => ({
+                nombre: jugador.nombre || "N/A",
+                equipo: jugador.equipo || "N/A",
+                posicion: jugador.posicion || "N/A",
+                partidos_jugados: jugador.partidos_jugados ?? 0,
+                goles: jugador.goles ?? 0,
+                asistencias: jugador.asistencias ?? 0,
+                vallas_invictas: jugador.vallas_invictas ?? 0,
+                tarjetas_amarillas: jugador.tarjetas_amarillas ?? 0,
+                tarjetas_rojas: jugador.tarjetas_rojas ?? 0,
+                puntaje_promedio: jugador.puntaje_promedio ?? 0
+            }));
+
+            // Crear filas para la tabla de jugadores
+            cleanedData.forEach(jugador => {
+                const row = document.createElement("tr");
+                row.innerHTML = `
+                    <td>${jugador.nombre}</td>
+                    <td>${jugador.equipo}</td>
+                    <td>${jugador.posicion}</td>
+                    <td>${jugador.partidos_jugados}</td>
+                    <td>${jugador.goles}</td>
+                    <td>${jugador.asistencias}</td>
+                    <td>${jugador.vallas_invictas}</td>
+                    <td>${jugador.tarjetas_amarillas}</td>
+                    <td>${jugador.tarjetas_rojas}</td>
+                    <td>${jugador.puntaje_promedio}</td>
+                `;
+                tbody.appendChild(row);
+            });
+
+            // Inicializar DataTables
+            $('#tabla-jugadores').DataTable();
+        }
+
+        // Listeners para los botones
+        document.getElementById("btn-posiciones").addEventListener("click", () => {
+            cargarTabla(urlPosiciones, "posiciones");
+            actualizarBotones("posiciones");
+        });
+
+        document.getElementById("btn-local").addEventListener("click", () => {
+            cargarTabla(urlPosicionesLocal, "posiciones");
+            actualizarBotones("local");
+        });
+
+        document.getElementById("btn-visitante").addEventListener("click", () => {
+            cargarTabla(urlPosicionesVisitante, "posiciones");
+            actualizarBotones("visitante");
+        });
+
+        // Función para actualizar los estilos de los botones
+        function actualizarBotones(tipo) {
+            document.getElementById("btn-posiciones").className = "btn btn-secondary";
+            document.getElementById("btn-local").className = "btn btn-secondary";
+            document.getElementById("btn-visitante").className = "btn btn-secondary";
+
+            if (tipo === "posiciones") {
+                document.getElementById("btn-posiciones").className = "btn btn-primary";
+            } else if (tipo === "local") {
+                document.getElementById("btn-local").className = "btn btn-primary";
+            } else if (tipo === "visitante") {
+                document.getElementById("btn-visitante").className = "btn btn-primary";
+            }
+        }
+
+        // Cargar tabla general y tabla de jugadores al iniciar
+        cargarTabla(urlPosiciones, "posiciones");
+        cargarTablaJugadores();
+    </script>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
