@@ -229,7 +229,7 @@ def cargar_fecha(fecha:int, modelo) -> pd.DataFrame:
 if __name__ == '__main__':
 
     modelo = joblib.load('modelo_puntajes/modelos/primer_modelo.pkl')
-    fecha = 2
+    fecha = 3
     with app.app_context():
         try:
             rendimientos = pd.read_csv(f'modelo_puntajes/data/predicciones/rendimientos_fecha_{fecha}.csv')
