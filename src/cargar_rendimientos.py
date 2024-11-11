@@ -229,7 +229,7 @@ def cargar_fecha(fecha:int, modelo) -> pd.DataFrame:
 if __name__ == '__main__':
 
     modelo = joblib.load('modelo_puntajes/modelos/primer_modelo.pkl')
-    fecha = 1
+    fecha = 3
     with app.app_context():
         try:
             rendimientos = pd.read_csv(f'modelo_puntajes/data/predicciones/rendimientos_fecha_{fecha}.csv')
@@ -238,35 +238,35 @@ if __name__ == '__main__':
             rendimientos.to_csv(f'modelo_puntajes/data/predicciones/rendimientos_fecha_{fecha}.csv', index=False)
 
         for _, row in rendimientos.iterrows():
-            # cargamos partido, lo agregamos si no esta en db
+            # cargamos partido
             local = row['match'].split(' - ')[0]
-            visitante = row['match'].split(' - ')[1]            
+            visitante = row['match'].split(' - ')[1]
+
             partido = PartidoModel.query.filter_by(
                 local_id=ClubModel.query.filter_by(nombre=local).first().club_id,
-                visitante_id=ClubModel.query.filter_by(nombre=visitante).first().club_id
+                visitante_id=ClubModel.query.filter_by(nombre=visitante).first().club_id,
+                fecha=fecha
                 ).first()
-            if not partido:
-                local_id = ClubModel.query.filter_by(nombre=local).first().club_id
-                visitante_id = ClubModel.query.filter_by(nombre=visitante).first().club_id
-                goles_local = row['score'].split('–')[0]
-                goles_visitante = row['score'].split('–')[1]
-                fecha = row['fecha']
-                nuevo_partido = PartidoModel(local_id=local_id, visitante_id=visitante_id, goles_local=goles_local, goles_visitante=goles_visitante, fecha=fecha)
-                db.session.add(nuevo_partido)
-                db.session.commit()
-                partido = PartidoModel.query.filter_by(
-                    local_id=local_id,
-                    visitante_id=visitante_id
-                    ).first()
+            
+            partido.goles_local = row['score'].split('–')[0]
+            partido.goles_visitante = row['score'].split('–')[1]
+            
             partido_id = partido.partido_id
             
             # cargamos club
             club_id = ClubModel.query.filter_by(nombre=row['team']).first().club_id
 
-            # cargamos jugador, lo agregamos si no esta en la db
+            # cargamos jugador, si no esta en la db lo agregamos
             jugador = JugadorModel.query.filter_by(nombre=row['Player'], club_id=club_id).first()
             if not jugador:
-                posicion = row['Posicion']
+                if row['Pos'] in ['FW', 'W']:
+                    posicion = 'DEL'
+                elif row['Pos'] in ['AM', 'M', 'CM', 'DM']:
+                    posicion = 'VOL'
+                elif row['Pos'] in ['FB', 'WB', 'CB']:
+                    posicion = 'DEF'
+                elif row['Pos'] == 'GK':
+                    posicion = 'ARQ'
                 nuevo_jugador = JugadorModel(nombre=row['Player'], club_id=club_id, precio=300_000, posicion=posicion)
                 db.session.add(nuevo_jugador)
                 db.session.commit()
@@ -287,8 +287,6 @@ if __name__ == '__main__':
                 npxG=row['npxG'],
                 ocaciones_creadas=row['SCA'],
                 goles_creados=row['GCA'],
-                # distancia_pases=row['Total_TotDist'],
-                # distancia_pases_progresivos=row['Total_PrgDist'],
                 pases_cortos_completados=row['Short-Cmp'],
                 pases_cortos_intentados=row['Short-Att'],
                 pases_medios_completados=row['Medium-Cmp'],
@@ -298,53 +296,28 @@ if __name__ == '__main__':
                 xAG = row['xAG'],
                 xA = row['xA'],
                 pases_clave=row['KP'],
-                # pases_ultimo_tercio = row['third_1_3']
-                # pases_al_area = row['PPA']
-                # centros_al_area = row['CrsPA']
                 pases_progresivos=row['PrgP'],
                 pases_intentados=row['Att'],
-                # pases_pelota_en_movimiento = row['Live']
-                # pases_pelota_parada = row['Dead']
-                # pases_tiro_libre = row['FK']
                 pases_filtrados=row['TB'],
-                # cambios_frente = row['Sw']
                 centros=row['Crs'],
-                # laterales_ejecutados = row['TI']
                 corners_ejecutados=row['CK'],
                 entradas=row['Tackles-Tkl'],
                 entradas_ganadas=row['Tackles-TklW'],
-                # duelos_defensivos_ganados = row['Challenges_Tkl']
-                # duelos_defensivos = row['Challenges_Att']
-                # duelos_defensivos_perdidos = row['Challenges_Lost']
                 bloqueos=row['Blocks-Blocks'],
                 remates_bloqueados=row['Blocks-Sh'],
                 pases_bloqueados=row['Blocks-Pass'],
                 intercepciones=row['Int'],
                 despejes=row['Clr'],
                 errores_graves=row['Err'],
-                # toques_area_propia = row['Touches_Def_Pen']
-                # toques_tercio_def = row['Touches_Def_3rd']
-                # toques_tercio_med = row['Touches_Mid_3rd']
-                # toques_tercio_ata = row['Touches_Att_3rd']
-                # toques_area_rival = row['Touches_Att_Pen']
                 gambetas_intentadas=row['Take-Ons-Att'],
                 gambetas_completadas=row['Take-Ons-Succ'],
                 traslados=row['Carries-Carries'],
-                # traslados_distancia = row['Carries_TotDist']
-                # traslados_progresivos_distancia = row['Carries_PrgDist']
                 traslados_progresivos=row['Carries-PrgC'],
-                # traslados_ultimo_tercio = row['Carries_1_3']
-                # traslados_al_area = row['Carries_CPA']
-                # malos_controles = row['Carries_Mis']
-                # traslados_perdidas = row['Carries_Dis']
-                # pases_recibidos = row['Receiving_Rec']
-                # pases_progresivos_recibidos = row['Receiving_PrgR']
                 tarjetas_amarillas=row['CrdY'],
                 tarjetas_rojas=row['CrdR'],
                 doble_amarilla=row['2CrdY'],
                 faltas=row['Fls'],
                 faltas_ganadas=row['Fld'],
-                # Offsides = row['Off']
                 penales_ganados=row['PKwon'],
                 penales_concedidos=row['PKcon'],
                 goles_en_contra=row['OG'],
@@ -355,17 +328,8 @@ if __name__ == '__main__':
                 goles_recibidos=row['GA'],
                 atajadas=row['Saves'],
                 PSxG=row['PSxG'],
-                # saques_largos_completados = row['Launched_Cmp']
-                # saques_largos_intentados = row['Launched_Att']
-                # pases_intentados_arqueros = row['Passes_Att_GK']
-                # pases_lanzados_mano = row['Passes_Thr']
-                # distancia_promedio_saques = row['Passes_AvgLen']
-                # saques_arco = row['Goal_Kicks_Att']
-                # distancia_promedio_saques_arco = row['Goal_Kicks_AvgLen']
                 centros_enfrentados=row['Crosses-Opp'],
                 centros_atajados=row['Crosses-Stp'],
-                # acciones_def_fuera_area = row['Sweeper_OPA']
-                # acciones_def_fuera_area_dist_promedio = row['Sweeper_AvgDist']
                 puntaje=row['puntaje_modelo'],
                 puntaje_total=row['puntaje']
                 )

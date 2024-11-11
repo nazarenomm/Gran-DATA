@@ -62,8 +62,8 @@ CREATE TABLE partidos (
     partido_id INT AUTO_INCREMENT PRIMARY KEY,
     local_id INT NOT NULL,
     visitante_id INT NOT NULL,
-    goles_local INT NOT NULL,
-    goles_visitante INT NOT NULL,
+    goles_local INT,
+    goles_visitante INT,
     fecha INT NOT NULL,
     FOREIGN KEY (local_id) REFERENCES clubes(club_id),
     FOREIGN KEY (visitante_id) REFERENCES clubes(club_id)
