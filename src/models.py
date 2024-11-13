@@ -50,7 +50,18 @@ class EquipoModel(db.Model):
     usuario_id = db.Column(db.Integer, db.ForeignKey('usuarios.usuario_id'), nullable=False)
     valor = db.Column(db.Integer, nullable=False) # cotización
     formacion = db.Column(db.String(100), db.ForeignKey('formaciones.formacion'), nullable=False)
-    jugadores_id = db.Column(db.JSON, nullable=False)
+
+class RolModel(db.Model):
+    __tablename__ = 'roles'
+    rol_id = db.Column(db.Integer, primary_key=True)
+    rol = db.Column(db.String(100), nullable=False)
+
+class EquipoJugadorModel(db.Model):
+    __tablename__ = 'equipo_jugador'
+    equipo_jugador_id = db.Column(db.Integer, primary_key=True)
+    equipo_id = db.Column(db.Integer, db.ForeignKey('equipos.equipo_id'), nullable=False)
+    jugador_id = db.Column(db.Integer, db.ForeignKey('jugadores.jugador_id'), nullable=False)
+    rol_id = db.Column(db.Integer, db.ForeignKey('roles.rol_id'), nullable=False)
 
 class PuntajeModel(db.Model):
     __tablename__ = 'puntajes'

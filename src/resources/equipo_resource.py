@@ -1,6 +1,5 @@
 from flask_restful import Resource, reqparse, fields, marshal_with, abort
-from exceptions.exceptions import JugadorNoEncontradoException
-from models import EquipoModel, FormacionModel, JugadorModel
+from models import EquipoJugadorModel, EquipoModel, FormacionModel, JugadorModel, RolModel
 from extensiones import db
 
 PRESUPUESTO = 70_000_000
@@ -10,13 +9,25 @@ equipo_post_args.add_argument("usuario_id", type=int, help="Usuario ID Requerido
 equipo_post_args.add_argument("formacion", type=str, help="Formación Requerida", required=True)
 equipo_post_args.add_argument("jugadores_id", type=dict, help="Jugadores Requeridos", required=True)
 
+equipo_patch_args = reqparse.RequestParser()
+# equipo_patch_args.add_argument("equipo_id", type=int, help="Equipo ID Requerido", required=True)
+equipo_patch_args.add_argument("accion", type=str, help="Accion requerida", required= True) # transferencia o cambio titular por suplente
+equipo_patch_args.add_argument("jugador_entrante_id", type=int, help="Jugador Entrante ID Requerido", required= True)
+equipo_patch_args.add_argument("jugador_saliente_id", type=int, help="Jugador Saliente ID Requerido", required= True)
+
 equipo_fields = {
     'equipo_id': fields.Integer,
     'usuario_id': fields.Integer,
     'valor': fields.Integer,
     'formacion': fields.String,
-    'jugadores_id': fields.Raw  # Para el campo JSON de jugadores
 }
+
+# TODO:
+# jugadores_id = {
+#     "titulares": [],
+#     "suplentes": [],
+#     "capitan": int
+# }
 
 class EquipoResource(Resource):
     @marshal_with(equipo_fields)
@@ -30,6 +41,11 @@ class EquipoResource(Resource):
         equipo = EquipoModel.query.filter_by(equipo_id=equipo_id).first()
         if not equipo:
             abort(404, message="Equipo no encontrado")
+
+        jugadores = EquipoJugadorModel.query.filter_by(equipo_id=equipo_id).all()
+        for jugador in jugadores:
+            db.session.delete(jugador)
+            
         db.session.delete(equipo)
         db.session.commit()
         return {"message": "Equipo eliminado"}, 200
@@ -38,11 +54,12 @@ class EquipoResource(Resource):
     def post(self):
         args = equipo_post_args.parse_args()
         usuario_id = args['usuario_id']
-        equipo_existente = EquipoModel.query.filter_by(usuario_id=usuario_id).first() #revisar si ya tiene un equipo, en tal caso borrarlo
-        if equipo_existente:
-            db.session.delete(equipo_existente)
-            db.session.commit()
         
+        equipo_existente = EquipoModel.query.filter_by(usuario_id=usuario_id).first()
+        if equipo_existente:
+            abort(400, message="Ya existe un equipo para este usuario")
+
+        # Validar la formación
         formacion = args['formacion']
         formacion_model = FormacionModel.query.filter_by(formacion=formacion).first()
         if not formacion_model:
@@ -54,74 +71,220 @@ class EquipoResource(Resource):
 
         jugadores = args['jugadores_id']
 
-        if len(jugadores['defensores']) != defensores_requeridos:
+        # Validaciones de la cantidad de jugadores
+        titulares = JugadorModel.query.filter(JugadorModel.jugador_id.in_(jugadores['titulares'])).all()
+        suplentes = JugadorModel.query.filter(JugadorModel.jugador_id.in_(jugadores['suplentes'])).all()
+
+        arqueros = [jugador for jugador in titulares if jugador.posicion == 'ARQ']
+        defensores = [jugador for jugador in titulares if jugador.posicion == 'DEF']
+        mediocampistas = [jugador for jugador in titulares if jugador.posicion == 'VOL']
+        delanteros = [jugador for jugador in titulares if jugador.posicion == 'DEL']
+
+        arqueros_suplentes = [jugador for jugador in suplentes if jugador.posicion == 'ARQ']
+        defensores_suplentes = [jugador for jugador in suplentes if jugador.posicion == 'DEF']
+        mediocampistas_suplentes = [jugador for jugador in suplentes if jugador.posicion == 'VOL']
+        delanteros_suplentes = [jugador for jugador in suplentes if jugador.posicion == 'DEL']
+
+        if len(titulares) != 11:
+            abort(400, message="Se requieren 11 jugadores titulares")
+        elif len(suplentes) != 4:
+            abort(400, message="Cantidad de jugadores suplentes incorrecta")
+        elif jugadores.get('capitan') is None:
+            abort(400, message="Se requiere un capitán")
+        elif jugadores['capitan'] not in jugadores['titulares']:
+            abort(400, message="El capitán debe ser un jugador titular")
+        elif len(defensores) != defensores_requeridos:
             abort(400, message=f"Se requieren {defensores_requeridos} defensores titulares")
-        if len(jugadores['mediocampistas']) != mediocampistas_requeridos:
+        elif len(mediocampistas) != mediocampistas_requeridos:
             abort(400, message=f"Se requieren {mediocampistas_requeridos} mediocampistas titulares")
-        if len(jugadores['delanteros']) != delanteros_requeridos:
+        elif len(delanteros) != delanteros_requeridos:
             abort(400, message=f"Se requieren {delanteros_requeridos} delanteros titulares")
-        if not jugadores.get('arquero'):
+        elif len(arqueros) != 1:
             abort(400, message="Se requiere 1 arquero titular")
-
-        if not jugadores.get('arquero_suplente'):
+        elif len(arqueros_suplentes) != 1:
             abort(400, message="Se requiere 1 arquero suplente")
-        if not jugadores.get('defensor_suplente'):
+        elif len(defensores_suplentes) != 1:
             abort(400, message="Se requiere 1 defensor suplente")
-        if not jugadores.get('mediocampista_suplente'):
+        elif len(mediocampistas_suplentes) != 1:
             abort(400, message="Se requiere 1 mediocampista suplente")
-        if not jugadores.get('delantero_suplente'):
+        elif len(delanteros_suplentes) != 1:
             abort(400, message="Se requiere 1 delantero suplente")
-
-        all_jugadores_ids = (
-        jugadores['defensores'] + jugadores['mediocampistas'] +
-        jugadores['delanteros'] + [jugadores['arquero']] +
-        [jugadores['arquero_suplente'], jugadores['defensor_suplente'],
-         jugadores['mediocampista_suplente'], jugadores['delantero_suplente']]
-        )
+    
+        # Validar jugadores duplicados
+        all_jugadores_ids = jugadores['titulares'] + jugadores['suplentes']
 
         if len(all_jugadores_ids) != len(set(all_jugadores_ids)):
             abort(400, message="No se permiten jugadores repetidos")
-        
+
+        # Verificar que todos los jugadores existen en la base de datos
         jugadores_db = JugadorModel.query.filter(JugadorModel.jugador_id.in_(all_jugadores_ids)).all()
-        jugadores_dict = {jugador.jugador_id: jugador for jugador in jugadores_db}
-
-
-        #podriamos modificar la tabla directamente y nos ahorrramos este paso
-        posiciones_codificadas = {
-            'arquero': 'ARQ',
-            'defensores': 'DEF',
-            'mediocampistas': 'VOL',
-            'delanteros': 'DEL'
-        }
-
-        posiciones = {
-            'arquero': [jugadores['arquero']] + [jugadores['arquero_suplente']],
-            'defensores': jugadores['defensores'] + [jugadores['defensor_suplente']],
-            'mediocampistas': jugadores['mediocampistas'] + [jugadores['mediocampista_suplente']],
-            'delanteros': jugadores['delanteros'] + [jugadores['delantero_suplente']]
-        }
-
-        for posicion, ids in posiciones.items():
-            codigo_posicion = posiciones_codificadas[posicion]  
-            for jugador_id in ids:
-                jugador = jugadores_dict.get(jugador_id)
-                if not jugador:
-                    abort(404, message=f"Jugador con ID {jugador_id} no encontrado")
-                if jugador.posicion != codigo_posicion:
-                    abort(400, message=f"El jugador {jugador_id} no es un {posicion}")
+        if len(jugadores_db) != len(all_jugadores_ids):
+            abort(404, message="Uno o más jugadores no encontrados") # TODO: Mostrar los jugadores no encontrados
         
-        # Verificar que el usuario no pase el presupuesto
+        # Calcular el valor total del equipo
         valor_total = sum(jugador.precio for jugador in jugadores_db)
         if valor_total > PRESUPUESTO:
             abort(400, message="El valor total del equipo supera el presupuesto")
 
+        # Crear el nuevo equipo
         nuevo_equipo = EquipoModel(
-            usuario_id=args['usuario_id'],
+            usuario_id=usuario_id,
             valor=valor_total,
-            formacion=formacion,
-            jugadores_id=jugadores
+            formacion=formacion
         )
         db.session.add(nuevo_equipo)
-        db.session.commit()
 
+        # Agregar jugadores a la tabla equipo_jugador
+        for rol, jugadores_ids in [('titular', jugadores['titulares']), ('suplente', jugadores['suplentes'])]:
+            for jugador_id in jugadores_ids:
+                if jugador_id == jugadores['capitan']:
+                    rol_id = RolModel.query.filter_by(rol='capitan').first().rol_id
+                else:
+                    rol_id = RolModel.query.filter_by(rol=rol).first().rol_id
+                equipo_jugador = EquipoJugadorModel(
+                    equipo_id=nuevo_equipo.equipo_id,
+                    jugador_id=jugador_id,
+                    rol_id=rol_id
+                )
+                db.session.add(equipo_jugador)
+
+        db.session.commit()
         return nuevo_equipo, 201
+    
+    def patch(self, equipo_id):
+        args = equipo_patch_args.parse_args()
+
+        equipo = EquipoModel.query.filter_by(equipo_id=equipo_id).first()
+        if not equipo:
+            abort(404, message="Equipo no encontrado")
+        
+        accion = args['accion']
+        jugador_entrante_id = args['jugador_entrante_id']
+        jugador_saliente_id = args['jugador_saliente_id']
+
+        jugador_entrante = JugadorModel.query.filter_by(jugador_id=jugador_entrante_id).first()
+        jugador_saliente = JugadorModel.query.filter_by(jugador_id=jugador_saliente_id).first()
+
+        if not jugador_entrante:
+            abort(404, message="Jugador Entrante no encontrado")
+        if not jugador_saliente:
+            abort(404, message="Jugador Saliente no encontrado")
+
+        if not (jugador_entrante_id and jugador_saliente_id):
+            abort(400, message="Se requieren los IDs de los jugadores")
+
+        if accion == 'transferencia':
+            equipo_jugador_saliente = EquipoJugadorModel.query.filter_by(equipo_id=equipo_id, jugador_id=jugador_saliente_id).first()
+            if not equipo_jugador_saliente:
+                abort(404, message="Jugador Saliente no encontrado en el equipo")
+
+            equipo_jugador_entrante = EquipoJugadorModel.query.filter_by(equipo_id=equipo_id, jugador_id=jugador_entrante_id).first()
+            if equipo_jugador_entrante:
+                abort(400, message="Jugador Entrante ya pertenece al equipo")
+
+            # chequear el presupuesto
+            valor_equipo = equipo.valor
+            valor_jugador_entrante = jugador_entrante.precio
+            valor_jugador_saliente = jugador_saliente.precio
+            if valor_equipo - valor_jugador_saliente + valor_jugador_entrante > PRESUPUESTO:
+                abort(400, message="El valor total del equipo supera el presupuesto")
+
+            # chequear que el jugador entrante tenga la misma posición que el jugador saliente, si no cambiar la formacion del equipo si hay una formacion posible
+            formacion = FormacionModel.query.filter_by(formacion=equipo.formacion).first()
+            cantidad_defensores = formacion.defensores
+            cantidad_mediocampistas = formacion.mediocampistas
+            cantidad_delanteros = formacion.delanteros
+
+            if jugador_saliente.posicion != jugador_entrante.posicion:
+                if jugador_saliente.posicion == 'ARQ' or jugador_entrante.posicion == 'ARQ':
+                    abort(400, message="No se puede cambiar un arquero por un jugador de campo")   
+
+                elif jugador_saliente.posicion == 'DEF':
+                    if jugador_entrante.posicion == 'VOL':
+                        nueva_formacion = FormacionModel.query.filter_by(
+                            defensores=cantidad_defensores-1,
+                            mediocampistas=cantidad_mediocampistas+1,
+                            delanteros=cantidad_delanteros
+                            ).first()
+                    elif jugador_entrante.posicion == 'DEL':
+                        nueva_formacion = FormacionModel.query.filter_by(
+                            defensores=cantidad_defensores-1,
+                            mediocampistas=cantidad_mediocampistas,
+                            delanteros=cantidad_delanteros+1
+                            ).first()
+                        
+                elif jugador_saliente.posicion == 'VOL':
+                    if jugador_entrante.posicion == 'DEF':
+                        nueva_formacion = FormacionModel.query.filter_by(
+                            defensores=cantidad_defensores+1,
+                            mediocampistas=cantidad_mediocampistas-1,
+                            delanteros=cantidad_delanteros
+                            ).first()
+                    elif jugador_entrante.posicion == 'DEL':
+                        nueva_formacion = FormacionModel.query.filter_by(
+                            defensores=cantidad_defensores,
+                            mediocampistas=cantidad_mediocampistas-1,
+                            delanteros=cantidad_delanteros+1
+                            ).first()
+                        
+                elif jugador_saliente.posicion == 'DEL':
+                    if jugador_entrante.posicion == 'DEF':
+                        nueva_formacion = FormacionModel.query.filter_by(
+                            defensores=cantidad_defensores+1,
+                            mediocampistas=cantidad_mediocampistas,
+                            delanteros=cantidad_delanteros-1
+                            ).first()
+                    elif jugador_entrante.posicion == 'VOL':
+                        nueva_formacion = FormacionModel.query.filter_by(
+                            defensores=cantidad_defensores,
+                            mediocampistas=cantidad_mediocampistas+1,
+                            delanteros=cantidad_delanteros-1
+                            ).first()
+                
+                if not nueva_formacion:
+                    abort(400, message="No hay formación posible para hacer la transferencia")
+                
+                equipo.formacion = nueva_formacion.formacion
+
+            # se cambia el jugador saliente por el entrante en la tabla equipo_jugador, sin cambiar el rol
+            equipo_jugador_saliente.jugador_id = jugador_entrante_id
+
+        elif accion == 'cambio':
+            if jugador_entrante.posicion != jugador_saliente.posicion:
+                abort(400, message="Los jugadores deben tener la misma posición para hacer el cambio")
+
+            rol_suplente_id = RolModel.query.filter_by(rol='suplente').first().rol_id
+            equipo_jugador_entrante = EquipoJugadorModel.query.filter_by(equipo_id=equipo_id, jugador_id=jugador_entrante_id, rol_id=rol_suplente_id).first()
+            if not equipo_jugador_entrante:
+                abort(404, message="Jugador Entrante no encontrado en el equipo suplente")
+            
+            rol_titular_id = RolModel.query.filter_by(rol='titular').first().rol_id
+            equipo_jugador_saliente = EquipoJugadorModel.query.filter_by(equipo_id=equipo_id, jugador_id=jugador_saliente_id, rol_id=rol_titular_id).first()
+            if not equipo_jugador_saliente:
+                rol_capitan_id = RolModel.query.filter_by(rol='capitan').first().rol_id
+                equipo_jugador_saliente = EquipoJugadorModel.query.filter_by(equipo_id=equipo_id, jugador_id=jugador_saliente_id, rol_id=rol_capitan_id).first()
+                if not equipo_jugador_saliente:
+                    abort(404, message="Jugador Saliente no encontrado en el equipo titular")
+            
+            # se intercambian los roles de los jugadores, para no hardcodear los rol_id
+            # si el jugador saliente es el capitán, el jugador entrante pasa a serlo
+            equipo_jugador_entrante.rol_id, equipo_jugador_saliente.rol_id = equipo_jugador_saliente.rol_id, equipo_jugador_entrante.rol_id
+
+        elif accion == 'cambio capitan':
+            rol_titular_id = RolModel.query.filter_by(rol='titular').first().rol_id
+            equipo_jugador_entrante = EquipoJugadorModel.query.filter_by(equipo_id=equipo_id, jugador_id=jugador_entrante_id, rol_id=rol_titular_id).first()
+            if not equipo_jugador_entrante:
+                abort(404, message="Jugador a capitanear no encontrado en el equipo titular")
+
+            rol_capitan_id = RolModel.query.filter_by(rol='capitan').first().rol_id
+            equipo_jugador_saliente = EquipoJugadorModel.query.filter_by(equipo_id=equipo_id, rol_id=rol_capitan_id).first()
+            if not equipo_jugador_saliente:
+                abort(404, message="Capitan no encontrado")
+
+            equipo_jugador_entrante.rol_id, equipo_jugador_saliente.rol_id = equipo_jugador_saliente.rol_id, equipo_jugador_entrante.rol_id
+
+        else:
+            abort(400, message="Accion no reconocida")
+        
+        db.session.commit()
+        return {"message": "cambio realizado"}, 200

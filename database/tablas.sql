@@ -39,23 +39,36 @@ CREATE Table formaciones (
     delanteros INT NOT NULL
 );
 
-# TODO: no usar json, usar una tabla aparte
 CREATE TABLE equipos (
     equipo_id INT AUTO_INCREMENT PRIMARY KEY,
     usuario_id INT NOT NULL,
     valor INT NOT NULL,
     formacion VARCHAR(100) NOT NULL,
-    jugadores_id JSON NOT NULL,
     Foreign Key (usuario_id) REFERENCES usuarios(usuario_id),
     FOREIGN KEY (formacion) REFERENCES formaciones(formacion)
 );
 
-create table puntajes (
-	puntaje_id int auto_increment primary key,
-    equipo_id int not null,
-    fecha int not null,
-    puntaje int,
-    foreign key (equipo_id) references equipos(equipo_id)
+CREATE TABLE roles (
+    rol_id INT AUTO_INCREMENT PRIMARY KEY,
+    rol VARCHAR(100) NOT NULL
+);
+
+CREATE TABLE equipo_jugador (
+    equipo_jugador_id INT AUTO_INCREMENT PRIMARY KEY,
+    equipo_id INT NOT NULL,
+    jugador_id INT NOT NULL,
+    rol_id INT NOT NULL,
+    FOREIGN KEY (equipo_id) REFERENCES equipos(equipo_id),
+    FOREIGN KEY (jugador_id) REFERENCES jugadores(jugador_id),
+    FOREIGN KEY (rol_id) REFERENCES roles(rol_id)
+);
+
+CREATE TABLE puntajes (
+	puntaje_id INT AUTO_INCREMENT PRIMARY KEY,
+    equipo_id INT NOT NULL,
+    fecha INT NOT NULL,
+    puntaje INT,
+    FOREIGN KEY (equipo_id) REFERENCES equipos(equipo_id)
 );
 
 CREATE TABLE partidos (
