@@ -1,4 +1,4 @@
-from flask_restful import Resource, reqparse, abort, fields, marshal_with
+from flask_restx import Resource, reqparse, abort, fields, marshal_with
 from models import UsuarioModel
 from extensiones import db
 

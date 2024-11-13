@@ -1,4 +1,4 @@
-from flask_restful import Resource, reqparse, fields, marshal_with, abort
+from flask_restx import Resource, reqparse, fields, marshal_with, abort
 from models import TorneoModel, TorneoUsuarioModel, UsuarioModel
 from extensiones import db
 from datetime import date

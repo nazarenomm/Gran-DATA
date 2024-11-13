@@ -1,4 +1,4 @@
-from flask_restful import Resource, reqparse, fields, marshal_with, abort
+from flask_restx import Resource, reqparse, fields, marshal_with, abort
 from flask_jwt_extended import jwt_required, get_jwt_identity
 from exceptions.exceptions import JugadorNoEncontradoException
 from models import EquipoModel, FormacionModel, JugadorModel, UsuarioModel
