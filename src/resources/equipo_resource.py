@@ -1,4 +1,4 @@
-from flask_restful import Resource, reqparse, fields, marshal_with, abort
+from flask_restx import Resource, reqparse, fields, marshal_with, abort
 from models import EquipoJugadorModel, EquipoModel, FormacionModel, JugadorModel, RolModel
 from extensiones import db
 
