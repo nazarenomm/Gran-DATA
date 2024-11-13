@@ -22,19 +22,21 @@ equipo_fields = {
 class EquipoResource(Resource):
     @jwt_required
     @marshal_with(equipo_fields)
-    def get(self, equipo_id):
+    def get(self, equipo_id=None):
         usuario_mail = get_jwt_identity()
         usuario = UsuarioModel.query.filter_by(mail=usuario_mail).first()
         if not usuario:
             return {"message": "Usuario no encontrado"}, 404
+
+        if equipo_id:
+            equipo = EquipoModel.query.filter_by(equipo_id=equipo_id).first()
+        else:
+            equipo = EquipoModel.query.filter_by(usuario_id=usuario.usuario_id).first()
         
-        equipo = EquipoModel.query.filter_by(equipo_id=equipo_id).first()
         if not equipo:
-            abort(404, message="Equipo no encontrado")
-        return {
-            "usuario_nombre": usuario.nombre,  # o como almacenes el nombre
-            "equipo": equipo is not None       # True si hay equipo, False si no hay
-        }, 200
+            return {"equipo": False}, 200
+        
+        return equipo, 200
     
     @jwt_required
     def delete(self, equipo_id):

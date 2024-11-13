@@ -10,8 +10,8 @@
     <div class="container mt-5">
         <h1>Bienvenidx, <span id="usuario_nombre"></span></h1>
         <div id="equipo-section" class="mt-4">
-            <button id="crear-equipo-btn" class="btn btn-primary d-none">Crear Equipo</button>
-            <a id="ver-equipo-btn" href="/equipo" class="btn btn-success d-none">Ver Equipo</a>
+            <a id="crear-equipo-btn" class="btn btn-primary d-none">Crear Equipo</a>
+            <a id="ver-equipo-btn" class="btn btn-success d-none">Ver Equipo</a>
             <button id="logout-btn" class="btn btn-danger mt-3">Cerrar Sesión</button>
         </div>
     </div>
@@ -39,10 +39,16 @@
         if (response.ok) {
             const data = await response.json();
             document.getElementById('usuario_nombre').innerText = data.usuario_nombre;
+            
+            const crearEquipoBtn = document.getElementById('crear-equipo-btn');
+            const verEquipoBtn = document.getElementById('ver-equipo-btn');
+
             if (data.equipo) {
-                document.getElementById('ver-equipo-btn').classList.remove('d-none');
+                verEquipoBtn.href = `/ver_equipo/${data.equipo_id}`;
+                verEquipoBtn.classList.remove('d-none');
             } else {
-                document.getElementById('crear-equipo-btn').classList.remove('d-none');
+                crearEquipoBtn.href = `/crear_equipo/${usuario_id}`;
+                crearEquipoBtn.classList.remove('d-none');
             }
         } else {
             const errorData = await response.json();

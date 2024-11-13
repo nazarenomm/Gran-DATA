@@ -1,23 +1,176 @@
-<!-- src/templates/create_team.html -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <title>Crear Equipo</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
 </head>
 <body>
-    <div class="container">
-        <h2>Crear un Nuevo Equipo</h2>
-        <form action="/equipo" method="post">
-            <div class="mb-3">
-                <label for="team_name" class="form-label">Nombre del Equipo</label>
-                <input type="text" class="form-control" id="team_name" name="team_name" required>
+    <div class="container mt-5">
+        <h1>Crear Equipo</h1>
+
+        <!-- Selección de Formación -->
+        <div class="mb-3">
+            <label for="formacion" class="form-label">Formación</label>
+            <select id="formacion" class="form-select" required>
+                <!-- Opciones cargadas dinámicamente -->
+            </select>
+        </div>
+
+        <!-- Selección de Jugadores -->
+        <div id="jugadores" class="mb-3">
+            <h5>Seleccionar jugadores:</h5>
+            <label for="posicion" class="form-label">Posición</label>
+            <select id="posicion" class="form-select mb-3">
+                <option value="ARQ">Arquero</option>
+                <option value="DEF">Defensor</option>
+                <option value="VOL">Mediocampista</option>
+                <option value="DEL">Delantero</option>
+            </select>
+
+            <!-- Tabla Dinámica de Jugadores -->
+            <div id="tabla-jugadores" class="d-none">
+                <input type="text" id="busqueda-jugador" class="form-control mb-2" placeholder="Buscar por nombre">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Nombre</th>
+                            <th>Equipo</th>
+                            <th>Precio</th>
+                            <th>Seleccionar</th>
+                        </tr>
+                    </thead>
+                    <tbody id="jugadores-disponibles">
+                        <!-- Filas dinámicas -->
+                    </tbody>
+                </table>
             </div>
-            <!--TODO-->
-            <button type="submit" class="btn btn-primary">Guardar Equipo</button>
-        </form>
+        </div>
+
+        <!-- Jugadores Seleccionados -->
+        <div class="mb-3">
+            <h5>Jugadores seleccionados:</h5>
+            <ul id="jugadores-seleccionados" class="list-group">
+                <!-- Jugadores seleccionados se muestran aquí -->
+            </ul>
+        </div>
+
+        <button type="submit" class="btn btn-primary" id="crear-equipo-btn">Crear Equipo</button>
+        <div id="mensaje" class="mt-3"></div>
     </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', async () => {
+            const formacionSelect = document.getElementById('formacion');
+            const posicionSelect = document.getElementById('posicion');
+            const tablaJugadores = document.getElementById('tabla-jugadores');
+            const jugadoresDisponibles = document.getElementById('jugadores-disponibles');
+            const busquedaInput = document.getElementById('busqueda-jugador');
+            const jugadoresSeleccionados = document.getElementById('jugadores-seleccionados');
+            const mensajeDiv = document.getElementById('mensaje');
+
+            const equipoSeleccionado = []; // Array para jugadores seleccionados
+
+            // Cargar formaciones dinámicamente
+            try {
+                const formacionesRes = await fetch('/formaciones');
+                const formaciones = await formacionesRes.json();
+                formaciones.forEach(f => {
+                    const option = document.createElement('option');
+                    option.textContent = f.formacion;
+                    formacionSelect.appendChild(option);
+                });
+            } catch (err) {
+                console.error('Error cargando formaciones:', err);
+            }
+
+            // Al cambiar posición, cargar jugadores
+            posicionSelect.addEventListener('change', async () => {
+                const posicion = posicionSelect.value;
+                jugadoresDisponibles.innerHTML = '';
+                try {
+                    const response = await fetch(`/jugadores?posicion=${posicion}`);
+                    const jugadores = await response.json();
+
+                    jugadores.forEach(j => {
+                        const row = document.createElement('tr');
+                        row.innerHTML = `
+                            <td>${j.nombre} ${j.apellido}</td>
+                            <td>${j.equipo}</td>
+                            <td>${j.precio}</td>
+                            <td><button class="btn btn-sm btn-success seleccionar-btn" data-id="${j.id}" data-nombre="${j.nombre} ${j.apellido}">Seleccionar</button></td>
+                        `;
+                        jugadoresDisponibles.appendChild(row);
+                    });
+
+                    tablaJugadores.classList.remove('d-none');
+                } catch (error) {
+                    console.error('Error obteniendo jugadores:', error);
+                }
+            });
+
+            // Filtrar jugadores
+            busquedaInput.addEventListener('input', () => {
+                const term = busquedaInput.value.toLowerCase();
+                Array.from(jugadoresDisponibles.rows).forEach(row => {
+                    const nombre = row.cells[0].textContent.toLowerCase();
+                    row.style.display = nombre.includes(term) ? '' : 'none';
+                });
+            });
+
+            // Seleccionar jugador
+            jugadoresDisponibles.addEventListener('click', (event) => {
+                if (event.target.classList.contains('seleccionar-btn')) {
+                    const button = event.target;
+                    const jugadorId = button.getAttribute('data-id');
+                    const jugadorNombre = button.getAttribute('data-nombre');
+
+                    if (equipoSeleccionado.some(j => j.id === jugadorId)) {
+                        alert('Este jugador ya está seleccionado.');
+                        return;
+                    }
+
+                    equipoSeleccionado.push({ id: jugadorId, nombre: jugadorNombre });
+
+                    const li = document.createElement('li');
+                    li.className = 'list-group-item';
+                    li.textContent = jugadorNombre;
+                    jugadoresSeleccionados.appendChild(li);
+
+                    mensajeDiv.innerHTML = `<div class="alert alert-success">Jugador ${jugadorNombre} añadido al equipo.</div>`;
+                }
+            });
+
+            // Crear equipo
+            document.getElementById('crear-equipo-btn').addEventListener('click', async () => {
+                if (equipoSeleccionado.length === 0) {
+                    mensajeDiv.innerHTML = `<div class="alert alert-danger">Debes seleccionar al menos un jugador.</div>`;
+                    return;
+                }
+
+                try {
+                    const formacion = formacionSelect.value;
+                    const response = await fetch('/equipos', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            formacion: formacion,
+                            jugadores: equipoSeleccionado
+                        })
+                    });
+
+                    if (response.ok) {
+                        mensajeDiv.innerHTML = `<div class="alert alert-success">Equipo creado con éxito.</div>`;
+                    } else {
+                        const errorData = await response.json();
+                        mensajeDiv.innerHTML = `<div class="alert alert-danger">${errorData.message}</div>`;
+                    }
+                } catch (error) {
+                    mensajeDiv.innerHTML = `<div class="alert alert-danger">Error al crear el equipo.</div>`;
+                }
+            });
+        });
+    </script>
 </body>
 </html>
