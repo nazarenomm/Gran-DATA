@@ -23,13 +23,19 @@ CREATE TABLE clubes (
     goles_contra INT NOT NULL # ir agregando
 );
 
+CREATE TABLE estados (
+    estado VARCHAR(100) PRIMARY KEY
+)
+
 CREATE TABLE jugadores (
     jugador_id INT AUTO_INCREMENT PRIMARY KEY,
     club_id INT NOT NULL,
     nombre VARCHAR(100) NOT NULL,
     precio INT NOT NULL,
     posicion VARCHAR(100) NOT NULL,
-    FOREIGN KEY (club_id) REFERENCES clubes(club_id)
+    estado VARCHAR(100) NOT NULL,
+    FOREIGN KEY (club_id) REFERENCES clubes(club_id),
+    FOREIGN KEY (estado) REFERENCES estados(estado)
 );
 
 CREATE Table formaciones (

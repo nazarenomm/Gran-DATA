@@ -29,6 +29,10 @@ class ClubModel(db.Model):
     goles_favor = db.Column(db.Integer, nullable=False)
     goles_contra = db.Column(db.Integer, nullable=False)
 
+class EstadoModel(db.Model):
+    __tablename__ = 'estados'
+    estado = db.Column(db.String(100), primary_key=True)
+
 class JugadorModel(db.Model):
     __tablename__ = 'jugadores'
     jugador_id = db.Column(db.Integer, primary_key=True)
@@ -36,6 +40,7 @@ class JugadorModel(db.Model):
     nombre = db.Column(db.String(100), nullable=False)
     precio = db.Column(db.Integer, nullable=False)
     posicion = db.Column(db.String(100), nullable=False)
+    estado = db.Column(db.String(100), db.ForeignKey('estados.estado'), nullable=False)
 
 class FormacionModel(db.Model):
     __tablename__ = 'formaciones'
