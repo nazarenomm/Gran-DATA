@@ -8,7 +8,7 @@ def cargar_jugador(jugador):
     club_id = club.club_id if club else None
     if not JugadorModel.query.filter_by(nombre=jugador['Jugador'], club_id=club_id).first():
         jugador_model = JugadorModel(club_id=club_id, nombre=jugador['Jugador'],
-                                     precio=jugador['Precio'], posicion=jugador['Pos'])
+                                     precio=jugador['Precio'], posicion=jugador['Pos'], estado=jugador['Estado'],)
         db.session.add(jugador_model)
     db.session.commit()
 

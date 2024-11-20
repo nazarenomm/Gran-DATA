@@ -14,18 +14,19 @@ create table usuarios (
 CREATE TABLE clubes (
     club_id INT AUTO_INCREMENT PRIMARY KEY,
     nombre VARCHAR(100),
+    -- creo que esto no lo usamos
     puntos INT NOT NULL,
     partidos_jugados INT NOT NULL,
     partidos_ganados INT NOT NULL,
     partidos_empatados INT NOT NULL,
     partidos_perdidos INT NOT NULL,
     goles_favor INT NOT NULL,
-    goles_contra INT NOT NULL # ir agregando
+    goles_contra INT NOT NULL
 );
 
 CREATE TABLE estados (
     estado VARCHAR(100) PRIMARY KEY
-)
+);
 
 CREATE TABLE jugadores (
     jugador_id INT AUTO_INCREMENT PRIMARY KEY,
