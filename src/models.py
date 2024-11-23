@@ -16,6 +16,15 @@ class UsuarioModel(db.Model):
 
     def verificar_contraseña(self, contraseña):
         return check_password_hash(self.contraseña, contraseña)
+    
+class NotificacionModel(db.Model):
+    __tablename__ = 'notificaciones'
+    notificacion_id = db.Column(db.Integer, primary_key=True)
+    usuario_id = db.Column(db.Integer, db.ForeignKey('usuarios.usuario_id'), nullable=False)
+    titulo = db.Column(db.String(100), nullable=False)
+    mensaje = db.Column(db.String(200), nullable=False)
+    fecha = db.Column(db.DateTime, nullable=False)
+    leida = db.Column(db.Boolean, nullable=False)
 
 class ClubModel(db.Model):
     __tablename__ = 'clubes'
@@ -29,6 +38,10 @@ class ClubModel(db.Model):
     goles_favor = db.Column(db.Integer, nullable=False)
     goles_contra = db.Column(db.Integer, nullable=False)
 
+class EstadoModel(db.Model):
+    __tablename__ = 'estados'
+    estado = db.Column(db.String(100), primary_key=True)
+
 class JugadorModel(db.Model):
     __tablename__ = 'jugadores'
     jugador_id = db.Column(db.Integer, primary_key=True)
@@ -36,6 +49,7 @@ class JugadorModel(db.Model):
     nombre = db.Column(db.String(100), nullable=False)
     precio = db.Column(db.Integer, nullable=False)
     posicion = db.Column(db.String(100), nullable=False)
+    estado = db.Column(db.String(100), db.ForeignKey('estados.estado'), nullable=False)
 
 class FormacionModel(db.Model):
     __tablename__ = 'formaciones'
@@ -112,8 +126,6 @@ class RendimientoModel(db.Model):
     npxG = db.Column(db.Float)
     ocaciones_creadas = db.Column(db.Integer)
     goles_creados = db.Column(db.Integer)
-    # distancia_pases = db.Column(db.Float)
-    # distancia_pases_progresivos = db.Column(db.Float)
     pases_cortos_completados = db.Column(db.Integer)
     pases_cortos_intentados = db.Column(db.Integer)
     pases_medios_completados = db.Column(db.Integer)
@@ -123,53 +135,28 @@ class RendimientoModel(db.Model):
     xAG = db.Column(db.Float)
     xA = db.Column(db.Float)
     pases_clave = db.Column(db.Integer)
-    # pases_ultimo_tercio = db.Column(db.Integer)
-    # pases_al_area = db.Column(db.Integer)
-    # centros_al_area = db.Column(db.Integer)
     pases_progresivos = db.Column(db.Integer)
     pases_intentados = db.Column(db.Integer)
-    # pases_pelota_en_movimiento = db.Column(db.Integer)
-    # pases_pelota_parada = db.Column(db.Integer)
-    # pases_tiro_libre = db.Column(db.Integer)
     pases_filtrados = db.Column(db.Integer)
-    # cambios_frente = db.Column(db.Integer)
     centros = db.Column(db.Integer)
-    # laterales_ejecutados = db.Column(db.Integer)
     corners_ejecutados = db.Column(db.Integer)
     entradas = db.Column(db.Integer)
     entradas_ganadas = db.Column(db.Integer)
-    # duelos_defensivos_ganados = db.Column(db.Integer)
-    # duelos_defensivos = db.Column(db.Integer)
-    # duelos_defensivos_perdidos = db.Column(db.Integer)
     bloqueos = db.Column(db.Integer)
     remates_bloqueados = db.Column(db.Integer)
     pases_bloqueados = db.Column(db.Integer)
     intercepciones = db.Column(db.Integer)
     despejes = db.Column(db.Integer)
     errores_graves = db.Column(db.Integer)
-    # toques_area_propia = db.Column(db.Integer)
-    # toques_tercio_def = db.Column(db.Integer)
-    # toques_tercio_med = db.Column(db.Integer)
-    # toques_tercio_ata = db.Column(db.Integer)
-    # toques_area_rival = db.Column(db.Integer)
     gambetas_intentadas = db.Column(db.Integer)
     gambetas_completadas = db.Column(db.Integer)
     traslados = db.Column(db.Integer)
-    # traslados_distancia = db.Column(db.Float)
-    # traslados_progresivos_distancia = db.Column(db.Float)
     traslados_progresivos = db.Column(db.Integer)
-    # traslados_ultimo_tercio = db.Column(db.Integer)
-    # traslados_al_area = db.Column(db.Integer)
-    # malos_controles = db.Column(db.Integer)
-    # traslados_perdidas = db.Column(db.Integer)
-    # pases_recibidos = db.Column(db.Integer)
-    # pases_progresivos_recibidos = db.Column(db.Integer)
     tarjetas_amarillas = db.Column(db.Integer)
     tarjetas_rojas = db.Column(db.Integer)
     doble_amarilla = db.Column(db.Integer)
     faltas = db.Column(db.Integer)
     faltas_ganadas = db.Column(db.Integer)
-    # Offsides = db.Column(db.Integer)
     penales_ganados = db.Column(db.Integer)
     penales_concedidos = db.Column(db.Integer)
     goles_en_contra = db.Column(db.Integer)
@@ -180,16 +167,7 @@ class RendimientoModel(db.Model):
     goles_recibidos = db.Column(db.Integer)
     atajadas = db.Column(db.Integer)
     PSxG = db.Column(db.Float)
-    # saques_largos_completados = db.Column(db.Float)
-    # saques_largos_intentados = db.Column(db.Float)
-    # pases_intentados_arqueros = db.Column(db.Float)
-    # pases_lanzados_mano = db.Column(db.Float)
-    # distancia_promedio_saques = db.Column(db.Float)
-    # saques_arco = db.Column(db.Float)
-    # distancia_promedio_saques_arco = db.Column(db.Float)
     centros_enfrentados = db.Column(db.Float)
     centros_atajados = db.Column(db.Float)
-    # acciones_def_fuera_area = db.Column(db.Integer)
-    # acciones_def_fuera_area_dist_promedio = db.Column(db.Float)
     puntaje = db.Column(db.Integer)
     puntaje_total = db.Column(db.Integer)

@@ -2,6 +2,7 @@ from flask import Flask, render_template
 from flask_restx import Api
 from extensiones import db, jwt
 from config import Config
+from resources.notificacion_resource import NotificacionResource
 from resources.usuario_resource import UsuarioResource
 from resources.login_resource import LoginResource
 from resources.equipo_resource import EquipoResource
@@ -30,6 +31,7 @@ api.add_resource(TablaPosicionesLocal, '/posiciones/local')
 api.add_resource(TablaPosicionesVisitante, '/posiciones/visitante')
 api.add_resource(Fixture, '/fixture')
 api.add_resource(TablaEstadisticasPrincipales, '/estadisticas-principales')
+api.add_resource(NotificacionResource, '/notificaciones/<int:usuario_id>', '/notificacion/<int:notificacion_id>')
 
 @app.route('/estadisticas')
 def estadisticas():
