@@ -1,8 +1,6 @@
 from extensiones import db
 from werkzeug.security import generate_password_hash, check_password_hash
 
-from services.notificador import NotificadorService
-
 class UsuarioModel(db.Model):
     __tablename__ = 'usuarios'
 
@@ -18,6 +16,15 @@ class UsuarioModel(db.Model):
 
     def verificar_contraseña(self, contraseña):
         return check_password_hash(self.contraseña, contraseña)
+    
+class NotificacionModel(db.Model):
+    __tablename__ = 'notificaciones'
+    notificacion_id = db.Column(db.Integer, primary_key=True)
+    usuario_id = db.Column(db.Integer, db.ForeignKey('usuarios.usuario_id'), nullable=False)
+    titulo = db.Column(db.String(100), nullable=False)
+    mensaje = db.Column(db.String(200), nullable=False)
+    fecha = db.Column(db.DateTime, nullable=False)
+    leida = db.Column(db.Boolean, nullable=False)
 
 class ClubModel(db.Model):
     __tablename__ = 'clubes'
@@ -43,18 +50,6 @@ class JugadorModel(db.Model):
     precio = db.Column(db.Integer, nullable=False)
     posicion = db.Column(db.String(100), nullable=False)
     estado = db.Column(db.String(100), db.ForeignKey('estados.estado'), nullable=False)
-
-    def cambiar_estado(self, estado):
-        if self.estado != estado:
-            self.estado = estado
-            if self.estado in ['Lesionado', 'Suspendido', 'No Juega', 'Duda']:
-                titular = RolModel.query.filter_by(rol='titular').first().rol_id
-                equipos_id = [ej.equipo_id for ej in EquipoJugadorModel.query.filter_by(jugador_id=self.jugador_id, rol_id=titular).all()]
-                usuarios_id = [EquipoModel.query.filter_by(equipo_id=equipo_id).first().usuario_id for equipo_id in equipos_id]
-                for usuario_id in usuarios_id:
-                    usuario = UsuarioModel.query.filter_by(usuario_id=usuario_id).first()
-                    NotificadorService.notificar_estado(usuario, self, estado)
-            db.session.commit()
 
 class FormacionModel(db.Model):
     __tablename__ = 'formaciones'
