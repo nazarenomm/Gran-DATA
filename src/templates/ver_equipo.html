@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ver Equipo</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+    <div class="container mt-5">
+        <h1>Tu Equipo</h1>
+        <div id="equipo-detalle">
+            <!-- Detalles del equipo aparecerán aquí -->
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', async () => {
+            const equipoId = EQUIPO_ID;  // Define dinámicamente el ID del equipo
+            const response = await fetch(`/equipo/${equipoId}`, {
+                method: 'GET',
+                headers: {
+                    'Authorization': `Bearer ${localStorage.getItem('access_token')}`
+                }
+            });
+
+            const data = await response.json();
+            if (response.ok) {
+                const equipoDiv = document.getElementById('equipo-detalle');
+                equipoDiv.innerHTML = `
+                    <p><strong>Formación:</strong> ${data.formacion}</p>
+                    <p><strong>Valor Total:</strong> ${data.valor}</p>
+                    <p><strong>Jugadores:</strong> ${JSON.stringify(data.jugadores_id)}</p>
+                `;
+            } else {
+                document.getElementById('equipo-detalle').innerText = `Error: ${data.message}`;
+            }
+        });
+    </script>
+</body>
+</html>

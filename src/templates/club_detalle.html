@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Detalles del Club</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="/static/styles.css">
+</head>
+<body>
+    <div class="container mt-4">
+        <h1 id="clubName">Detalles del Club</h1>
+        
+        <table class="table">
+            <tbody id="clubDetails">
+                <!-- Detalles del club se cargarán aquí -->
+            </tbody>
+        </table>
+    </div>
+
+    <script>
+        const clubId = {{ club_id }};
+        fetch(`/api/clubes/${clubId}`)
+            .then(response => response.json())
+            .then(club => {
+                document.getElementById('clubName').textContent = club.nombre;
+                
+                const details = `
+                    <tr><td>Puntos</td><td>${club.puntos}</td></tr>
+                    <tr><td>Partidos Jugados</td><td>${club.partidos_jugados}</td></tr>
+                    <tr><td>Partidos Ganados</td><td>${club.partidos_ganados}</td></tr>
+                    <tr><td>Partidos Empatados</td><td>${club.partidos_empatados}</td></tr>
+                    <tr><td>Partidos Perdidos</td><td>${club.partidos_perdidos}</td></tr>
+                    <tr><td>Goles a Favor</td><td>${club.goles_favor}</td></tr>
+                    <tr><td>Goles en Contra</td><td>${club.goles_contra}</td></tr>
+                `;
+                
+                document.getElementById('clubDetails').innerHTML = details;
+            })
+            .catch(error => console.error('Error al cargar el club:', error));
+    </script>
+</body>
+</html>

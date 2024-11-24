@@ -14,10 +14,11 @@ class LoginResource(Resource):
             abort(404, message="Usuario no registrado")
         if not usuario.verificar_contraseña(args['contraseña']):
             abort(401, message="Contraseña incorrecta")
-        access_token = create_access_token(identity=usuario.mail)
-        refresh_token = create_refresh_token(identity=usuario.mail)
+        access_token = create_access_token(identity=usuario.usuario_id)
+        refresh_token = create_refresh_token(identity=usuario.usuario_id)
         return {
             "message": "Login exitoso",
             "access_token": access_token,
-            "refresh_token": refresh_token
+            "refresh_token": refresh_token,
+            'redirect_url': f'/menu/{usuario.usuario_id}'
             }, 200

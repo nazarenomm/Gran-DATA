@@ -1,4 +1,7 @@
 from flask_restx import Resource, reqparse, fields, marshal_with, abort
+from flask_jwt_extended import jwt_required, get_jwt_identity
+from exceptions.exceptions import JugadorNoEncontradoException
+from models import EquipoModel, FormacionModel, JugadorModel, UsuarioModel
 from models import EquipoJugadorModel, EquipoModel, FormacionModel, JugadorModel, RolModel
 from extensiones import db
 
@@ -21,21 +24,35 @@ equipo_fields = {
     'formacion': fields.String,
 }
 
-# TODO:
-# jugadores_id = {
-#     "titulares": [],
-#     "suplentes": [],
-#     "capitan": int
-# }
-
 class EquipoResource(Resource):
-    @marshal_with(equipo_fields)
-    def get(self, equipo_id):
-        result = EquipoModel.query.filter_by(equipo_id=equipo_id).first()
-        if not result:
-            abort(404, message="Equipo no encontrado")
-        return result
     
+    @jwt_required()
+    @marshal_with(equipo_fields)
+    def get(self, equipo_id=None):  # `equipo_id` es opcional
+        usuario_id = get_jwt_identity()
+        # Buscar el usuario autenticado
+        usuario = UsuarioModel.query.filter_by(usuario_id=usuario_id).first()
+        if not usuario:
+            return {"message": "Usuario no encontrado"}, 404
+
+        # Si `equipo_id` está presente, buscar equipo por ID, de lo contrario buscar por usuario
+        if equipo_id:
+            equipo = EquipoModel.query.filter_by(equipo_id=equipo_id, usuario_id=usuario_id).first()
+            if not equipo:
+                return {"message": "Equipo no encontrado o no pertenece al usuario"}, 404
+        else:
+            equipo = EquipoModel.query.filter_by(usuario_id=usuario_id).first()
+            if not equipo:
+                return {"equipo": False}, 200
+        # Serializar respuesta
+        return {
+            "equipo_id": equipo.equipo_id,
+            "usuario_id": equipo.usuario_id,
+            "valor": equipo.valor,
+            "formacion": equipo.formacion
+        }, 200
+    
+    @jwt_required()
     def delete(self, equipo_id):
         equipo = EquipoModel.query.filter_by(equipo_id=equipo_id).first()
         if not equipo:
@@ -50,9 +67,10 @@ class EquipoResource(Resource):
         return {"message": "Equipo eliminado"}, 200
     
     @marshal_with(equipo_fields)
+    @jwt_required()
     def post(self):
         args = equipo_post_args.parse_args()
-        usuario_id = args['usuario_id']
+        usuario_id = get_jwt_identity()
         
         equipo_existente = EquipoModel.query.filter_by(usuario_id=usuario_id).first()
         if equipo_existente:

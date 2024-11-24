@@ -11,8 +11,27 @@ jugador_fields = {
 
 class JugadorResource(Resource):
     @marshal_with(jugador_fields)
-    def get(self, jugador_id):
-        result = JugadorModel.query.filter_by(jugador_id=jugador_id).first()
-        if not result:
-            abort(404, message="Jugador no encontrado")
-        return result
+    def get(self):
+        parser = reqparse.RequestParser()
+        parser.add_argument('posicion', type=str, required=True, help='La posición es obligatoria.')
+        parser.add_argument('search', type=str, required=False, help='Filtro opcional por nombre o apellido.')
+        args = parser.parse_args()
+
+        posicion = args['posicion']
+        search = args.get('search', '')
+
+        query = JugadorModel.query.filter(JugadorModel.posicion == posicion)
+
+        # Si hay un término de búsqueda, filtrar por nombre o apellido
+        if search:
+            query = query.filter(
+                or_(
+                    func.lower(JugadorModel.nombre).like(f'%{search.lower()}%'),
+                    func.lower(JugadorModel.apellido).like(f'%{search.lower()}%')
+                )
+            )
+
+        jugadores = query.all()
+
+        # Convertir jugadores en un formato JSON
+        return jugadores, 200
