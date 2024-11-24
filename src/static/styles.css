@@ -37,3 +37,36 @@ a {
 a:hover {
     color: #fff;
 }
+.cancha-container {
+  position: relative;
+  width: 584px;
+  height: 918px;  
+  background-image: url('/static/cancha.jpg');
+  background-size: cover;
+  margin: auto;
+}
+
+.camiseta {
+  position: absolute;
+  width: 60px;
+  cursor: pointer;
+}
+
+#tabla-jugadores {
+  max-width: 600px; /* Ajustar el ancho según prefieras */
+  flex-shrink: 0;   /* Evitar que se reduzca */
+  display: none;    /* Inicialmente oculta */
+}
+
+#tabla-jugadores.active {
+  display: block;
+}
+
+#jugadores-disponibles {
+  max-height: 800px; /* Limita la altura visible de la tabla */
+  overflow-y: auto;  /* Activa el scroll vertical si el contenido excede */
+}
+
+.table {
+  margin-bottom: 0; /* Quita el margen inferior de la tabla */
+}

@@ -25,33 +25,35 @@ equipo_fields = {
     'formacion': fields.String,
 }
 
-# TODO:
-# jugadores_id = {
-#     "titulares": [],
-#     "suplentes": [],
-#     "capitan": int
-# }
-
 class EquipoResource(Resource):
-    @jwt_required
+    
+    @jwt_required()
     @marshal_with(equipo_fields)
-    def get(self, equipo_id=None):
-        usuario_mail = get_jwt_identity()
-        usuario = UsuarioModel.query.filter_by(mail=usuario_mail).first()
+    def get(self, equipo_id=None):  # `equipo_id` es opcional
+        usuario_id = get_jwt_identity()
+        # Buscar el usuario autenticado
+        usuario = UsuarioModel.query.filter_by(usuario_id=usuario_id).first()
         if not usuario:
             return {"message": "Usuario no encontrado"}, 404
 
+        # Si `equipo_id` está presente, buscar equipo por ID, de lo contrario buscar por usuario
         if equipo_id:
-            equipo = EquipoModel.query.filter_by(equipo_id=equipo_id).first()
+            equipo = EquipoModel.query.filter_by(equipo_id=equipo_id, usuario_id=usuario_id).first()
+            if not equipo:
+                return {"message": "Equipo no encontrado o no pertenece al usuario"}, 404
         else:
-            equipo = EquipoModel.query.filter_by(usuario_id=usuario.usuario_id).first()
-        
-        if not equipo:
-            return {"equipo": False}, 200
-        
-        return equipo, 200
+            equipo = EquipoModel.query.filter_by(usuario_id=usuario_id).first()
+            if not equipo:
+                return {"equipo": False}, 200
+        # Serializar respuesta
+        return {
+            "equipo_id": equipo.equipo_id,
+            "usuario_id": equipo.usuario_id,
+            "valor": equipo.valor,
+            "formacion": equipo.formacion
+        }, 200
     
-    @jwt_required
+    @jwt_required()
     def delete(self, equipo_id):
         equipo = EquipoModel.query.filter_by(equipo_id=equipo_id).first()
         if not equipo:
@@ -65,17 +67,11 @@ class EquipoResource(Resource):
         db.session.commit()
         return {"message": "Equipo eliminado"}, 200
     
-    @jwt_required
     @marshal_with(equipo_fields)
+    @jwt_required()
     def post(self):
-        usuario_mail = get_jwt_identity()
-        usuario = UsuarioModel.query.filter_by(mail=usuario_mail).first()
-        if not usuario:
-            abort(404, message="Usuario no encontrado")
-
-        usuario_id = usuario.usuario_id
         args = equipo_post_args.parse_args()
-        usuario_id = args['usuario_id']
+        usuario_id = get_jwt_identity()
         
         equipo_existente = EquipoModel.query.filter_by(usuario_id=usuario_id).first()
         if equipo_existente:

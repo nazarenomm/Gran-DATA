@@ -1,4 +1,4 @@
-from flask_restful import Resource, fields, marshal_with, abort
+from flask_restx import Resource, fields, marshal_with
 from flask import jsonify
 from sqlalchemy import text
 from extensiones import db

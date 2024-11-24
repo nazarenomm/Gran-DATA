@@ -1,4 +1,4 @@
-from flask_restful import Resource
+from flask_restx import Resource
 from flask_jwt_extended import jwt_required, get_jwt_identity
 from models import UsuarioModel, EquipoModel 
 
@@ -19,6 +19,5 @@ class MenuResource(Resource):
         equipo = EquipoModel.query.filter_by(usuario_id=usuario_id).first()
         print(f'Equipo: {equipo}')
         return {
-            "usuario_nombre": usuario.nombre,
-            "equipo": equipo.nombre if equipo else None
+            "usuario_nombre": usuario.nombre
         }
