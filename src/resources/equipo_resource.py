@@ -13,7 +13,6 @@ equipo_post_args.add_argument("formacion", type=str, help="Formación Requerida"
 equipo_post_args.add_argument("jugadores_id", type=dict, help="Jugadores Requeridos", required=True)
 
 equipo_patch_args = reqparse.RequestParser()
-# equipo_patch_args.add_argument("equipo_id", type=int, help="Equipo ID Requerido", required=True)
 equipo_patch_args.add_argument("accion", type=str, help="Accion requerida", required= True) # transferencia o cambio titular por suplente
 equipo_patch_args.add_argument("jugador_entrante_id", type=int, help="Jugador Entrante ID Requerido", required= True)
 equipo_patch_args.add_argument("jugador_saliente_id", type=int, help="Jugador Saliente ID Requerido", required= True)

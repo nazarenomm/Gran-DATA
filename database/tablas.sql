@@ -10,17 +10,31 @@ create table usuarios (
     contraseña varchar(256) not null,
     telefono int
 );
+CREATE TABLE notificaciones (
+    notificacion_id INT AUTO_INCREMENT PRIMARY KEY,
+    usuario_id INT NOT NULL,
+    titulo VARCHAR(100) NOT NULL,
+    mensaje VARCHAR(200) NOT NULL,
+    fecha DATETIME NOT NULL,
+    leida BOOLEAN DEFAULT FALSE,
+    FOREIGN KEY (usuario_id) REFERENCES usuarios(usuario_id)
+);
 
 CREATE TABLE clubes (
     club_id INT AUTO_INCREMENT PRIMARY KEY,
     nombre VARCHAR(100),
+    -- creo que esto no lo usamos
     puntos INT NOT NULL,
     partidos_jugados INT NOT NULL,
     partidos_ganados INT NOT NULL,
     partidos_empatados INT NOT NULL,
     partidos_perdidos INT NOT NULL,
     goles_favor INT NOT NULL,
-    goles_contra INT NOT NULL # ir agregando
+    goles_contra INT NOT NULL
+);
+
+CREATE TABLE estados (
+    estado VARCHAR(100) PRIMARY KEY
 );
 
 CREATE TABLE jugadores (
@@ -29,7 +43,9 @@ CREATE TABLE jugadores (
     nombre VARCHAR(100) NOT NULL,
     precio INT NOT NULL,
     posicion VARCHAR(100) NOT NULL,
-    FOREIGN KEY (club_id) REFERENCES clubes(club_id)
+    estado VARCHAR(100) NOT NULL,
+    FOREIGN KEY (club_id) REFERENCES clubes(club_id),
+    FOREIGN KEY (estado) REFERENCES estados(estado)
 );
 
 CREATE Table formaciones (
