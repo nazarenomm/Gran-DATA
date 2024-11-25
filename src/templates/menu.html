@@ -8,12 +8,13 @@
     <title>Menu</title>
 </head>
 <body>
+    {% include 'navbar.html' %}
+
     <div class="container mt-5">
         <h1>Bienvenidx, <span id="usuario_nombre"></span></h1>
         <div id="equipo-section" class="mt-4">
             <a id="crear-equipo-btn" class="btn btn-primary d-none">Crear Equipo</a>
             <a id="ver-equipo-btn" class="btn btn-success d-none">Ver Equipo</a>
-            <button id="logout-btn" class="btn btn-danger mt-3">Cerrar Sesión</button>
         </div>
     </div>
     

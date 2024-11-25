@@ -4,28 +4,17 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Clubes</title>
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css">
+    <link rel="stylesheet" href="/static/styles.css">
 </head>
 <body>
-    <div class="container mt-4">
-        <h1>Clubes del Torneo</h1>
-        <table class="table table-striped" id="clubesTable">
-            <thead>
-                <tr>
-                    <th>Nombre</th>
-                    <th>Puntos</th>
-                    <th>Partidos Jugados</th>
-                    <th>Partidos Ganados</th>
-                    <th>Partidos Empatados</th>
-                    <th>Partidos Perdidos</th>
-                    <th>Goles a Favor</th>
-                    <th>Goles en Contra</th>
-                </tr>
-            </thead>
-            <tbody>
-                <!-- Los datos de los clubes se insertarán aquí -->
-            </tbody>
-        </table>
+    {% include 'navbar.html' %}
+
+    <div class="container text-center mt-4">
+        <h1>Clubes </h1>
+        <div class="row mt-4" id="clubesContainer">
+            <!-- Los nombres de los clubes se insertarán aquí -->
+        </div>
     </div>
 
     <script>
@@ -33,22 +22,17 @@
         fetch('/api/clubes')
             .then(response => response.json())
             .then(clubes => {
-                const clubesTableBody = document.querySelector('#clubesTable tbody');
+                const clubesContainer = document.querySelector('#clubesContainer');
                 
                 clubes.forEach(club => {
-                    const row = `
-                        <tr>
-                            <td><a href="/clubes/${club.club_id}">${club.nombre}</a></td>
-                            <td>${club.puntos}</td>
-                            <td>${club.partidos_jugados}</td>
-                            <td>${club.partidos_ganados}</td>
-                            <td>${club.partidos_empatados}</td>
-                            <td>${club.partidos_perdidos}</td>
-                            <td>${club.goles_favor}</td>
-                            <td>${club.goles_contra}</td>
-                        </tr>
+                    const clubElement = `
+                        <div class="col-6 col-md-4 col-lg-3 mb-3">
+                            <a href="/clubes/${club.club_id}" class="text-light text-decoration-none">
+                                ${club.nombre}
+                            </a>
+                        </div>
                     `;
-                    clubesTableBody.insertAdjacentHTML('beforeend', row);
+                    clubesContainer.insertAdjacentHTML('beforeend', clubElement);
                 });
             })
             .catch(error => {
@@ -57,4 +41,3 @@
     </script>
 </body>
 </html>
-

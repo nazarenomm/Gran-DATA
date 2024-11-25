@@ -6,7 +6,8 @@ jugador_fields = {
     'club_id': fields.Integer,
     'nombre': fields.String,
     'precio': fields.Integer,
-    'posicion': fields.String
+    'posicion': fields.String,
+    'estado': fields.String
 }
 
 class JugadorResource(Resource):

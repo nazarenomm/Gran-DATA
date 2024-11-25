@@ -8,10 +8,15 @@
     <link rel="stylesheet" href="/static/styles.css">
 </head>
 <body>
+    {% include 'navbar.html' %}
+
     <div class="container mt-4">
-        <h1 id="clubName">Detalles del Club</h1>
+        <div class="d-flex align-items-center">
+            <img id="clubLogo" src="" alt="Escudo del club" class="me-3" style="width: 80px; height: 80px;">
+            <h1 id="clubName">Detalles del Club</h1>
+        </div>
         
-        <table class="table">
+        <table class="table mt-3">
             <tbody id="clubDetails">
                 <!-- Detalles del club se cargarán aquí -->
             </tbody>
@@ -23,8 +28,15 @@
         fetch(`/api/clubes/${clubId}`)
             .then(response => response.json())
             .then(club => {
+                // Actualizar nombre del club
                 document.getElementById('clubName').textContent = club.nombre;
                 
+                // Actualizar logo del club
+                const clubLogo = document.getElementById('clubLogo');
+                clubLogo.src = `/static/clubes/${club.nombre.replaceAll(" ", "_")}.png`;
+                clubLogo.onerror = () => { clubLogo.src = '/static/clubes/default.png'; };
+
+                // Generar detalles del club
                 const details = `
                     <tr><td>Puntos</td><td>${club.puntos}</td></tr>
                     <tr><td>Partidos Jugados</td><td>${club.partidos_jugados}</td></tr>
@@ -34,7 +46,6 @@
                     <tr><td>Goles a Favor</td><td>${club.goles_favor}</td></tr>
                     <tr><td>Goles en Contra</td><td>${club.goles_contra}</td></tr>
                 `;
-                
                 document.getElementById('clubDetails').innerHTML = details;
             })
             .catch(error => console.error('Error al cargar el club:', error));
