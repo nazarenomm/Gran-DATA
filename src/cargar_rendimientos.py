@@ -92,6 +92,9 @@ def rendimientos_partido(url, match, score, modelo) -> pd.DataFrame:
             tabla_limpia['conceded_goals'] = int(score.split('–')[0])
             tabla_limpia['win'] = int(score.split('–')[1]) > int(score.split('–')[0])
             tabla_limpia['tie'] = int(score.split('–')[1]) == int(score.split('–')[0])
+        
+        # tabla_limpia['Nation'] = tabla_limpia['Nation'].fillna('ar ARG')
+        # tabla_limpia['Age'] = tabla_limpia['Age'].fillna('0-0')
 
         # Eliminar la última fila si no es GK
         if nombre_tabla not in ['home_gk', 'away_gk']:
@@ -114,7 +117,7 @@ def rendimientos_partido(url, match, score, modelo) -> pd.DataFrame:
         for i in range(0, len(tablas_clean), group_size):
             group = tablas_clean[i:i + group_size]
             df_merged = reduce(
-                lambda left, right: pd.merge(left, right, how='left', on=['Player', 'Nation', 'Age', 'team'], suffixes=('', '_dup')),
+                lambda left, right: pd.merge(left, right, how='left', on=['Player', 'team'], suffixes=('', '_dup')),
                 group
             )
             df_merged = df_merged.loc[:, ~df_merged.columns.str.endswith('_dup')]
@@ -156,33 +159,48 @@ def rendimientos_partido(url, match, score, modelo) -> pd.DataFrame:
     def calcular_puntaje_total(row):
         if row['Pos'] == 'FW':
             row['puntaje'] += (row['Gls']-row['PK'])*3 + row['Ast']
+
         elif row['Pos'] in ['W', 'AM']:
             row['puntaje'] += (row['Gls']-row['PK'])*4 + row['Ast']
+
         elif row['Pos'] in ['M', 'CM']:
             row['puntaje'] += (row['Gls']-row['PK'])*5 + row['Ast']
+
         elif row['Pos'] == 'DM':
             row['puntaje'] += (row['Gls']-row['PK'])*6 + row['Ast']*2
             if row['conceded_goals'] == 0:
                 row['puntaje'] += 1
+
         elif row['Pos'] in ['FB', 'WB']:
             row['puntaje'] += (row['Gls']-row['PK'])*8 + row['Ast']*2
             if row['conceded_goals'] == 0:
                 row['puntaje'] += 2
-        elif row['Pos'] == 'CB':
+
+        elif row['Pos'] in ['CB', 'DF']:
             row['puntaje'] += (row['Gls']-row['PK'])*6 + row['Ast']*3
             if row['conceded_goals'] == 0:
                 row['puntaje'] += 2
+
         elif row['Pos'] == 'GK':
             row['puntaje'] += (row['Gls']-row['PK'])*10 + row['Ast']*4
             if row['conceded_goals'] == 0:
                 row['puntaje'] += 3
+
         else:
             raise ValueError(f'Posición {row["Pos"]} no reconocida')
         
-        row['puntaje'] -=  row['CrdR']*4 + row['OG']*2 + (row['PKatt']-row['PK'])*2 + row['CrdY']*2
+        if row['CrdR'] == 1:
+            row['puntaje'] -= 4
+
+        if row['CrdY'] == 1: # si hubo doble amarilla ya se le resto como roja
+            row['puntaje'] -= 2
+    
+        row['puntaje'] -= row['OG']*2 + (row['PKatt']-row['PK'])*2 # resta de goles en contra y penales fallados
 
         if row['figura'] == True:
             row['puntaje'] += 4
+        
+        row['puntaje'] += row['PK']*2
 
         return row
     
@@ -221,15 +239,12 @@ def cargar_fecha(fecha:int, modelo) -> pd.DataFrame:
     
     return df_fecha_concat # dataframe de rendimientos, tiene equipo y partido, CAMBIAR POR IDs
 
-
-
-
-
+##########################################################  MAIN  ##########################################################
 
 if __name__ == '__main__':
 
     modelo = joblib.load('modelo_puntajes/modelos/primer_modelo.pkl')
-    fecha = 3
+    fecha = 13
     with app.app_context():
         try:
             rendimientos = pd.read_csv(f'modelo_puntajes/data/predicciones/rendimientos_fecha_{fecha}.csv')
@@ -263,7 +278,7 @@ if __name__ == '__main__':
                     posicion = 'DEL'
                 elif row['Pos'] in ['AM', 'M', 'CM', 'DM']:
                     posicion = 'VOL'
-                elif row['Pos'] in ['FB', 'WB', 'CB']:
+                elif row['Pos'] in ['FB', 'WB', 'CB', 'DF']:
                     posicion = 'DEF'
                 elif row['Pos'] == 'GK':
                     posicion = 'ARQ'
@@ -273,65 +288,66 @@ if __name__ == '__main__':
                 jugador = JugadorModel.query.filter_by(nombre=row['Player'], club_id=club_id).first()
             jugador_id = jugador.jugador_id
             
-            nuevo_rendimiento = RendimientoModel(
-                jugador_id=jugador_id,
-                partido_id=partido_id,
-                minutos_jugados=row['Min'],
-                goles=row['Gls'],
-                asistencias=row['Ast'],
-                goles_penal=row['PK'],
-                penales_ejecutados=row['PKatt'],
-                remates=row['Sh'],
-                remates_arco=row['SoT'],
-                xG=row['xG'],
-                npxG=row['npxG'],
-                ocaciones_creadas=row['SCA'],
-                goles_creados=row['GCA'],
-                pases_cortos_completados=row['Short-Cmp'],
-                pases_cortos_intentados=row['Short-Att'],
-                pases_medios_completados=row['Medium-Cmp'],
-                pases_medios_intentados=row['Medium-Att'],
-                pases_largos_completados=row['Long-Cmp'],
-                pases_largos_intentados=row['Long-Att'],
-                xAG = row['xAG'],
-                xA = row['xA'],
-                pases_clave=row['KP'],
-                pases_progresivos=row['PrgP'],
-                pases_intentados=row['Att'],
-                pases_filtrados=row['TB'],
-                centros=row['Crs'],
-                corners_ejecutados=row['CK'],
-                entradas=row['Tackles-Tkl'],
-                entradas_ganadas=row['Tackles-TklW'],
-                bloqueos=row['Blocks-Blocks'],
-                remates_bloqueados=row['Blocks-Sh'],
-                pases_bloqueados=row['Blocks-Pass'],
-                intercepciones=row['Int'],
-                despejes=row['Clr'],
-                errores_graves=row['Err'],
-                gambetas_intentadas=row['Take-Ons-Att'],
-                gambetas_completadas=row['Take-Ons-Succ'],
-                traslados=row['Carries-Carries'],
-                traslados_progresivos=row['Carries-PrgC'],
-                tarjetas_amarillas=row['CrdY'],
-                tarjetas_rojas=row['CrdR'],
-                doble_amarilla=row['2CrdY'],
-                faltas=row['Fls'],
-                faltas_ganadas=row['Fld'],
-                penales_ganados=row['PKwon'],
-                penales_concedidos=row['PKcon'],
-                goles_en_contra=row['OG'],
-                recuperaciones=row['Recov'],
-                duelos_aereos_ganados=row['Aerial Duels-Won'],
-                duelos_aereos_perdidos=row['Aerial Duels-Lost'],
-                remates_arco_recibidos=row['SoTA'],
-                goles_recibidos=row['GA'],
-                atajadas=row['Saves'],
-                PSxG=row['PSxG'],
-                centros_enfrentados=row['Crosses-Opp'],
-                centros_atajados=row['Crosses-Stp'],
-                puntaje=row['puntaje_modelo'],
-                puntaje_total=row['puntaje']
-                )
+            if row['Min'] >= 20:
+                nuevo_rendimiento = RendimientoModel(
+                    jugador_id=jugador_id,
+                    partido_id=partido_id,
+                    minutos_jugados=row['Min'],
+                    goles=row['Gls'],
+                    asistencias=row['Ast'],
+                    goles_penal=row['PK'],
+                    penales_ejecutados=row['PKatt'],
+                    remates=row['Sh'],
+                    remates_arco=row['SoT'],
+                    xG=row['xG'],
+                    npxG=row['npxG'],
+                    ocaciones_creadas=row['SCA'],
+                    goles_creados=row['GCA'],
+                    pases_cortos_completados=row['Short-Cmp'],
+                    pases_cortos_intentados=row['Short-Att'],
+                    pases_medios_completados=row['Medium-Cmp'],
+                    pases_medios_intentados=row['Medium-Att'],
+                    pases_largos_completados=row['Long-Cmp'],
+                    pases_largos_intentados=row['Long-Att'],
+                    xAG = row['xAG'],
+                    xA = row['xA'],
+                    pases_clave=row['KP'],
+                    pases_progresivos=row['PrgP'],
+                    pases_intentados=row['Att'],
+                    pases_filtrados=row['TB'],
+                    centros=row['Crs'],
+                    corners_ejecutados=row['CK'],
+                    entradas=row['Tackles-Tkl'],
+                    entradas_ganadas=row['Tackles-TklW'],
+                    bloqueos=row['Blocks-Blocks'],
+                    remates_bloqueados=row['Blocks-Sh'],
+                    pases_bloqueados=row['Blocks-Pass'],
+                    intercepciones=row['Int'],
+                    despejes=row['Clr'],
+                    errores_graves=row['Err'],
+                    gambetas_intentadas=row['Take-Ons-Att'],
+                    gambetas_completadas=row['Take-Ons-Succ'],
+                    traslados=row['Carries-Carries'],
+                    traslados_progresivos=row['Carries-PrgC'],
+                    tarjetas_amarillas=row['CrdY'],
+                    tarjetas_rojas=row['CrdR'],
+                    doble_amarilla=row['2CrdY'],
+                    faltas=row['Fls'],
+                    faltas_ganadas=row['Fld'],
+                    penales_ganados=row['PKwon'],
+                    penales_concedidos=row['PKcon'],
+                    goles_en_contra=row['OG'],
+                    recuperaciones=row['Recov'],
+                    duelos_aereos_ganados=row['Aerial Duels-Won'],
+                    duelos_aereos_perdidos=row['Aerial Duels-Lost'],
+                    remates_arco_recibidos=row['SoTA'],
+                    goles_recibidos=row['GA'],
+                    atajadas=row['Saves'],
+                    PSxG=row['PSxG'],
+                    centros_enfrentados=row['Crosses-Opp'],
+                    centros_atajados=row['Crosses-Stp'],
+                    puntaje=row['puntaje_modelo'],
+                    puntaje_total=row['puntaje']
+                    )
             db.session.add(nuevo_rendimiento)
             db.session.commit()
