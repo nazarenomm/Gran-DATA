@@ -2,6 +2,7 @@ from flask_restx import Resource, reqparse, abort
 from flask_jwt_extended import jwt_required, get_jwt_identity
 from models import PartidoModel, ProdeModel, UsuarioModel
 from extensiones import db
+from services import fecha
 
 post_args = reqparse.RequestParser()
 
@@ -50,9 +51,11 @@ class ProdeResource(Resource):
         ]
         return prodes, 200
     
-    # falta logica de fecha actual
     @jwt_required()
     def post(self):
+        if fecha.verificar_veda():
+            abort(400, message="Estamos en veda")
+
         usuario_id = get_jwt_identity()
         args = post_args.parse_args()
         
@@ -78,6 +81,9 @@ class ProdeResource(Resource):
         return {"message": "Prode creado"}, 201
     
     def patch(self):
+        if fecha.verificar_veda():
+            abort(400, message="Estamos en veda")
+            
         args = patch_args.parse_args()
         partidos_ids_fecha = [partido.partido_id for partido in PartidoModel.query.filter_by(fecha=args['fecha']).all()]
 

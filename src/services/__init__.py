@@ -1,5 +1,5 @@
 from services.notificador import NotificadorService
-from services.veda import VedaService
+from services.fecha import FechaService
 
 notificador = NotificadorService()
-veda = VedaService()
+fecha = FechaService()
