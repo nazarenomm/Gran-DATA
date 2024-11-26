@@ -47,7 +47,7 @@ class PuntajeService:
                 # sumar puntaje del capitan
                 rendimiento = RendimientoModel.query.filter(RendimientoModel.jugador_id == capitan.jugador_id, RendimientoModel.partido_id.in_(partidos_ids_fecha)).first()
                 if rendimiento:
-                    puntaje_total += rendimiento.puntaje_total
+                    puntaje_total += (rendimiento.puntaje_total - rendimiento.puntaje) + 2*rendimiento.puntaje
                 else:
                     suplente = [suplente for suplente in suplentes if suplente.posicion == capitan.posicion][0]
                     rendimiento = RendimientoModel.query.filter(RendimientoModel.jugador_id == suplente.jugador_id, RendimientoModel.partido_id.in_(partidos_ids_fecha)).first()
