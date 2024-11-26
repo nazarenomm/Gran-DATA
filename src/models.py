@@ -93,6 +93,21 @@ class PartidoModel(db.Model):
     goles_visitante = db.Column(db.Integer)
     fecha = db.Column(db.Integer, nullable=False)
 
+class ProdeModel(db.Model):
+    __tablename__ = 'prodes'
+    prode_id = db.Column(db.Integer, primary_key=True)
+    usuario_id = db.Column(db.Integer, db.ForeignKey('usuarios.usuario_id'), nullable=False)
+    partido_id = db.Column(db.Integer, db.ForeignKey('partidos.partido_id'), nullable=False)
+    goles_local = db.Column(db.Integer, nullable=False)
+    goles_visitante = db.Column(db.Integer, nullable=False)
+
+class PuntajeProdeModel(db.Model):
+    __tablename__ = 'puntajes_prode'
+    puntaje_id = db.Column(db.Integer, primary_key=True)
+    usuario_id = db.Column(db.Integer, db.ForeignKey('usuarios.usuario_id'), nullable=False)
+    fecha = db.Column(db.Integer, nullable=False)
+    puntaje = db.Column(db.Integer, nullable=False)
+
 class TorneoModel(db.Model):
     __tablename__ = 'torneos'
     torneo_id = db.Column(db.Integer, primary_key=True)
