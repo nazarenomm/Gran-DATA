@@ -43,6 +43,8 @@ class PuntajeResource(Resource):
         except Exception as e:
             return {"message": "Error al obtener el puntaje", "error": str(e)}, 500
     
+
+    ## No es al pedo esto?? los usuarios no van a poder crear puntajes, VA EN CARGAR_RENDIMIENTO (FUTURA CLASE FECHA)
     @marshal_with(puntaje_fields)
     def post(self):
         try:
