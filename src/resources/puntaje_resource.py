@@ -1,6 +1,4 @@
 from flask_restx import Resource, fields, marshal_with, reqparse
-from flask import jsonify
-from sqlalchemy import text
 from extensiones import db
 from models import PuntajeModel, EquipoJugadorModel, PartidoModel, RendimientoModel
 
