@@ -236,6 +236,8 @@ def cargar_fecha(fecha:int, modelo) -> pd.DataFrame:
     df_fecha_concat = pd.concat(rendimientos, ignore_index=True)
 
     df_fecha_concat['fecha'] = fecha
+
+    df_fecha_concat.drop_duplicates(inplace=True)
     
     return df_fecha_concat # dataframe de rendimientos, tiene equipo y partido, CAMBIAR POR IDs
 
