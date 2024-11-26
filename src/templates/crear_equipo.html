@@ -48,6 +48,8 @@
                 </div>
             </div>
         </div>
+
+        <button id="guardar-equipo" class="btn btn-primary mt-4">Guardar Equipo</button>
     </div>
 
     <script>
@@ -142,7 +144,7 @@
                         const club = await clubResponse.json();
     
                         const row = document.createElement('tr');
-                        row.innerHTML = `
+                        row.innerHTML = ` 
                             <td>${jugador.nombre}</td>
                             <td>${club.nombre}</td>
                             <td>${jugador.precio}</td>
@@ -165,6 +167,7 @@
     
             // Inicializar con la primera formación
             generarCamisetas(formacionSelect.value);
+    
             const jugadoresSeleccionados = [];
 
             document.addEventListener('click', (event) => {
@@ -179,14 +182,25 @@
                 }
             });
 
+            // Función para guardar el equipo
             document.getElementById('guardar-equipo').addEventListener('click', async () => {
+                if (jugadoresSeleccionados.length === 0) {
+                    alert('Debes seleccionar jugadores para tu equipo');
+                    return;
+                }
+
+                const jugadoresParaGuardar = jugadoresSeleccionados.map(jugadorId => ({
+                    jugador_id: jugadorId,
+                    // Puedes agregar más detalles como la posición si es necesario
+                }));
+
                 try {
                     const response = await fetch('/equipos', {
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/json'
                         },
-                        body: JSON.stringify({ jugadores: jugadoresSeleccionados })
+                        body: JSON.stringify({ jugadores: jugadoresParaGuardar })
                     });
 
                     if (response.ok) {
@@ -199,7 +213,6 @@
                     alert('Error al guardar el equipo');
                 }
             });
-            
         });
     </script>
 </body>

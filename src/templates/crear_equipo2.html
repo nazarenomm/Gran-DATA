@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Seleccionar Formación</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="/static/styles.css">
+    <style>
+        .position-group {
+            display: flex;
+            gap: 15px; /* Separación entre botones */
+            margin-bottom: 20px;
+        }
+        .position-group label {
+            min-width: 120px;
+            text-align: center;
+        }
+        #total-gasto {
+            font-size: 1.2em;
+            margin-top: 20px;
+            font-weight: bold;
+        }
+        #guardar-btn {
+            margin-top: 30px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Seleccionar Formación</h1>
+        <div class="mb-3">
+            <label for="formacion" class="form-label">Elige una Formación</label>
+            <select id="formacion" class="form-select" onchange="generatePositionFields()">
+                <option selected>Selecciona una formación</option>
+            </select>
+        </div>
+
+        <div id="jugadores">
+            <!-- Aquí se generarán los botones de jugadores titulares y suplentes -->
+        </div>
+
+        <div id="tabla-jugadores" class="mt-4" style="display:none;">
+            <h2>Selecciona un Jugador</h2>
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Nombre</th>
+                        <th>Club</th>
+                        <th>Precio</th>
+                        <th>Estado</th>
+                    </tr>
+                </thead>
+                <tbody id="jugadores-list">
+                    <!-- Aquí se llenarán los jugadores -->
+                </tbody>
+            </table>
+        </div>
+
+        <div id="total-gasto">
+            Total Gastado: $0
+        </div>
+
+        <!-- Botón para guardar equipo -->
+        <button id="guardar-btn" class="btn btn-primary" onclick="guardarEquipo()">Guardar equipo</button>
+    </div>
+
+    <script>
+        let selectedPosition = null;
+        let selectedButtons = {};
+        let totalGastado = 0; // Variable para acumular el total de los precios
+        let usuariosSeleccionados = {
+            titulares: [],
+            suplentes: [],
+            capitan: null
+        };
+
+        // Obtener formaciones
+        function fetchFormaciones() {
+            fetch('/formaciones')
+                .then(response => response.json())
+                .then(formaciones => {
+                    const formacionSelect = document.getElementById("formacion");
+                    formaciones.forEach(formacion => {
+                        const option = document.createElement("option");
+                        option.value = formacion.formacion;
+                        option.text = formacion.formacion;
+                        formacionSelect.appendChild(option);
+                    });
+                });
+        }
+
+        // Generar campos para titulares y suplentes
+        function generatePositionFields() {
+            const formacion = document.getElementById("formacion").value;
+            fetch('/formaciones')
+                .then(response => response.json())
+                .then(formaciones => {
+                    const selectedFormacion = formaciones.find(f => f.formacion === formacion);
+                    if (!selectedFormacion) return;
+
+                    const jugadoresDiv = document.getElementById("jugadores");
+                    jugadoresDiv.innerHTML = '';
+                    let positionCounter = 1;
+
+                    const createPositionGroup = (label, position, count) => {
+                        const divGroup = document.createElement("div");
+                        divGroup.classList.add("position-group");
+
+                        for (let i = 0; i < count; i++) {
+                            const button = document.createElement("button");
+                            button.classList.add("btn", "btn-secondary");
+                            button.type = "button";
+                            button.textContent = `Jugador ${positionCounter++}`;
+                            button.onclick = () => selectJugador(position, `${label} ${i + 1}`, button);
+                            divGroup.appendChild(button);
+                        }
+
+                        // Suplente
+                        const suplenteButton = document.createElement("button");
+                        suplenteButton.classList.add("btn", "btn-secondary");
+                        suplenteButton.type = "button";
+                        suplenteButton.textContent = `Jugador ${positionCounter++}`;
+                        suplenteButton.onclick = () => selectJugador(position, `${label} Suplente`, suplenteButton);
+                        divGroup.appendChild(suplenteButton);
+
+                        const labelGroup = document.createElement("label");
+                        labelGroup.textContent = label;
+                        divGroup.prepend(labelGroup);
+
+                        jugadoresDiv.appendChild(divGroup);
+                    };
+
+                    // Crear posiciones (titulares + suplentes)
+                    createPositionGroup('Arquero', 'ARQ', 1);
+                    createPositionGroup('Defensor', 'DEF', selectedFormacion.defensores);
+                    createPositionGroup('Mediocampista', 'VOL', selectedFormacion.mediocampistas);
+                    createPositionGroup('Delantero', 'DEL', selectedFormacion.delanteros);
+                });
+        }
+
+        // Mostrar jugadores por posición
+        function selectJugador(posicion, label, button) {
+            selectedPosition = { posicion, label, button };
+
+            fetch(`/jugadores?posicion=${posicion}`)
+                .then(response => response.json())
+                .then(jugadores => {
+                    const tablaJugadoresDiv = document.getElementById("tabla-jugadores");
+                    const jugadoresList = document.getElementById("jugadores-list");
+                    jugadoresList.innerHTML = '';
+
+                    jugadores.forEach(jugador => {
+                        const row = document.createElement("tr");
+                        row.innerHTML = `
+                            <td>${jugador.nombre}</td>
+                            <td>${jugador.club_id}</td>
+                            <td>${jugador.precio}</td>
+                            <td>${jugador.estado}</td>
+                        `;
+                        row.onclick = () => assignJugadorToPosition(jugador, button);
+                        jugadoresList.appendChild(row);
+                    });
+
+                    tablaJugadoresDiv.style.display = 'block';
+                });
+        }
+
+        // Asignar jugador a posición
+        function assignJugadorToPosition(jugador, button) {
+            if (selectedPosition) {
+                selectedButtons[selectedPosition.label] = jugador.nombre;
+
+                // Cambiar el texto del botón con el nombre del jugador seleccionado
+                button.innerText = `${jugador.nombre}`;
+
+                // Sumar el precio al total
+                totalGastado += jugador.precio;
+
+                // Actualizar el total gastado en la interfaz
+                document.getElementById("total-gasto").innerText = `Total Gastado: $${totalGastado}`;
+
+                // Guardar el jugador en el array correspondiente
+                if (selectedPosition.label.includes('Suplente')) {
+                    usuariosSeleccionados.suplentes.push(jugador.id);
+                } else {
+                    usuariosSeleccionados.titulares.push(jugador.id);
+                }
+
+                // Si es el capitán, guardar el ID del capitán
+                if (selectedPosition.label.includes('Capitán')) {
+                    usuariosSeleccionados.capitan = jugador.id;
+                }
+
+                document.getElementById("tabla-jugadores").style.display = 'none';
+                selectedPosition = null;
+            }
+        }
+
+        // Guardar el equipo
+        function guardarEquipo() {
+            const formacion = document.getElementById("formacion").value;
+
+            const equipoData = {
+                "usuario_id": 1,  // Cambia esto con el ID de usuario actual
+                "formacion": formacion,
+                "jugadores_id": {
+                    "titulares": usuariosSeleccionados.titulares,
+                    "suplentes": usuariosSeleccionados.suplentes,
+                    "capitan": usuariosSeleccionados.capitan
+                }
+            };
+            console.log(equipoData);
+
+            fetch('/equipo', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(equipoData)
+            })
+            .then(response => response.json())
+            .then(data => {
+                alert("Equipo guardado exitosamente.");
+                // Aquí podrías hacer alguna acción post-guardado, como redirigir al usuario o resetear el formulario.
+            })
+            .catch(error => {
+                alert("Hubo un error al guardar el equipo.");
+            });
+        }
+
+        // Inicializar formaciones
+        fetchFormaciones();
+    </script>
+</body>
+</html>

@@ -60,9 +60,9 @@ def register():
 def menu(usuario_id):
     return render_template('menu.html', usuario_id=usuario_id)
 
-@app.route('/crear_equipo/<int:usuario_id>')
+@app.route('/crear_equipo2/<int:usuario_id>')
 def crear_equipo(usuario_id):
-    return render_template('crear_equipo.html', usuario_id=usuario_id)
+    return render_template('crear_equipo2.html', usuario_id=usuario_id)
 
 @app.route('/ver_equipo/<int:equipo_id>')
 def ver_equipo(equipo_id):
