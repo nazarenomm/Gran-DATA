@@ -1,9 +1,9 @@
 from flask_restx import Resource, reqparse, fields, marshal_with, abort
 from flask_jwt_extended import jwt_required, get_jwt_identity
-from exceptions.exceptions import JugadorNoEncontradoException
 from models import EquipoModel, FormacionModel, JugadorModel, UsuarioModel
 from models import EquipoJugadorModel, EquipoModel, FormacionModel, JugadorModel, RolModel
-from extensiones import db, veda_service
+from extensiones import db
+from services import veda
 
 PRESUPUESTO = 70_000_000
 
@@ -69,7 +69,7 @@ class EquipoResource(Resource):
     @marshal_with(equipo_fields)
     @jwt_required()
     def post(self):
-        if veda_service.verificar_veda():
+        if veda.verificar_veda():
             abort(400, message="Estamos en veda")
         args = equipo_post_args.parse_args()
         usuario_id = get_jwt_identity()
@@ -171,7 +171,7 @@ class EquipoResource(Resource):
         return nuevo_equipo, 201
     
     def patch(self, equipo_id):
-        if veda_service.verificar_veda():
+        if veda.verificar_veda():
             abort(400, message="Estamos en veda")
         args = equipo_patch_args.parse_args()
 
