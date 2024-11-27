@@ -1,12 +1,12 @@
 from flask import Flask, render_template
-from flask_restx import Api
-from extensiones import db, jwt
+from extensiones import db, jwt, api
 from config import Config
+# Hay que importarlos igual, rarisimo
 from resources.notificacion_resource import NotificacionResource
-from resources.usuario_resource import UsuarioResource
+from resources.usuario_resource import UsuarioResource, UsuarioPostResource
 from resources.login_resource import LoginResource
-from resources.equipo_resource import EquipoResource
-from resources.torneo_resource import TorneoResource
+from resources.equipo_resource import EquipoResource, EquipoPostResource
+from resources.torneo_resource import TorneoResource, TorneoPostResource
 from resources.jugador_resource import JugadorResource
 from resources.menu_resource import MenuResource
 from resources.club_resource import ClubResource
@@ -14,38 +14,19 @@ from resources.tabla_posiciones_resource import TablaPosiciones, TablaPosiciones
 from resources.fixture_resource import Fixture
 from resources.tablas_jugadores_resource import TablaEstadisticasPrincipales
 from resources.formacion_resource import FormacionResource
-from resources.puntaje_resource import PuntajeResource
-from resources.prode_resource import ProdeResource
+from resources.puntaje_resource import PuntajeResource, PuntajeTotalResource
+from resources.prode_resource import ProdeResource, ProdePostResource
 from resources.fecha_resource import FechaResource
 from resources.equipo_jugador_resource import EquipoJugadorResource
+from resources.puntaje_prode_resource import PuntajeProdeResource, PuntajeTotalProdeResource
 
 app = Flask(__name__)
 
 app.config.from_object(Config)
 
-api = Api(app)
-
 db.init_app(app)
+api.init_app(app)
 jwt.init_app(app)
-
-api.add_resource(UsuarioResource, '/usuario', '/usuario/<int:usuario_id>')
-api.add_resource(LoginResource, '/login')
-api.add_resource(EquipoResource, '/equipo/<int:equipo_id>','/equipo')
-api.add_resource(TorneoResource, '/torneo', '/torneo/<int:torneo_id>')
-api.add_resource(JugadorResource, '/jugadores')
-api.add_resource(MenuResource,'/menu/<int:usuario_id>')
-api.add_resource(TablaPosiciones, '/posiciones')
-api.add_resource(TablaPosicionesLocal, '/posiciones/local')
-api.add_resource(TablaPosicionesVisitante, '/posiciones/visitante')
-api.add_resource(Fixture, '/fixture')
-api.add_resource(TablaEstadisticasPrincipales, '/estadisticas-principales')
-api.add_resource(FormacionResource, '/formaciones')
-api.add_resource(ClubResource, '/api/clubes', '/api/clubes/<int:club_id>')
-api.add_resource(PuntajeResource, '/puntajes', '/puntajes/<int:equipo_id>', '/puntajes/<int:equipo_id>/<int:fecha>')
-api.add_resource(NotificacionResource, '/notificaciones/<int:usuario_id>', '/notificacion/<int:notificacion_id>')
-api.add_resource(FechaResource, '/fecha')
-api.add_resource(EquipoJugadorResource, '/equipo_jugador' )
-
 
 # Rutas del Frontend
 @app.route('/home')

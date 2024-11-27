@@ -1,5 +1,6 @@
 from flask_restx import Resource, reqparse, fields, marshal_with, abort
 from models import JugadorModel
+from extensiones import jugador_ns
 
 jugador_fields = {
     'jugador_id': fields.Integer,
@@ -10,7 +11,10 @@ jugador_fields = {
     'estado': fields.String
 }
 
+@jugador_ns.route('')
 class JugadorResource(Resource):
+    @jugador_ns.doc(responses={200: 'OK', 400: 'Invalid Argument', 500: 'Mapping Key Error'},
+                    params={'posicion': 'La posición del jugador', 'search': 'Filtro opcional por nombre o apellido'})
     @marshal_with(jugador_fields)
     def get(self):
         parser = reqparse.RequestParser()

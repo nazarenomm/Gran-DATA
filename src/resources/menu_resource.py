@@ -1,8 +1,12 @@
 from flask_restx import Resource
 from flask_jwt_extended import jwt_required, get_jwt_identity
 from models import UsuarioModel, EquipoModel 
+from extensiones import menu_ns
 
+@menu_ns.route('/<int:usuario_id>')
 class MenuResource(Resource):
+    @menu_ns.doc(params={'usuario_id': 'El id del usuario'},
+                 responses={200: 'OK', 403: 'Acceso no autorizado', 404: 'Usuario no encontrado'})
     @jwt_required()
     def post(self, usuario_id):
         print("Entro al Menu########################################")

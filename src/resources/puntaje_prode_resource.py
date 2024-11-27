@@ -1,5 +1,6 @@
-from flask_restx import Resource, fields, abort, marshal
+from flask_restx import Resource, fields, abort, marshal_with
 from models import PuntajeProdeModel
+from extensiones import puntaje_prode_ns
 
 puntaje_prode_fields = {
     'puntaje_id': fields.Integer,
@@ -8,24 +9,29 @@ puntaje_prode_fields = {
     'puntaje': fields.Integer
 }
 
+@puntaje_prode_ns.route('/<int:usuario_id>/<int:fecha>')
 class PuntajeProdeResource(Resource):
-    def get(self, usuario_id, fecha=None):
-        if not fecha:
-            puntajes = PuntajeProdeModel.query.filter_by(usuario_id=usuario_id).all()
+    @marshal_with(puntaje_prode_fields)
+    def get(self, usuario_id, fecha):
+    
+        puntaje = PuntajeProdeModel.query.filter_by(usuario_id=usuario_id, fecha=fecha).first()
 
-            puntajes_serializados = [
-                {"puntaje_id": puntaje.puntaje_id, 
-                "usuario_id": puntaje.usuario_id, 
-                "fecha": puntaje.fecha, 
-                "puntaje": puntaje.puntaje
-                }
-                for puntaje in puntajes]
+        if not puntaje:
+            abort(404, message="Puntaje no encontrado")
+        
+        return puntaje, 200
 
-            return puntajes_serializados, 200
-        else:
-            puntaje = PuntajeProdeModel.query.filter_by(usuario_id=usuario_id, fecha=fecha).first()
+@puntaje_prode_ns.route('/<int:usuario_id>')
+class PuntajeTotalProdeResource(Resource):
+    def get(self, usuario_id):
+        puntajes = PuntajeProdeModel.query.filter_by(usuario_id=usuario_id).all()
 
-            if not puntaje:
-                abort(404, message="Puntaje no encontrado")
-            
-        return marshal(puntaje, puntaje_prode_fields), 200
+        puntajes_serializados = [
+            {"puntaje_id": puntaje.puntaje_id, 
+            "usuario_id": puntaje.usuario_id, 
+            "fecha": puntaje.fecha, 
+            "puntaje": puntaje.puntaje
+            }
+            for puntaje in puntajes]
+
+        return puntajes_serializados, 200
