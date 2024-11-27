@@ -6,45 +6,50 @@
     <title>Tablas de Estadísticas</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://cdn.datatables.net/1.13.4/css/jquery.dataTables.min.css">
+    <link rel="stylesheet" href="/static/styles.css">
 </head>
-<body class="container">
+<body>
+    {% include 'navbar.html' %}
+    <div class="container mt-5">
+        <h1 class="mt-4">Tablas de Estadísticas</h1>
 
-    <h1 class="mt-4">Tablas de Estadísticas</h1>
+        <!-- Botones para cambiar entre tablas de posiciones -->
+        <div class="btn-group mb-3" role="group">
+            <button id="btn-posiciones" class="btn btn-primary">Tabla General</button>
+            <button id="btn-local" class="btn btn-secondary">Tabla Local</button>
+            <button id="btn-visitante" class="btn btn-secondary">Tabla Visitante</button>
+        </div>
 
-    <!-- Botones para cambiar entre tablas de posiciones -->
-    <div class="btn-group mb-3" role="group">
-        <button id="btn-posiciones" class="btn btn-primary">Tabla General</button>
-        <button id="btn-local" class="btn btn-secondary">Tabla Local</button>
-        <button id="btn-visitante" class="btn btn-secondary">Tabla Visitante</button>
+        <!-- Tabla de posiciones -->
+        <table id="tabla-posiciones" class="table table-dark table-striped">
+            <thead id="tabla-head"></thead>
+            <tbody id="tabla-body"></tbody>
+        </table>
+
+        <hr class="my-4">
+
+        <!-- Tabla de jugadores -->
+        <h2>Estadísticas de Jugadores</h2>
+        <div id="jugadores-disponibles">
+            <table id="tabla-jugadores" class="table table-dark table-striped display">
+                <thead>
+                    <tr>
+                        <th>Jugador</th>
+                        <th>Equipo</th>
+                        <th>Posición</th>
+                        <th>Partidos Jugados</th>
+                        <th>Goles</th>
+                        <th>Asistencias</th>
+                        <th>Vallas Invictas</th>
+                        <th>Tarjetas Amarillas</th>
+                        <th>Tarjetas Rojas</th>
+                        <th>Puntaje Promedio</th>
+                    </tr>
+                </thead>
+                <tbody></tbody>
+            </table>
+        </div>
     </div>
-
-    <!-- Tabla de posiciones -->
-    <table id="tabla-posiciones" class="table table-striped">
-        <thead id="tabla-head"></thead>
-        <tbody id="tabla-body"></tbody>
-    </table>
-
-    <hr>
-
-    <!-- Tabla de jugadores -->
-    <h2>Estadísticas de Jugadores</h2>
-    <table id="tabla-jugadores" class="table table-striped display">
-        <thead>
-            <tr>
-                <th>Jugador</th>
-                <th>Equipo</th>
-                <th>Posición</th>
-                <th>Partidos Jugados</th>
-                <th>Goles</th>
-                <th>Asistencias</th>
-                <th>Vallas Invictas</th>
-                <th>Tarjetas Amarillas</th>
-                <th>Tarjetas Rojas</th>
-                <th>Puntaje Promedio</th>
-            </tr>
-        </thead>
-        <tbody></tbody>
-    </table>
 
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdn.datatables.net/1.13.4/js/jquery.dataTables.min.js"></script>
@@ -104,7 +109,7 @@
             const tbody = document.querySelector("#tabla-jugadores tbody");
             tbody.innerHTML = "";
 
-            // Reemplazar `null` por `0` antes de cargar los datos
+            // Reemplazar valores nulos
             const cleanedData = data.map(jugador => ({
                 nombre: jugador.nombre || "N/A",
                 equipo: jugador.equipo || "N/A",
@@ -118,7 +123,7 @@
                 puntaje_promedio: jugador.puntaje_promedio ?? 0
             }));
 
-            // Crear filas para la tabla de jugadores
+            // Crear filas para la tabla
             cleanedData.forEach(jugador => {
                 const row = document.createElement("tr");
                 row.innerHTML = `
@@ -136,10 +141,17 @@
                 tbody.appendChild(row);
             });
 
-            // Inicializar DataTables
-            $('#tabla-jugadores').DataTable();
-        }
+            // Destruir DataTables si ya existe
+            if ($.fn.DataTable.isDataTable('#tabla-jugadores')) {
+                $('#tabla-jugadores').DataTable().destroy();
+            }
 
+            // Re-inicializar DataTables
+            $('#tabla-jugadores').DataTable({
+                pageLength: 10,
+                lengthChange: true
+            });
+        }
         // Listeners para los botones
         document.getElementById("btn-posiciones").addEventListener("click", () => {
             cargarTabla(urlPosiciones, "posiciones");
@@ -147,12 +159,12 @@
         });
 
         document.getElementById("btn-local").addEventListener("click", () => {
-            cargarTabla(urlPosicionesLocal, "posiciones");
+            cargarTabla(urlPosicionesLocal, "local");
             actualizarBotones("local");
         });
 
         document.getElementById("btn-visitante").addEventListener("click", () => {
-            cargarTabla(urlPosicionesVisitante, "posiciones");
+            cargarTabla(urlPosicionesVisitante, "visitante");
             actualizarBotones("visitante");
         });
 

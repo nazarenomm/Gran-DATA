@@ -17,7 +17,9 @@ from resources.formacion_resource import FormacionResource
 from resources.puntaje_resource import PuntajeResource, PuntajeTotalResource
 from resources.prode_resource import ProdeResource, ProdePostResource
 from resources.fecha_resource import FechaResource
+from resources.equipo_jugador_resource import EquipoJugadorResource
 from resources.puntaje_prode_resource import PuntajeProdeResource, PuntajeTotalProdeResource
+from resources.logout_resource import LogoutResource
 
 app = Flask(__name__)
 
@@ -48,9 +50,13 @@ def menu(usuario_id):
 def crear_equipo(usuario_id):
     return render_template('crear_equipo.html', usuario_id=usuario_id)
 
-@app.route('/ver_equipo/<int:equipo_id>')
-def ver_equipo(equipo_id):
-    return render_template('ver_equipo.html', equipo_id=equipo_id)
+@app.route('/ver_equipo/<int:usuario_id>')
+def ver_equipo(usuario_id):
+    return render_template('ver_equipo.html', usuario_id=usuario_id)
+
+@app.route('/modificar_equipo/<int:usuario_id>')
+def modificar_equipo(usuario_id):
+    return render_template('modificar_equipo.html', usuario_id=usuario_id)
 
 @app.route('/estadisticas')
 def estadisticas():

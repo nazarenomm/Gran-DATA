@@ -1,5 +1,5 @@
 from extensiones import db
-from models import ClubModel, EstadoModel, FormacionModel, JugadorModel, PartidoModel
+from models import ClubModel, EstadoModel, FormacionModel, JugadorModel, PartidoModel, RolModel
 from app import app
 import pandas as pd
 

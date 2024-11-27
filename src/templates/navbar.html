@@ -1,0 +1,53 @@
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
+    <div class="container-fluid">
+        <a class="navbar-brand" href="/menu/{{ usuario_id }}">Gran DATA</a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav ms-auto">
+                <li class="nav-item">
+                    <a class="nav-link" href="/menu/{{ usuario_id }}">Menu</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/estadisticas">Estadísticas</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/clubes">Clubes</a>
+                </li>
+                <li class="nav-item">
+                    <button id="logout-btn-nav" class="btn btn-danger">Cerrar Sesión</button>
+                </li>
+            </ul>
+        </div>
+    </div>
+</nav>
+
+<script>
+    document.getElementById('logout-btn-nav').addEventListener('click', () => {
+        // Verifica si el JWT existe en el localStorage
+        const token = localStorage.getItem('access token');
+
+        if (token) {
+            fetch('/logout', {
+                method: 'POST',
+                headers: {
+                    'Authorization': `Bearer ${token}`  // Envía el token en los headers
+                },
+                credentials: 'same-origin'  // Esto es para asegurar que las credenciales se manejen correctamente
+            })
+            .then(response => response.json())
+            .then(data => {
+                console.log('Logout exitoso:', data);  // Imprime la respuesta
+                localStorage.removeItem('access token');  // Elimina el JWT del localStorage
+                window.location.href = data.redirect_url;  // Redirige al login
+            })
+            .catch(err => {
+                console.error('Error al cerrar sesión:', err);
+                alert('Hubo un problema al cerrar sesión. Inténtalo nuevamente.');
+            });
+        } else {
+            window.location.href = '/login';
+        }
+    });
+</script>

@@ -13,6 +13,13 @@ body {
     text-align: center;
     box-shadow: 0 0 15px rgba(0, 0, 0, 0.5);
 }
+.navbar-brand {
+  font-weight: bold;
+}
+
+.nav-link, .btn {
+  color: white !important;
+}
 h2 {
     font-size: 2rem;
     margin-bottom: 20px;
@@ -52,11 +59,6 @@ a:hover {
   cursor: pointer;
 }
 
-#tabla-jugadores {
-  max-width: 600px; /* Ajustar el ancho según prefieras */
-  flex-shrink: 0;   /* Evitar que se reduzca */
-  display: none;    /* Inicialmente oculta */
-}
 
 #tabla-jugadores.active {
   display: block;

@@ -13,9 +13,10 @@ equipo_post_args.add_argument("formacion", type=str, help="Formación Requerida"
 equipo_post_args.add_argument("jugadores_id", type=dict, help="Jugadores Requeridos", required=True)
 
 equipo_patch_args = reqparse.RequestParser()
-equipo_patch_args.add_argument("accion", type=str, help="Accion requerida", required= True)
-equipo_patch_args.add_argument("jugador_entrante_id", type=int, help="Jugador Entrante ID Requerido", required= True)
-equipo_patch_args.add_argument("jugador_saliente_id", type=int, help="Jugador Saliente ID Requerido", required= True)
+equipo_patch_args.add_argument("accion", type=str, help="Accion requerida", required= True) # transferencia o cambio titular por suplente
+equipo_patch_args.add_argument("jugador_entrante_id", type=int, help="Jugador Entrante ID Requerido", required= False)
+equipo_patch_args.add_argument("jugador_saliente_id", type=int, help="Jugador Saliente ID Requerido", required= False)
+equipo_patch_args.add_argument("jugador_capitan_id", type=int, help="Jugador Saliente ID Requerido", required= False)
 
 equipo_fields = {
     'equipo_id': fields.Integer,
@@ -80,22 +81,28 @@ class EquipoResource(Resource):
         if not equipo:
             abort(404, message="Equipo no encontrado")
         
+        jugador_entrante_id = None
+        jugador_saliente_id = None
+        jugador_capitan_id = None
+        
         accion = args['accion']
-        jugador_entrante_id = args['jugador_entrante_id']
-        jugador_saliente_id = args['jugador_saliente_id']
+        if accion != 'cambio capitan':
+            jugador_entrante_id = args['jugador_entrante_id']
+            jugador_saliente_id = args['jugador_saliente_id']
 
-        jugador_entrante = JugadorModel.query.filter_by(jugador_id=jugador_entrante_id).first()
-        jugador_saliente = JugadorModel.query.filter_by(jugador_id=jugador_saliente_id).first()
+            jugador_entrante = JugadorModel.query.filter_by(jugador_id=jugador_entrante_id).first()
+            jugador_saliente = JugadorModel.query.filter_by(jugador_id=jugador_saliente_id).first()
+        else:
+            jugador_capitan_id = args['jugador_capitan_id']
+        if accion == 'transferencia':           
+        
+            if not jugador_entrante:
+                abort(404, message="Jugador Entrante no encontrado")
+            if not jugador_saliente:
+                abort(404, message="Jugador Saliente no encontrado")
 
-        if not jugador_entrante:
-            abort(404, message="Jugador Entrante no encontrado")
-        if not jugador_saliente:
-            abort(404, message="Jugador Saliente no encontrado")
-
-        if not (jugador_entrante_id and jugador_saliente_id):
-            abort(400, message="Se requieren los IDs de los jugadores")
-
-        if accion == 'transferencia':
+            if not (jugador_entrante_id and jugador_saliente_id):
+                abort(400, message="Se requieren los IDs de los jugadores")
             equipo_jugador_saliente = EquipoJugadorModel.query.filter_by(equipo_id=equipo_id, jugador_id=jugador_saliente_id).first()
             if not equipo_jugador_saliente:
                 abort(404, message="Jugador Saliente no encontrado en el equipo")
@@ -194,16 +201,17 @@ class EquipoResource(Resource):
 
         elif accion == 'cambio capitan':
             rol_titular_id = RolModel.query.filter_by(rol='titular').first().rol_id
-            equipo_jugador_entrante = EquipoJugadorModel.query.filter_by(equipo_id=equipo_id, jugador_id=jugador_entrante_id, rol_id=rol_titular_id).first()
-            if not equipo_jugador_entrante:
-                abort(404, message="Jugador a capitanear no encontrado en el equipo titular")
+            equipo_capitan_entrante = EquipoJugadorModel.query.filter_by(equipo_id=equipo_id, jugador_id=jugador_capitan_id, rol_id=rol_titular_id).first()
+            print(equipo_capitan_entrante)
+            if not equipo_capitan_entrante:
+                abort(404, message="Jugador a capitanear no encontrado en el equipo titular o ya es capitan")	
 
             rol_capitan_id = RolModel.query.filter_by(rol='capitan').first().rol_id
-            equipo_jugador_saliente = EquipoJugadorModel.query.filter_by(equipo_id=equipo_id, rol_id=rol_capitan_id).first()
-            if not equipo_jugador_saliente:
+            equipo_capitan_saliente = EquipoJugadorModel.query.filter_by(equipo_id=equipo_id, rol_id=rol_capitan_id).first()
+            if not equipo_capitan_saliente:
                 abort(404, message="Capitan no encontrado")
 
-            equipo_jugador_entrante.rol_id, equipo_jugador_saliente.rol_id = equipo_jugador_saliente.rol_id, equipo_jugador_entrante.rol_id
+            equipo_capitan_entrante.rol_id, equipo_capitan_saliente.rol_id = equipo_capitan_saliente.rol_id, equipo_capitan_entrante.rol_id
 
         else:
             abort(400, message="Accion no reconocida")
