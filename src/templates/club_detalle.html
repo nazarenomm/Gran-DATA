@@ -24,31 +24,57 @@
     </div>
 
     <script>
-        const clubId = {{ club_id }};
-        fetch(`/api/clubes/${clubId}`)
-            .then(response => response.json())
-            .then(club => {
-                // Actualizar nombre del club
-                document.getElementById('clubName').textContent = club.nombre;
-                
-                // Actualizar logo del club
-                const clubLogo = document.getElementById('clubLogo');
-                clubLogo.src = `/static/clubes/${club.nombre.replaceAll(" ", "_")}.png`;
-                clubLogo.onerror = () => { clubLogo.src = '/static/clubes/default.png'; };
+        const club_id = parseInt(window.location.pathname.split('/')[2]); // Obtener el club_id de la URL
 
-                // Generar detalles del club en la tabla
-                const details = `
-                    <tr><td>Puntos</td><td>${club.puntos}</td></tr>
-                    <tr><td>Partidos Jugados</td><td>${club.partidos_jugados}</td></tr>
-                    <tr><td>Partidos Ganados</td><td>${club.partidos_ganados}</td></tr>
-                    <tr><td>Partidos Empatados</td><td>${club.partidos_empatados}</td></tr>
-                    <tr><td>Partidos Perdidos</td><td>${club.partidos_perdidos}</td></tr>
-                    <tr><td>Goles a Favor</td><td>${club.goles_favor}</td></tr>
-                    <tr><td>Goles en Contra</td><td>${club.goles_contra}</td></tr>
-                `;
-                document.getElementById('clubDetails').innerHTML = details;
+        // Primero obtenemos los detalles del club para extraer el nombre
+        fetch(`/clubs`)
+            .then(response => response.json())
+            .then(clubes => {
+                // Encontrar el club por ID
+                const club = clubes.find(c => c.club_id === club_id);
+
+                if (!club) {
+                    console.error('Club no encontrado en /clubs');
+                    return;
+                }
+
+                const clubName = club.nombre;
+
+                // Luego hacemos el fetch a posiciones y filtramos por nombre
+                fetch(`/posiciones`)
+                    .then(response => response.json())
+                    .then(posiciones => {
+                        const posicion = posiciones.find(p => p.equipo.toLowerCase() === clubName.toLowerCase());
+
+                        if (!posicion) {
+                            console.error('Club no encontrado en /posiciones');
+                            return;
+                        }
+
+                        // Actualizar nombre del club
+                        document.getElementById('clubName').textContent = posicion.equipo;
+
+                        // Actualizar logo del club
+                        const clubLogo = document.getElementById('clubLogo');
+                        clubLogo.src = `/static/clubes/${posicion.equipo.replaceAll(" ", "_")}.png`;
+                        clubLogo.onerror = () => { clubLogo.src = '/static/clubes/default.png'; };
+
+                        // Generar detalles del club en la tabla
+                        const details = `
+                            <tr><td>Puntos</td><td>${posicion.puntos}</td></tr>
+                            <tr><td>Partidos Jugados</td><td>${posicion.partidos_jugados}</td></tr>
+                            <tr><td>Partidos Ganados</td><td>${posicion.ganados}</td></tr>
+                            <tr><td>Partidos Empatados</td><td>${posicion.empatados}</td></tr>
+                            <tr><td>Partidos Perdidos</td><td>${posicion.perdidos}</td></tr>
+                            <tr><td>Goles a Favor</td><td>${posicion.goles_favor}</td></tr>
+                            <tr><td>Goles en Contra</td><td>${posicion.goles_contra}</td></tr>
+                        `;
+                        document.getElementById('clubDetails').innerHTML = details;
+                    })
+                    .catch(error => console.error('Error al cargar posiciones:', error));
             })
-            .catch(error => console.error('Error al cargar el club:', error));
+            .catch(error => console.error('Error al cargar clubs:', error));
+
     </script>
 </body>
 </html>

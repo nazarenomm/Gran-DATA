@@ -103,7 +103,7 @@
             try {
                 const [formacionesRes, clubesRes, jugadoresRes] = await Promise.all([
                     fetch('/formaciones'),
-                    fetch('/api/clubes'),
+                    fetch('/clubs'),
                     fetch('/jugadores')
                 ]);
     

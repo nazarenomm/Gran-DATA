@@ -9,6 +9,7 @@ class TablaEstadisticasPrincipales(Resource):
     def get(self):
         query = text('''
             SELECT
+                j.jugador_id,
 	            j.nombre,
                 precio,
                 posicion,
@@ -34,6 +35,7 @@ class TablaEstadisticasPrincipales(Resource):
 
         tabla = [
             {
+                'jugador_id': row.jugador_id,
                 'nombre': row.nombre,
                 'precio': row.precio,
                 'posicion': row.posicion,

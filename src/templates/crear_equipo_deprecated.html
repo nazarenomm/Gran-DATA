@@ -140,7 +140,7 @@
                     }
     
                     for (const jugador of jugadores) {
-                        const clubResponse = await fetch(`/api/clubes/${jugador.club_id}`);
+                        const clubResponse = await fetch(`/clubs/${jugador.club_id}`);
                         const club = await clubResponse.json();
     
                         const row = document.createElement('tr');

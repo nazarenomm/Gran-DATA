@@ -19,6 +19,7 @@ from resources.prode_resource import ProdeResource, ProdePostResource
 from resources.fecha_resource import FechaResource
 from resources.equipo_jugador_resource import EquipoJugadorResource
 from resources.puntaje_prode_resource import PuntajeProdeResource, PuntajeTotalProdeResource
+from resources.logout_resource import LogoutResource
 
 app = Flask(__name__)
 

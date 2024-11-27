@@ -109,7 +109,7 @@
             const tbody = document.querySelector("#tabla-jugadores tbody");
             tbody.innerHTML = "";
 
-            // Reemplazar `null` por `0` antes de cargar los datos
+            // Reemplazar valores nulos
             const cleanedData = data.map(jugador => ({
                 nombre: jugador.nombre || "N/A",
                 equipo: jugador.equipo || "N/A",
@@ -123,7 +123,7 @@
                 puntaje_promedio: jugador.puntaje_promedio ?? 0
             }));
 
-            // Crear filas para la tabla de jugadores
+            // Crear filas para la tabla
             cleanedData.forEach(jugador => {
                 const row = document.createElement("tr");
                 row.innerHTML = `
@@ -141,10 +141,17 @@
                 tbody.appendChild(row);
             });
 
-            // Inicializar DataTables
-            $('#tabla-jugadores').DataTable();
-        }
+            // Destruir DataTables si ya existe
+            if ($.fn.DataTable.isDataTable('#tabla-jugadores')) {
+                $('#tabla-jugadores').DataTable().destroy();
+            }
 
+            // Re-inicializar DataTables
+            $('#tabla-jugadores').DataTable({
+                pageLength: 10,
+                lengthChange: true
+            });
+        }
         // Listeners para los botones
         document.getElementById("btn-posiciones").addEventListener("click", () => {
             cargarTabla(urlPosiciones, "posiciones");

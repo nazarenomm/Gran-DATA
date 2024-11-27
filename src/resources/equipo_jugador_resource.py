@@ -1,11 +1,12 @@
 from flask_restx import Resource, fields, marshal_with
 from models import EquipoJugadorModel, JugadorModel, EquipoModel
 from flask_jwt_extended import jwt_required, get_jwt_identity
+from extensiones import equipo_jugador_ns
 
 equipo_jugador_fields = {
     'equipo_id': fields.Integer,
     'usuario_id': fields.Integer,
-    'precio': fields.Integer,  # Cambié de 'valor' a 'precio'
+    'precio': fields.Integer,
     'formacion': fields.String,
     'jugadores': fields.List(fields.Nested({
         'jugador_id': fields.Integer,
@@ -16,7 +17,10 @@ equipo_jugador_fields = {
         'rol': fields.Integer
     }))
 }
+
+@equipo_jugador_ns.route('/')
 class EquipoJugadorResource(Resource):
+    @equipo_jugador_ns.doc(params={'usuario_id': 'ID del usuario'}, responses={200: 'OK', 404: 'No se encontró un equipo para este usuario.'})  
     @jwt_required()
     @marshal_with(equipo_jugador_fields)
     def get(self):
