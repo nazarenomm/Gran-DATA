@@ -15,7 +15,8 @@ from resources.fixture_resource import Fixture
 from resources.tablas_jugadores_resource import TablaEstadisticasPrincipales
 from resources.formacion_resource import FormacionResource
 from resources.puntaje_resource import PuntajeResource
-from resources.veda_resource import VedaResource
+from resources.prode_resource import ProdeResource
+from resources.fecha_resource import FechaResource
 from resources.equipo_jugador_resource import EquipoJugadorResource
 
 app = Flask(__name__)
@@ -42,8 +43,7 @@ api.add_resource(FormacionResource, '/formaciones')
 api.add_resource(ClubResource, '/api/clubes', '/api/clubes/<int:club_id>')
 api.add_resource(PuntajeResource, '/puntajes', '/puntajes/<int:equipo_id>', '/puntajes/<int:equipo_id>/<int:fecha>')
 api.add_resource(NotificacionResource, '/notificaciones/<int:usuario_id>', '/notificacion/<int:notificacion_id>')
-api.add_resource(VedaResource, '/veda') 
-api.add_resource(EquipoJugadorResource, '/equipojugador','/equipojugador/<int:equipo_id>') 
+api.add_resource(VedaResource, '/veda')
 
 # Rutas del Frontend
 @app.route('/home')

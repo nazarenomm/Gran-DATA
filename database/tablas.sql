@@ -98,10 +98,27 @@ CREATE TABLE partidos (
     FOREIGN KEY (visitante_id) REFERENCES clubes(club_id)
 );
 
+CREATE TABLE prodes (
+    prode_id INT AUTO_INCREMENT PRIMARY KEY,
+    usuario_id INT NOT NULL,
+    partido_id INT NOT NULL,
+    goles_local INT,
+    goles_visitante INT,
+    FOREIGN KEY (usuario_id) REFERENCES usuarios(usuario_id),
+    FOREIGN KEY (partido_id) REFERENCES partidos(partido_id)
+)
+
+CREATE TABLE puntajes_prode (
+    puntaje_id INT AUTO_INCREMENT PRIMARY KEY,
+    usuario_id INT NOT NULL,
+    fecha INT NOT NULL,
+    puntaje INT NOT NULL,
+    FOREIGN KEY (usuario_id) REFERENCES usuarios(usuario_id)
+);
+
 CREATE TABLE torneos (
     torneo_id INT AUTO_INCREMENT PRIMARY KEY,
     nombre VARCHAR(100) NOT NULL,
-    tipo VARCHAR(100) NOT NULL,
     fecha_creacion DATE NOT NULL
 );
 
@@ -110,14 +127,10 @@ CREATE TABLE torneo_usuario (
     torneo_id INT NOT NULL,
     usuario_id INT NOT NULL,
     es_admin BOOLEAN NOT NULL,
-    victorias INT,
-    empates INT,
-    derrotas INT,
     FOREIGN KEY (torneo_id) REFERENCES torneos(torneo_id),
     FOREIGN KEY (usuario_id) REFERENCES usuarios(usuario_id)
 );
 
-# TODO: cambiar lo nombres para mayor claridad, si es que se puede
 CREATE TABLE rendimientos (
     rendimiento_id INT AUTO_INCREMENT PRIMARY KEY,
     jugador_id INT NOT NULL,

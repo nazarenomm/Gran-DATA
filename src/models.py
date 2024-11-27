@@ -8,7 +8,7 @@ class UsuarioModel(db.Model):
     nombre = db.Column(db.String(80), nullable=False)
     apellido = db.Column(db.String(80), nullable=False)
     mail = db.Column(db.String(256), unique=True, nullable=False)
-    contraseña = db.Column(db.String(256), nullable=False) # unique?
+    contraseña = db.Column(db.String(256), nullable=False)
     telefono = db.Column(db.Integer, unique=True)
 
     def set_contraseña(self, contraseña):
@@ -93,11 +93,25 @@ class PartidoModel(db.Model):
     goles_visitante = db.Column(db.Integer)
     fecha = db.Column(db.Integer, nullable=False)
 
+class ProdeModel(db.Model):
+    __tablename__ = 'prodes'
+    prode_id = db.Column(db.Integer, primary_key=True)
+    usuario_id = db.Column(db.Integer, db.ForeignKey('usuarios.usuario_id'), nullable=False)
+    partido_id = db.Column(db.Integer, db.ForeignKey('partidos.partido_id'), nullable=False)
+    goles_local = db.Column(db.Integer, nullable=False)
+    goles_visitante = db.Column(db.Integer, nullable=False)
+
+class PuntajeProdeModel(db.Model):
+    __tablename__ = 'puntajes_prode'
+    puntaje_id = db.Column(db.Integer, primary_key=True)
+    usuario_id = db.Column(db.Integer, db.ForeignKey('usuarios.usuario_id'), nullable=False)
+    fecha = db.Column(db.Integer, nullable=False)
+    puntaje = db.Column(db.Integer, nullable=False)
+
 class TorneoModel(db.Model):
     __tablename__ = 'torneos'
     torneo_id = db.Column(db.Integer, primary_key=True)
     nombre = db.Column(db.String(100), nullable=False)
-    tipo = db.Column(db.String(100), nullable=False)
     fecha_creacion = db.Column(db.Date, nullable=False)
 
 class TorneoUsuarioModel(db.Model):
@@ -106,9 +120,6 @@ class TorneoUsuarioModel(db.Model):
     torneo_id = db.Column(db.Integer, db.ForeignKey('torneos.torneo_id'), nullable=False)
     usuario_id = db.Column(db.Integer, db.ForeignKey('usuarios.usuario_id'), nullable=False)
     es_admin = db.Column(db.Boolean, nullable=False)
-    victorias = db.Column(db.Integer)
-    empates = db.Column(db.Integer)
-    derrotas = db.Column(db.Integer)
 
 class RendimientoModel(db.Model):
     __tablename__ = 'rendimientos'
