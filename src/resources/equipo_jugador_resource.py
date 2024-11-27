@@ -8,6 +8,7 @@ equipo_jugador_fields = {
     'precio': fields.Integer,  # Cambié de 'valor' a 'precio'
     'formacion': fields.String,
     'jugadores': fields.List(fields.Nested({
+        'jugador_id': fields.Integer,
         'nombre': fields.String,
         'posicion': fields.String,
         'precio': fields.Integer,
@@ -34,6 +35,7 @@ class EquipoJugadorResource(Resource):
             jugador = JugadorModel.query.get(ej.jugador_id)
             valor_equipo += jugador.precio
             jugadores.append({
+                "jugador_id": jugador.jugador_id,
                 "nombre": jugador.nombre,
                 "posicion": jugador.posicion,
                 "precio": jugador.precio,

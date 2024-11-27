@@ -57,6 +57,10 @@
     <script>
         let jugadores = []; // Estado para los jugadores actuales
         let jugadoresDisponibles = []; // Estado para los jugadores disponibles
+        let accionSeleccionada = ''; // Almacena la acción seleccionada (transferencia, cambio o cambio de capitán)
+        let jugadorEntranteId = null;
+        let jugadorSalienteId = null;
+        let nuevoCapitanId = null;
 
         document.addEventListener('DOMContentLoaded', async () => {
             const equipoId = window.location.pathname.split('/')[2]; // Obtiene el ID del equipo desde la URL
@@ -64,7 +68,7 @@
             console.log('Equipo ID:', equipoId);
             console.log('Token:', token);
 
-            const response = await fetch(`/equipojugador`, { 
+            const response = await fetch(`/equipo_jugador`, { 
                 method: 'GET',
                 headers: {
                     'Authorization': `Bearer ${localStorage.getItem('access_token')}`
@@ -110,7 +114,9 @@
                             <td>${jugador.precio}</td>
                             <td>${jugador.estado}</td>
                             <td>
-                                <button class="btn btn-warning btn-sm" onclick="seleccionarJugadorParaTransferencia(${jugador.id}, '${jugador.posicion}')">Transferir</button>
+                                <button class="btn btn-warning btn-sm" onclick="setAccion('transferencia', ${jugador.jugador_id}, '${jugador.posicion}')">Transferir</button>
+                                <button class="btn btn-primary btn-sm" onclick="setAccion('cambio', ${jugador.jugador_id})">Cambio</button>
+                                <button class="btn btn-secondary btn-sm" onclick="setAccion('cambio capitan', ${jugador.jugador_id})">Cambiar Capitán</button>
                             </td>
                         </tr>
                     `;
@@ -123,6 +129,55 @@
                 `;
             }
         }
+
+        async function seleccionarCambioJugador(jugadorId, posicion) {
+            console.log('Cambio de jugador seleccionado:', jugadorId);
+
+            const jugadoresDisponiblesResponse = await fetch(`/jugadores?posicion=${posicion}`, {
+                method: 'GET',
+                headers: {
+                    'Authorization': `Bearer ${localStorage.getItem('access_token')}`
+                }
+            });
+
+            if (jugadoresDisponiblesResponse.ok) {
+                const jugadoresDisponiblesResponseData = await jugadoresDisponiblesResponse.json();
+                console.log('Jugadores disponibles para cambio:', jugadoresDisponiblesResponseData);
+                jugadoresDisponibles = jugadoresDisponiblesResponseData;
+                renderJugadoresTransferencia(jugadoresDisponibles);
+            } else {
+                console.log('Error al obtener jugadores disponibles.');
+                renderJugadoresTransferencia([]);
+            }
+        }
+
+        function cambiarCapitan(jugadorId) {
+            nuevoCapitanId = jugadorId; // Asigna el ID del nuevo capitán
+            console.log('Nuevo Capitán ID:', nuevoCapitanId);
+
+            jugadores.forEach(jugador => {
+                jugador.rol = (jugador.jugador_id === jugadorId) ? 3 : (jugador.rol === 3 ? 1 : jugador.rol);
+            });
+            renderJugadoresEquipo(jugadores); // Refresca la tabla con el nuevo capitán
+        }
+
+        function setAccion(accion, jugadorId, posicion = null) {
+            accionSeleccionada = accion;
+
+            if (accion === 'transferencia') {
+                jugadorSalienteId = jugadorId; // Actualiza jugadorSalienteId
+                console.log(`Acción seleccionada: ${accion}, Jugador Saliente ID: ${jugadorSalienteId}, Posición: ${posicion}`);
+                seleccionarJugadorParaTransferencia(jugadorId, posicion); // Llama a la función para obtener jugadores disponibles
+            } else if (accion === 'cambio') {
+                jugadorSalienteId = jugadorId; // Actualiza jugadorSalienteId
+                console.log(`Acción seleccionada: ${accion}, Jugador Saliente ID: ${jugadorSalienteId}`);
+            } else if (accion === 'cambio capitan') {
+                nuevoCapitanId = jugadorId; // Actualiza nuevoCapitanId
+                console.log(`Acción seleccionada: ${accion}, Jugador Capitán ID: ${nuevoCapitanId}`);
+                cambiarCapitan(jugadorId); // Llama a la función para cambiar el capitán
+            }
+        }
+
 
         // Función para seleccionar un jugador y cargar jugadores disponibles por su posición
         async function seleccionarJugadorParaTransferencia(jugadorId, posicion) {
@@ -160,7 +215,7 @@
                             <td>${jugador.precio}</td>
                             <td>${jugador.estado}</td>
                             <td>
-                                <button class="btn btn-info btn-sm" onclick="transferirJugador(${jugador.id})">Transferir</button>
+                                <button class="btn btn-info btn-sm" onclick="transferirJugador(${jugador.jugador_id})">Transferir</button>
                             </td>
                         </tr>
                     `;
@@ -176,71 +231,63 @@
 
         // Función para transferir jugador (mover entre equipos)
         function transferirJugador(jugadorId) {
-            // Aquí es donde podrías cambiar el jugador entre las listas de jugadores
-            console.log('Jugador transferido:', jugadorId);
-            // Esto solo debe actualizar el estado local y luego proceder a actualizar el backend
-            const jugador = jugadoresDisponibles.find(j => j.id === jugadorId);
-            jugadores.push(jugador); // Agregar jugador al equipo
-            renderJugadoresEquipo(jugadores);
+            jugadorEntranteId = jugadorId; // Asigna el ID del jugador entrante
+            console.log('Jugador Entrante ID:', jugadorEntranteId);
+
+            const jugador = jugadoresDisponibles.find(j => j.jugador_id === jugadorId);
+            if (jugador) {
+                jugadores.push(jugador); // Agrega el jugador al equipo
+                renderJugadoresEquipo(jugadores); // Refresca la lista de jugadores del equipo
+            }
         }
 
         // Confirmar cambios
         document.getElementById('confirmar-cambios').addEventListener('click', async () => {
+            console.log(`Acción confirmada: ${accionSeleccionada}`);
             const equipoId = window.location.pathname.split('/')[2];  // Obtén el ID del equipo desde la URL
-            let accion = ''; // Esta variable se definirá según la acción seleccionada
-            let jugadorEntranteId = null;
-            let jugadorSalienteId = null;
-            let nuevoCapitanId = null;
 
-            // Aquí determinarás qué acción se tomará según la lógica de tu aplicación
-            // Este ejemplo solo cubre una acción de 'transferencia' como ilustración:
-
-            // Suponiendo que has seleccionado un jugador para transferencia o cambio de capitán
-            if (accionSeleccionada === 'transferencia') {
-                // Supón que tienes los IDs de los jugadores entrante y saliente
-                jugadorEntranteId = seleccionadoParaTransferencia.id;
-                jugadorSalienteId = jugadorSeleccionado.id;  // El jugador que está saliendo del equipo
-                accion = 'transferencia';
-            } else if (accionSeleccionada === 'cambio') {
-                // Lógica para cambio de jugadores dentro del equipo
-                jugadorEntranteId = jugadorNuevo.id;
-                jugadorSalienteId = jugadorActual.id;
-                accion = 'cambio';
-            } else if (accionSeleccionada === 'cambio capitan') {
-                // Lógica para cambio de capitán
-                nuevoCapitanId = nuevoCapitan.id;
-                accion = 'cambio capitan';
-            }
-
-            // Crear el cuerpo de la petición según la acción
-            const body = {
-                accion: accion,
+            // Declara el cuerpo de la petición una sola vez
+            let body = {
+                accion: '', // Acción seleccionada
             };
 
-            if (accion === 'transferencia' || accion === 'cambio') {
+            // Determina la acción según lo seleccionado
+            if (accionSeleccionada === 'transferencia') {
+                body.accion = 'transferencia';
                 body.jugador_entrante_id = jugadorEntranteId;
                 body.jugador_saliente_id = jugadorSalienteId;
-            }
+            } else if (accionSeleccionada === 'cambio') {
+                const titular = jugadores.find(jugador => jugador.jugador_id === jugadorSalienteId);
+                const suplente = jugadores.find(jugador => jugador.rol === 2 && jugador.posicion === titular.posicion);
+                body.accion = 'cambio';     
+                body.jugador_entrante_id = suplente.jugador_id;
+                body.jugador_saliente_id = titular.jugador_id;
 
-            if (accion === 'cambio capitan') {
+            } else if (accionSeleccionada === 'cambio capitan') {
+                body.accion = 'cambio capitan';
                 body.jugador_capitan_id = nuevoCapitanId;
             }
 
             // Realiza la petición PATCH al backend
-            const response = await fetch(`/equipo/${equipoId}`, {
-                method: 'PATCH',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${localStorage.getItem('access_token')}`,
-                },
-                body: JSON.stringify(body),  // El cuerpo de la petición
-            });
-
-            if (response.ok) {
-                alert('Equipo actualizado exitosamente');
-            } else {
-                const errorData = await response.json();
-                alert(`Error al actualizar el equipo: ${errorData.message}`);
+            try {
+                const response = await fetch(`/equipo/${equipoId}`, {
+                    method: 'PATCH',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${localStorage.getItem('access_token')}`,
+                    },
+                    body: JSON.stringify(body),  // El cuerpo de la petición
+                });
+                console.log(body);
+                if (response.ok) {
+                    alert('Equipo actualizado exitosamente');
+                } else {
+                    const errorData = await response.json();
+                    alert(`Error al actualizar el equipo: ${errorData.message}`);
+                }
+            } catch (error) {
+                console.error('Error al realizar la petición:', error);
+                alert('Ocurrió un error al conectar con el servidor.');
             }
         });
 

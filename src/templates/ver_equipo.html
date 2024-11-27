@@ -40,7 +40,7 @@
             const token = localStorage.getItem('access_token');
             console.log(equipoId);
             console.log(token); 
-            const response = await fetch(`/equipojugador`, {  // Cambia aquí a '/equipojugador'
+            const response = await fetch(`/equipo_jugador`, { 
                 method: 'GET',
                 headers: {
                     'Authorization': `Bearer ${localStorage.getItem('access_token')}`

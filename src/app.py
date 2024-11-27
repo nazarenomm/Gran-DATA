@@ -43,7 +43,9 @@ api.add_resource(FormacionResource, '/formaciones')
 api.add_resource(ClubResource, '/api/clubes', '/api/clubes/<int:club_id>')
 api.add_resource(PuntajeResource, '/puntajes', '/puntajes/<int:equipo_id>', '/puntajes/<int:equipo_id>/<int:fecha>')
 api.add_resource(NotificacionResource, '/notificaciones/<int:usuario_id>', '/notificacion/<int:notificacion_id>')
-api.add_resource(VedaResource, '/veda')
+api.add_resource(FechaResource, '/fecha')
+api.add_resource(EquipoJugadorResource, '/equipo_jugador' )
+
 
 # Rutas del Frontend
 @app.route('/home')

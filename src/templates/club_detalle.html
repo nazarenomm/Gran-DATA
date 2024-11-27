@@ -36,7 +36,7 @@
                 clubLogo.src = `/static/clubes/${club.nombre.replaceAll(" ", "_")}.png`;
                 clubLogo.onerror = () => { clubLogo.src = '/static/clubes/default.png'; };
 
-                // Generar detalles del club
+                // Generar detalles del club en la tabla
                 const details = `
                     <tr><td>Puntos</td><td>${club.puntos}</td></tr>
                     <tr><td>Partidos Jugados</td><td>${club.partidos_jugados}</td></tr>
