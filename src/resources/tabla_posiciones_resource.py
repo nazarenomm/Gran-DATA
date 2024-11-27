@@ -1,9 +1,11 @@
 from flask_restx import Resource
 from flask import jsonify
 from sqlalchemy import text
-from extensiones import db
+from extensiones import db, posiciones_ns
 
+@posiciones_ns.route('')
 class TablaPosiciones(Resource):
+    @posiciones_ns.doc(responses={200: 'OK', 400: 'Invalid Argument', 500: 'Mapping Key Error'})
     def get(self):
         query = text('''
             WITH tabla AS (
@@ -69,7 +71,6 @@ class TablaPosiciones(Resource):
 
         result = db.session.execute(query).fetchall()
 
-        # Convertir cada fila a un diccionario manualmente
         posiciones = [
             {
                 "equipo": row.equipo,
@@ -88,7 +89,9 @@ class TablaPosiciones(Resource):
         return jsonify(posiciones)
     
 
+@posiciones_ns.route('/local')
 class TablaPosicionesLocal(Resource):
+    @posiciones_ns.doc(responses={200: 'OK', 400: 'Invalid Argument', 500: 'Mapping Key Error'})
     def get(self):
         query = text('''
             WITH tabla AS (
@@ -156,7 +159,9 @@ class TablaPosicionesLocal(Resource):
 
         return jsonify(posiciones)
 
+@posiciones_ns.route('/visitante')
 class TablaPosicionesVisitante(Resource):
+    @posiciones_ns.doc(responses={200: 'OK', 400: 'Invalid Argument', 500: 'Mapping Key Error'})
     def get(self):
         query = text('''
             WITH tabla AS (

@@ -1,9 +1,11 @@
 from flask_restx import Resource
 from flask import jsonify
 from sqlalchemy import text
-from extensiones import db
+from extensiones import db, estadisticas_principales_ns
 
+@estadisticas_principales_ns.route('')
 class TablaEstadisticasPrincipales(Resource):
+    @estadisticas_principales_ns.doc(responses={200: 'OK', 400: 'Invalid Argument', 500: 'Mapping Key Error'})
     def get(self):
         query = text('''
             SELECT
