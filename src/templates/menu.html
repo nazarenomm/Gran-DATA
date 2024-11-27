@@ -20,48 +20,49 @@
     
     <script>
         document.addEventListener('DOMContentLoaded', async () => {
-    const access_token = localStorage.getItem('access_token');
-    if (!access_token) {
-        window.location.href = "/login";
-        return;
-    }
-
-    try {
-        const usuario_id = window.location.pathname.split('/')[2];
-        
-        const response = await fetch(`/menu/${usuario_id}`, {
-            method: "POST",  
-            headers: {
-                "Authorization": `Bearer ${access_token}`,
-                "Content-Type": "application/json"
-            },
-            body: JSON.stringify({}) 
-        });
-
-        if (response.ok) {
-            const data = await response.json();
-            document.getElementById('usuario_nombre').innerText = data.usuario_nombre;
-            
-            const crearEquipoBtn = document.getElementById('crear-equipo-btn');
-            const verEquipoBtn = document.getElementById('ver-equipo-btn');
-
-            if (data.equipo) {
-                verEquipoBtn.href = `/ver_equipo/${data.equipo_id}`;
-                verEquipoBtn.classList.remove('d-none');
-            } else {
-                crearEquipoBtn.href = `/crear_equipo/${usuario_id}`;
-                crearEquipoBtn.classList.remove('d-none');
+            const access_token = localStorage.getItem('access_token');
+            if (!access_token) {
+                window.location.href = "/login";
+                return;
             }
-        } else {
-            const errorData = await response.json();
-            console.error("Error del servidor:", errorData);
-            localStorage.removeItem('access_token');
-            window.location.href = "/login";
-        }
-    } catch (error) {
-        console.error('Error de red:', error);
-    }
-});
+
+            try {
+                const usuario_id = window.location.pathname.split('/')[2];
+                
+                const response = await fetch(`/menu/${usuario_id}`, {
+                    method: "POST",  
+                    headers: {
+                        "Authorization": `Bearer ${access_token}`,
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify({}) 
+                });
+
+                if (response.ok) {
+                    const data = await response.json();
+                    document.getElementById('usuario_nombre').innerText = data.usuario_nombre;
+                    
+                    const crearEquipoBtn = document.getElementById('crear-equipo-btn');
+                    const verEquipoBtn = document.getElementById('ver-equipo-btn');
+
+                    if (data.equipo_id) { 
+                        verEquipoBtn.href = `/ver_equipo/${data.equipo_id}`;
+                        verEquipoBtn.classList.remove('d-none');
+                    } else {
+                        crearEquipoBtn.href = `/crear_equipo/${usuario_id}`;
+                        crearEquipoBtn.classList.remove('d-none');
+                    }
+
+                } else {
+                    const errorData = await response.json();
+                    console.error("Error del servidor:", errorData);
+                    localStorage.removeItem('access_token');
+                    window.location.href = "/login";
+                }
+            } catch (error) {
+                console.error('Error de red:', error);
+            }
+        });
     </script>
 </body>
 </html>

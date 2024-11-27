@@ -14,8 +14,9 @@ equipo_post_args.add_argument("jugadores_id", type=dict, help="Jugadores Requeri
 
 equipo_patch_args = reqparse.RequestParser()
 equipo_patch_args.add_argument("accion", type=str, help="Accion requerida", required= True) # transferencia o cambio titular por suplente
-equipo_patch_args.add_argument("jugador_entrante_id", type=int, help="Jugador Entrante ID Requerido", required= True)
-equipo_patch_args.add_argument("jugador_saliente_id", type=int, help="Jugador Saliente ID Requerido", required= True)
+equipo_patch_args.add_argument("jugador_entrante_id", type=int, help="Jugador Entrante ID Requerido", required= False)
+equipo_patch_args.add_argument("jugador_saliente_id", type=int, help="Jugador Saliente ID Requerido", required= False)
+equipo_patch_args.add_argument("jugador_capitan", type=int, help="Jugador Saliente ID Requerido", required= False)
 
 equipo_fields = {
     'equipo_id': fields.Integer,
@@ -170,6 +171,7 @@ class EquipoResource(Resource):
         db.session.commit()
         return nuevo_equipo, 201
     
+    @jwt_required()
     def patch(self, equipo_id):
         if veda_service.verificar_veda():
             abort(400, message="Estamos en veda")
@@ -180,21 +182,21 @@ class EquipoResource(Resource):
             abort(404, message="Equipo no encontrado")
         
         accion = args['accion']
-        jugador_entrante_id = args['jugador_entrante_id']
-        jugador_saliente_id = args['jugador_saliente_id']
+        if args['jugador_entrante_id']:
+            jugador_entrante_id = args['jugador_entrante_id']
+            jugador_saliente_id = args['jugador_saliente_id']
 
-        jugador_entrante = JugadorModel.query.filter_by(jugador_id=jugador_entrante_id).first()
-        jugador_saliente = JugadorModel.query.filter_by(jugador_id=jugador_saliente_id).first()
+            jugador_entrante = JugadorModel.query.filter_by(jugador_id=jugador_entrante_id).first()
+            jugador_saliente = JugadorModel.query.filter_by(jugador_id=jugador_saliente_id).first()
+        if accion == 'transferencia':           
+        
+            if not jugador_entrante:
+                abort(404, message="Jugador Entrante no encontrado")
+            if not jugador_saliente:
+                abort(404, message="Jugador Saliente no encontrado")
 
-        if not jugador_entrante:
-            abort(404, message="Jugador Entrante no encontrado")
-        if not jugador_saliente:
-            abort(404, message="Jugador Saliente no encontrado")
-
-        if not (jugador_entrante_id and jugador_saliente_id):
-            abort(400, message="Se requieren los IDs de los jugadores")
-
-        if accion == 'transferencia':
+            if not (jugador_entrante_id and jugador_saliente_id):
+                abort(400, message="Se requieren los IDs de los jugadores")
             equipo_jugador_saliente = EquipoJugadorModel.query.filter_by(equipo_id=equipo_id, jugador_id=jugador_saliente_id).first()
             if not equipo_jugador_saliente:
                 abort(404, message="Jugador Saliente no encontrado en el equipo")

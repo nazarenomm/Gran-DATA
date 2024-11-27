@@ -19,5 +19,6 @@ class MenuResource(Resource):
         equipo = EquipoModel.query.filter_by(usuario_id=usuario_id).first()
         print(f'Equipo: {equipo}')
         return {
-            "usuario_nombre": usuario.nombre
+            "usuario_nombre": usuario.nombre,
+            "equipo_id" : equipo.equipo_id if equipo else None
         }

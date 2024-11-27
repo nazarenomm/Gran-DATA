@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Crear Equipo - Estilo Gran DT</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="/static/styles.css">
+</head>
+<body>
+    {% include 'navbar.html' %}
+
+    <div class="container mt-5">
+        <h1>Crear Equipo</h1>
+    
+        <!-- Selección de Formación -->
+        <div class="mb-3">
+            <label for="formacion" class="form-label">Formación</label>
+            <select id="formacion" class="form-select"></select>
+        </div>
+    
+        <!-- Contenedor flex para cancha y tabla -->
+        <div class="d-flex justify-content-between align-items-start">
+            <!-- Cancha -->
+            <div class="cancha-container" id="cancha">
+                <!-- Camisetas generadas dinámicamente -->
+            </div>
+    
+            <!-- Tabla de Jugadores -->
+            <div id="tabla-jugadores" class="active mt-4">
+                <h5>Seleccionar jugador para posición: <span id="posicion-actual"></span></h5>
+                <input type="text" id="busqueda-jugador" class="form-control mb-2" placeholder="Buscar por nombre o club">
+                <div id="jugadores-disponibles">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>Nombre</th>
+                                <th>Club</th>
+                                <th>Precio</th>
+                                <th>Estado</th>
+                                <th>Seleccionar</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <!-- Filas dinámicas -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <button id="guardar-equipo" class="btn btn-primary mt-4">Guardar Equipo</button>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', async () => {
+            const formacionSelect = document.getElementById('formacion');
+            const cancha = document.getElementById('cancha');
+            const tablaJugadores = document.getElementById('tabla-jugadores');
+            const jugadoresDisponibles = document.querySelector('#jugadores-disponibles tbody');
+            const posicionActual = document.getElementById('posicion-actual');
+            const inputBusqueda = document.getElementById('busqueda-jugador');
+    
+            // Obtener formaciones desde el backend
+            const formacionesResponse = await fetch('/formaciones');
+            const formaciones = await formacionesResponse.json();
+    
+            formaciones.forEach(f => {
+                const option = document.createElement('option');
+                option.value = f.formacion;
+                option.textContent = f.formacion;
+                formacionSelect.appendChild(option);
+            });
+    
+            // Generar camisetas en la cancha según la formación seleccionada
+            function generarCamisetas(formacion) {
+                cancha.innerHTML = ''; // Limpiar la cancha
+    
+                const formacionSeleccionada = formaciones.find(f => f.formacion === formacion);
+                if (!formacionSeleccionada) return;
+    
+                const { defensores, mediocampistas, delanteros } = formacionSeleccionada;
+                const posiciones = [
+                    { tipo: 'ARQ', cantidad: 1 },
+                    { tipo: 'DEF', cantidad: defensores },
+                    { tipo: 'VOL', cantidad: mediocampistas },
+                    { tipo: 'DEL', cantidad: delanteros }
+                ];
+    
+                const yPosiciones = [840, 690, 410, 170];
+    
+                posiciones.forEach((posicion, index) => {
+                    const y = yPosiciones[index];
+                    const espaciado = cancha.offsetWidth / (posicion.cantidad + 1);
+    
+                    for (let i = 0; i < posicion.cantidad; i++) {
+                        const camiseta = document.createElement('img');
+                        camiseta.src = '/static/camiseta_generica.png';
+                        camiseta.className = 'camiseta';
+                        camiseta.style.position = 'absolute';
+                        camiseta.style.left = `${(espaciado * (i + 1)) - 30}px`;
+                        camiseta.style.top = `${y}px`;
+                        camiseta.dataset.posicion = posicion.tipo;
+    
+                        camiseta.addEventListener('click', () => {
+                            posicionActual.textContent = posicion.tipo;
+                            cargarJugadores(posicion.tipo);
+                        });
+    
+                        cancha.appendChild(camiseta);
+                    }
+                });
+            }
+    
+            // Buscar jugadores dinámicamente
+            inputBusqueda.addEventListener('input', () => {
+                const filter = inputBusqueda.value.toLowerCase();
+                const rows = document.querySelectorAll('#jugadores-disponibles tbody tr');
+    
+                rows.forEach(row => {
+                    const nombre = row.querySelector('td:nth-child(1)').textContent.toLowerCase();
+                    const equipo = row.querySelector('td:nth-child(2)').textContent.toLowerCase();
+                    row.style.display = (nombre.includes(filter) || equipo.includes(filter)) ? '' : 'none';
+                });
+            });
+    
+            // Cargar jugadores según la posición
+            async function cargarJugadores(posicion) {
+                jugadoresDisponibles.innerHTML = ''; // Limpiar tabla
+    
+                try {
+                    const response = await fetch(`/jugadores?posicion=${posicion}`);
+                    const jugadores = await response.json();
+    
+                    if (!jugadores.length) {
+                        const emptyRow = document.createElement('tr');
+                        emptyRow.innerHTML = '<td colspan="4">No hay jugadores disponibles.</td>';
+                        jugadoresDisponibles.appendChild(emptyRow);
+                        return;
+                    }
+    
+                    for (const jugador of jugadores) {
+                        const clubResponse = await fetch(`/api/clubes/${jugador.club_id}`);
+                        const club = await clubResponse.json();
+    
+                        const row = document.createElement('tr');
+                        row.innerHTML = ` 
+                            <td>${jugador.nombre}</td>
+                            <td>${club.nombre}</td>
+                            <td>${jugador.precio}</td>
+                            <td>${jugador.estado}</td>
+                            <td><button class="btn btn-success seleccionar-btn" data-id="${jugador.jugador_id}">Seleccionar</button></td>
+                        `;
+                        jugadoresDisponibles.appendChild(row);
+                    }
+    
+                    tablaJugadores.classList.add('active'); // Mostrar tabla
+                } catch (error) {
+                    console.error('Error al cargar jugadores:', error);
+                }
+            }
+    
+            // Actualizar camisetas al cambiar la formación
+            formacionSelect.addEventListener('change', () => {
+                generarCamisetas(formacionSelect.value);
+            });
+    
+            // Inicializar con la primera formación
+            generarCamisetas(formacionSelect.value);
+    
+            const jugadoresSeleccionados = [];
+
+            document.addEventListener('click', (event) => {
+                if (event.target.classList.contains('seleccionar-btn')) {
+                    const jugadorId = event.target.dataset.id;
+                    if (!jugadoresSeleccionados.includes(jugadorId)) {
+                        jugadoresSeleccionados.push(jugadorId);
+                        event.target.textContent = 'Seleccionado';
+                        event.target.classList.remove('btn-success');
+                        event.target.classList.add('btn-secondary');
+                    }
+                }
+            });
+
+            // Función para guardar el equipo
+            document.getElementById('guardar-equipo').addEventListener('click', async () => {
+                if (jugadoresSeleccionados.length === 0) {
+                    alert('Debes seleccionar jugadores para tu equipo');
+                    return;
+                }
+
+                const jugadoresParaGuardar = jugadoresSeleccionados.map(jugadorId => ({
+                    jugador_id: jugadorId,
+                    // Puedes agregar más detalles como la posición si es necesario
+                }));
+
+                try {
+                    const response = await fetch('/equipos', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({ jugadores: jugadoresParaGuardar })
+                    });
+
+                    if (response.ok) {
+                        alert('Equipo guardado exitosamente');
+                    } else {
+                        alert('Error al guardar el equipo');
+                    }
+                } catch (error) {
+                    console.error('Error al guardar el equipo:', error);
+                    alert('Error al guardar el equipo');
+                }
+            });
+        });
+    </script>
+</body>
+</html>

@@ -16,6 +16,7 @@ from resources.tablas_jugadores_resource import TablaEstadisticasPrincipales
 from resources.formacion_resource import FormacionResource
 from resources.puntaje_resource import PuntajeResource
 from resources.veda_resource import VedaResource
+from resources.equipo_jugador_resource import EquipoJugadorResource
 
 app = Flask(__name__)
 
@@ -41,7 +42,8 @@ api.add_resource(FormacionResource, '/formaciones')
 api.add_resource(ClubResource, '/api/clubes', '/api/clubes/<int:club_id>')
 api.add_resource(PuntajeResource, '/puntajes', '/puntajes/<int:equipo_id>', '/puntajes/<int:equipo_id>/<int:fecha>')
 api.add_resource(NotificacionResource, '/notificaciones/<int:usuario_id>', '/notificacion/<int:notificacion_id>')
-api.add_resource(VedaResource, '/veda')
+api.add_resource(VedaResource, '/veda') 
+api.add_resource(EquipoJugadorResource, '/equipojugador','/equipojugador/<int:equipo_id>') 
 
 # Rutas del Frontend
 @app.route('/home')
@@ -60,13 +62,17 @@ def register():
 def menu(usuario_id):
     return render_template('menu.html', usuario_id=usuario_id)
 
-@app.route('/crear_equipo2/<int:usuario_id>')
+@app.route('/crear_equipo/<int:usuario_id>')
 def crear_equipo(usuario_id):
-    return render_template('crear_equipo2.html', usuario_id=usuario_id)
+    return render_template('crear_equipo.html', usuario_id=usuario_id)
 
-@app.route('/ver_equipo/<int:equipo_id>')
-def ver_equipo(equipo_id):
-    return render_template('ver_equipo.html', equipo_id=equipo_id)
+@app.route('/ver_equipo/<int:usuario_id>')
+def ver_equipo(usuario_id):
+    return render_template('ver_equipo.html', usuario_id=usuario_id)
+
+@app.route('/modificar_equipo/<int:usuario_id>')
+def modificar_equipo(usuario_id):
+    return render_template('modificar_equipo.html', usuario_id=usuario_id)
 
 @app.route('/estadisticas')
 def estadisticas():

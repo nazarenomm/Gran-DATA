@@ -14,14 +14,17 @@ class JugadorResource(Resource):
     @marshal_with(jugador_fields)
     def get(self):
         parser = reqparse.RequestParser()
-        parser.add_argument('posicion', type=str, required=True, help='La posición es obligatoria.')
+        parser.add_argument('posicion', type=str, required=False, help='La posición es obligatoria.')
         parser.add_argument('search', type=str, required=False, help='Filtro opcional por nombre o apellido.')
         args = parser.parse_args()
 
         posicion = args['posicion']
         search = args.get('search', '')
 
-        query = JugadorModel.query.filter(JugadorModel.posicion == posicion)
+        if posicion:
+            query = JugadorModel.query.filter(JugadorModel.posicion == posicion)
+        else:
+            query = JugadorModel.query
 
         # Si hay un término de búsqueda, filtrar por nombre o apellido
         if search:
