@@ -1,9 +1,11 @@
 from flask_restx import Resource
 from flask import jsonify
 from sqlalchemy import text
-from extensiones import db
+from extensiones import db, fixture_ns
 
+@fixture_ns.route('')
 class Fixture(Resource):
+    @fixture_ns.doc(responses={200: 'OK', 400: 'Invalid Argument', 500: 'Mapping Key Error'})
     def get(self):
         query = text('''
             WITH cte AS (

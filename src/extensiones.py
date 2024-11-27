@@ -1,5 +1,42 @@
+from flask_restx import Api
 from flask_sqlalchemy import SQLAlchemy
 from flask_jwt_extended import JWTManager
 
 db = SQLAlchemy()
 jwt = JWTManager()
+
+api = Api(doc='/docs', title='Gran Data')
+
+usuario_ns = api.namespace('usuario', description='Operaciones relacionadas a los usuarios')
+login_ns = api.namespace('login', description='Operaciones relacionadas al login')
+equipo_ns = api.namespace('equipo', description='Operaciones relacionadas a los equipos')
+torneo_ns = api.namespace('torneo', description='Operaciones relacionadas a los torneos')
+jugador_ns = api.namespace('jugadores', description='Operaciones relacionadas a los jugadores')
+menu_ns = api.namespace('menu', description='Operaciones relacionadas al menu')
+posiciones_ns = api.namespace('posiciones', description='Operaciones relacionadas a la tabla de posiciones')
+fixture_ns = api.namespace('fixture', description='Operaciones relacionadas al fixture')
+estadisticas_principales_ns = api.namespace('estadisticas-principales', description='Operaciones relacionadas a las estadisticas principales')
+formaciones_ns = api.namespace('formaciones', description='Operaciones relacionadas a las alineaciones')
+clubes_ns = api.namespace('clubs', description='Operaciones relacionadas a los clubes')
+puntajes_ns = api.namespace('puntaje', description='Operaciones relacionadas a los puntajes')
+notificaciones_ns = api.namespace('notificaciones', description='Operaciones relacionadas a las notificaciones')
+prode_ns = api.namespace('prode', description='Operaciones relacionadas al prode')
+fecha_ns = api.namespace('fecha', description='Operaciones relacionadas a la fecha')
+puntaje_prode_ns = api.namespace('puntaje_prode', description='Operaciones relacionadas a los puntajes del prode')
+
+api.add_namespace(usuario_ns, path='/usuario')
+api.add_namespace(login_ns, path='/login')
+api.add_namespace(equipo_ns, path='/equipo')
+api.add_namespace(torneo_ns, path='/torneo')
+api.add_namespace(jugador_ns, path='/jugadores')
+api.add_namespace(menu_ns, path='/menu')
+api.add_namespace(posiciones_ns, path='/posiciones')
+api.add_namespace(fixture_ns, path='/fixture')
+api.add_namespace(estadisticas_principales_ns, path='/estadisticas-principales')
+api.add_namespace(formaciones_ns, path='/formaciones')
+api.add_namespace(clubes_ns, path='/clubs')
+api.add_namespace(puntajes_ns, path='/puntaje')
+api.add_namespace(notificaciones_ns, path='/notificaciones')
+api.add_namespace(prode_ns, path='/prode')
+api.add_namespace(fecha_ns, path='/fecha')
+api.add_namespace(puntaje_prode_ns, path='/puntaje_prode')

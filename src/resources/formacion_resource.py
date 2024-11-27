@@ -1,7 +1,5 @@
 from flask_restx import Resource, fields, marshal_with
-from flask import jsonify
-from sqlalchemy import text
-from extensiones import db
+from extensiones import formaciones_ns
 from models import FormacionModel
 
 
@@ -12,7 +10,9 @@ jugador_fields = {
     'delanteros': fields.Integer
 }
 
+@formaciones_ns.route('')
 class FormacionResource(Resource):
+    @formaciones_ns.doc(responses={200: 'OK', 500: 'Error al obtener las formaciones'})
     @marshal_with(jugador_fields)
     def get(self):
         try:
