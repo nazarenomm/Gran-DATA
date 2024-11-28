@@ -28,6 +28,7 @@ class FechaService:
             self.initialized = True
             self.comienzo_veda = None
             self.final_veda = None
+            # self.modelo = joblib.load('/app/services/modelo_puntajes/modelos/primer_modelo.pkl')
             self.modelo = joblib.load('modelo_puntajes/modelos/primer_modelo.pkl')
             self.fecha_actual = 1
     

@@ -24,8 +24,9 @@ def cargar_estados():
         'No Juega'
     ]
     for estado in estados:
-        estado_model = EstadoModel(estado=estado)
-        db.session.add(estado_model)
+        if not EstadoModel.query.filter_by(estado=estado).first():
+            estado_model = EstadoModel(estado=estado)
+            db.session.add(estado_model)
     db.session.commit()
 
 def cargar_partidos():
@@ -80,11 +81,13 @@ def cargar_usuario_roles_iniciales():
 
 
 if __name__ == '__main__':
-    jugadores = pd.read_csv('modelo_puntajes/data/jugadores.csv')
+    jugadores = pd.read_csv('services/modelo_puntajes/data/jugadores.csv')
     clubes = jugadores['Equipo'].unique()
     formaciones = ['4-4-2', '4-3-3', '3-4-3', '4-5-1', '3-5-2', '5-3-2', '3-3-4', '4-2-4', '5-2-3']
 
     with app.app_context():
+        db.create_all()
+        
         for club in clubes:
             cargar_club(club)
 
