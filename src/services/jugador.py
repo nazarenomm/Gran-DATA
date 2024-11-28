@@ -1,10 +1,11 @@
-from services import notificador
+from services.notificador import NotificadorService
 from models import JugadorModel, RolModel, EquipoJugadorModel, EquipoModel, UsuarioModel
 from extensiones import db
 
 class JugadorService:
     @staticmethod
     def cambiar_estado(jugador, estado):
+        notificador = NotificadorService()
         if jugador.estado != estado:
             jugador.estado = estado
 

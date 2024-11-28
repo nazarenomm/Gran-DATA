@@ -26,6 +26,9 @@ class UsuarioModel(db.Model):
     def verificar_contraseña(self, contraseña):
         return check_password_hash(self.contraseña, contraseña)
     
+    def es_admin(self):
+        return self.rol.nombre == 'admin'
+    
 class NotificacionModel(db.Model):
     __tablename__ = 'notificaciones'
     notificacion_id = db.Column(db.Integer, primary_key=True)

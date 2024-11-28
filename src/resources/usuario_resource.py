@@ -41,30 +41,6 @@ class UsuarioResource(Resource):
         db.session.commit()
         return {"message": "Usuario eliminado"}, 200
     
-@usuario_ns.route('')
-class UsuarioPostResource(Resource):
-    @marshal_with(user_fields)
-    @usuario_ns.expect(user_post_args)
-    @usuario_ns.doc(params={'nombre': 'Nombre del usuario', 'apellido': 'Apellido del usuario', 'mail': 'Correo Electrónico del usuario', 'contraseña': 'Contraseña del usuario', 'telefono': 'Teléfono del usuario'},
-                    responses={201: 'Creado', 409: 'Usuario ya registrado'})
-    def post(self):
-        args = user_post_args.parse_args()  # Extrae los datos de la solicitud
-        if UsuarioModel.query.filter_by(mail=args['mail']).first(): # mail es unique
-            return {"message": "Usuario ya registrado"}, 409
-        
-        rol_usuario = RolesUsuarioModel.query.filter_by(nombre="Usuario").first()
-        if not rol_usuario:
-            return {"message": "El rol 'Usuario' no está configurado en la base de datos."}, 500
-        
-        usuario = UsuarioModel(nombre=args['nombre'], apellido=args['apellido'], mail=args['mail'],
-                               telefono=args['telefono'], rol_id=rol_usuario.rol_id)
-        usuario.set_contraseña(args['contraseña'])
-        db.session.add(usuario)
-        db.session.commit()
-        return usuario, 201
-    
-@usuario_ns.route('/<int:usuario_id>/rol')
-class UsuarioRolResource(Resource):
     @usuario_ns.expect(user_patch_args)
     @usuario_ns.doc(params={'usuario_id': 'ID del usuario', 'rol_id': 'ID del rol'},
                     responses={200: 'Rol actualizado', 404: 'Usuario no encontrado', 400: 'Rol no válido'})
@@ -86,3 +62,25 @@ class UsuarioRolResource(Resource):
         usuario.rol_id = rol.rol_id
         db.session.commit()
         return {"message": f"Rol actualizado a {rol.nombre}"}, 200
+    
+@usuario_ns.route('')
+class UsuarioPostResource(Resource):
+    @marshal_with(user_fields)
+    @usuario_ns.expect(user_post_args)
+    @usuario_ns.doc(params={'nombre': 'Nombre del usuario', 'apellido': 'Apellido del usuario', 'mail': 'Correo Electrónico del usuario', 'contraseña': 'Contraseña del usuario', 'telefono': 'Teléfono del usuario'},
+                    responses={201: 'Creado', 409: 'Usuario ya registrado'})
+    def post(self):
+        args = user_post_args.parse_args()  # Extrae los datos de la solicitud
+        if UsuarioModel.query.filter_by(mail=args['mail']).first(): # mail es unique
+            return {"message": "Usuario ya registrado"}, 409
+        
+        rol_usuario = RolesUsuarioModel.query.filter_by(nombre="Usuario").first()
+        if not rol_usuario:
+            return {"message": "El rol 'Usuario' no está configurado en la base de datos."}, 500
+        
+        usuario = UsuarioModel(nombre=args['nombre'], apellido=args['apellido'], mail=args['mail'],
+                               telefono=args['telefono'], rol_id=rol_usuario.rol_id)
+        usuario.set_contraseña(args['contraseña'])
+        db.session.add(usuario)
+        db.session.commit()
+        return usuario, 201

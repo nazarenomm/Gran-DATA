@@ -7,7 +7,7 @@ from resources.usuario_resource import UsuarioResource, UsuarioPostResource
 from resources.login_resource import LoginResource
 from resources.equipo_resource import EquipoResource, EquipoPostResource
 from resources.torneo_resource import TorneoResource, TorneoPostResource
-from resources.jugador_resource import JugadorResource
+from resources.jugador_resource import JugadorResource, JugadoresResource
 from resources.menu_resource import MenuResource
 from resources.club_resource import ClubResource
 from resources.tabla_posiciones_resource import TablaPosiciones, TablaPosicionesLocal, TablaPosicionesVisitante
