@@ -28,8 +28,8 @@ class FechaService:
             self.initialized = True
             self.comienzo_veda = None
             self.final_veda = None
-            # self.modelo = joblib.load('/app/services/modelo_puntajes/modelos/primer_modelo.pkl')
-            self.modelo = joblib.load('modelo_puntajes/modelos/primer_modelo.pkl')
+            self.modelo = joblib.load('/app/services/modelo_puntajes/modelos/primer_modelo.pkl')
+            # elf.modelo = joblib.load('modelo_puntajes/modelos/primer_modelo.pkl')
             self.fecha_actual = 1
     
     def setear_veda(self, comienzo, final) -> None:
@@ -59,10 +59,12 @@ class FechaService:
 
     def cargar_fecha(self):
         try:
-            rendimientos = pd.read_csv(f'modelo_puntajes/data/predicciones/rendimientos_fecha_{self.fecha_actual}.csv')
+            rendimientos = pd.read_csv(f'app/services/modelo_puntajes/data/predicciones/rendimientos_fecha_{self.fecha_actual}.csv')
+            #rendimientos = pd.read_csv(f'modelo_puntajes/data/predicciones/rendimientos_fecha_{self.fecha_actual}.csv')
         except FileNotFoundError:
             rendimientos = self.__calificar_fecha(self.modelo)
-            rendimientos.to_csv(f'modelo_puntajes/data/predicciones/rendimientos_fecha_{self.fecha_actual}.csv', index=False)
+            #rendimientos.to_csv(f'modelo_puntajes/data/predicciones/rendimientos_fecha_{self.fecha_actual}.csv', index=False)
+            rendimientos.to_csv(f'app/services/modelo_puntajes/data/predicciones/rendimientos_fecha_{self.fecha_actual}.csv', index=False)
 
         for _, row in rendimientos.iterrows():
             # obtener partido
