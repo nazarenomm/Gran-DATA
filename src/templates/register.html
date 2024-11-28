@@ -50,14 +50,11 @@
             const formData = new FormData(event.target);
             const data = Object.fromEntries(formData.entries());
 
+            // Construir la URL con parámetros
+            const url = `/usuario?nombre=${encodeURIComponent(data.nombre)}&apellido=${encodeURIComponent(data.apellido)}&mail=${encodeURIComponent(data.mail)}&contraseña=${encodeURIComponent(data.contraseña)}&telefono=${encodeURIComponent(data.telefono)}&rol_id=1`;
+
             try {
-                const response = await fetch("/usuario", {
-                    method: "POST",
-                    headers: {
-                        "Content-Type": "application/json"
-                    },
-                    body: JSON.stringify(data)
-                });
+                const response = await fetch(url, { method: "POST" });
 
                 const result = await response.json();
 
@@ -76,6 +73,7 @@
             messageElement.innerText = message;
             messageElement.classList.remove("d-none");
         }
+
     </script>
 </body>
 </html>
