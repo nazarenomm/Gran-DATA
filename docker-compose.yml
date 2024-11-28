@@ -1,8 +1,6 @@
 services:
   flask-app:
-    build:
-      context: .
-      dockerfile: Dockerfile
+    build: .
     container_name: flask-app
     ports:
       - "5000:5000"
@@ -16,7 +14,7 @@ services:
       - ./src:/app
 
   mysql-db:
-    image: mysql:8.0
+    image: mysql:8
     container_name: mysql-db
     environment:
       MYSQL_ROOT_PASSWORD: 
@@ -25,7 +23,13 @@ services:
     ports:
       - "3306:3306"
     volumes:
-      - mysql-data:/var/lib/mysql
+      - mysql_data:/var/lib/mysql
+    networks:
+      - app-network
 
 volumes:
-  mysql-data:
+  mysql_data:
+
+networks:
+  app-network:
+    driver: bridge
