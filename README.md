@@ -14,7 +14,7 @@ competencia de los fútbol fantasy.
 
 - Flask: framework para la API RESTful
 - JWT (Json Web Token): para autenticar a los usuarios dentro de la app
-- SQLAlchemy y MySQL: para la base de datos ([Diagrama Entidad-Relación](./database/DER.pdf))
+- SQLAlchemy y MySQL: para la base de datos ([Diagrama Entidad-Relación](./database/DER.jpg))
 - Docker: para la virtualización y facilitar el futuro deployment
 - Postman: para el testing
 - Swagger: documentación automática del proyecto 
