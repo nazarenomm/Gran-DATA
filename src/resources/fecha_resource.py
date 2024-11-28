@@ -2,6 +2,8 @@ from datetime import datetime
 from flask_restx import Resource, reqparse
 from services import fecha, notificador
 from extensiones import fecha_ns
+from decoradores import requiere_admin
+from flask_jwt_extended import jwt_required
 
 patch_args = reqparse.RequestParser()
 patch_args.add_argument('comienzo', type=str, help='Fecha y hora de inicio de la veda')
@@ -11,6 +13,8 @@ patch_args.add_argument('final', type=str, help='Fecha y hora de finalización d
 class FechaResource(Resource):
     # carga la fecha
     @fecha_ns.doc(responses={200: 'OK', 400: 'Error al cargar la fecha'})
+    @jwt_required() 
+    @requiere_admin
     def post(self):
         try:
             fecha.cargar_fecha()

@@ -1,5 +1,5 @@
 from flask_restx import Resource, reqparse, abort, fields, marshal_with
-from models import UsuarioModel
+from models import UsuarioModel, RolesUsuarioModel
 from extensiones import db, usuario_ns
 
 user_post_args = reqparse.RequestParser()
@@ -9,13 +9,17 @@ user_post_args.add_argument('mail', type=str, help='Correo Electrónico Requerid
 user_post_args.add_argument('contraseña', type=str, help='Contraseña Requerida', required=True)
 user_post_args.add_argument('telefono', type=int)
 
+user_patch_args = reqparse.RequestParser()
+user_patch_args.add_argument('rol_id', type=int, help="ID del rol es requerido", required=True)
+
 user_fields = {
     'usuario_id': fields.Integer,
     'nombre': fields.String,
     'apellido': fields.String,
     'mail': fields.String,
     'contraseña': fields.String,
-    'telefono': fields.Integer
+    'telefono': fields.Integer,
+    'rol_id': fields.Integer
     }
 
 @usuario_ns.route('/<int:usuario_id>')
@@ -47,9 +51,38 @@ class UsuarioPostResource(Resource):
         args = user_post_args.parse_args()  # Extrae los datos de la solicitud
         if UsuarioModel.query.filter_by(mail=args['mail']).first(): # mail es unique
             return {"message": "Usuario ya registrado"}, 409
+        
+        rol_usuario = RolesUsuarioModel.query.filter_by(nombre="Usuario").first()
+        if not rol_usuario:
+            return {"message": "El rol 'Usuario' no está configurado en la base de datos."}, 500
+        
         usuario = UsuarioModel(nombre=args['nombre'], apellido=args['apellido'], mail=args['mail'],
-                               telefono=args['telefono'])
+                               telefono=args['telefono'], rol_id=rol_usuario.rol_id)
         usuario.set_contraseña(args['contraseña'])
         db.session.add(usuario)
         db.session.commit()
         return usuario, 201
+    
+@usuario_ns.route('/<int:usuario_id>/rol')
+class UsuarioRolResource(Resource):
+    @usuario_ns.expect(user_patch_args)
+    @usuario_ns.doc(params={'usuario_id': 'ID del usuario', 'rol_id': 'ID del rol'},
+                    responses={200: 'Rol actualizado', 404: 'Usuario no encontrado', 400: 'Rol no válido'})
+    def patch(self, usuario_id):
+        args = user_patch_args.parse_args()  # Usa el parser definido
+
+        usuario = UsuarioModel.query.filter_by(usuario_id=usuario_id).first()
+        if not usuario:
+            return {"message": "Usuario no encontrado"}, 404
+
+        # Verifica que el rol exista
+        rol = RolesUsuarioModel.query.filter_by(rol_id=args['rol_id']).first()
+        if not rol:
+            return {"message": "Rol no válido"}, 400
+
+        # Asigna el nuevo rol
+        if usuario.rol_id == rol.rol_id:
+            return {"message": f"El usuario ya tiene el rol {rol.nombre}"}, 400
+        usuario.rol_id = rol.rol_id
+        db.session.commit()
+        return {"message": f"Rol actualizado a {rol.nombre}"}, 200
