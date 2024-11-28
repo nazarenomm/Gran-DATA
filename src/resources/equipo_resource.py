@@ -29,22 +29,13 @@ class EquipoResource(Resource):
     @equipo_ns.doc(params={'equipo_id': 'ID del equipo'}, responses={200: 'OK', 404: 'Equipo no encontrado'})
     @jwt_required()
     @marshal_with(equipo_fields)
-    def get(self, equipo_id=None):  # `equipo_id` es opcional
+    def get(self, equipo_id):  # `equipo_id` es opcional
         usuario_id = get_jwt_identity()
-        # Buscar el usuario autenticado
-        usuario = UsuarioModel.query.filter_by(usuario_id=usuario_id).first()
-        if not usuario:
-            return {"message": "Usuario no encontrado"}, 404
-
+        
         # Si `equipo_id` está presente, buscar equipo por ID, de lo contrario buscar por usuario
-        if equipo_id:
-            equipo = EquipoModel.query.filter_by(equipo_id=equipo_id, usuario_id=usuario_id).first()
-            if not equipo:
-                return {"message": "Equipo no encontrado o no pertenece al usuario"}, 404
-        else:
-            equipo = EquipoModel.query.filter_by(usuario_id=usuario_id).first()
-            if not equipo:
-                return {"equipo": False}, 200
+        equipo = EquipoModel.query.filter_by(equipo_id=equipo_id, usuario_id=usuario_id).first()
+        if not equipo:
+            abort(404, message="Equipo no encontrado o no pertenece al usuario")
         # Serializar respuesta
         return {
             "equipo_id": equipo.equipo_id,
