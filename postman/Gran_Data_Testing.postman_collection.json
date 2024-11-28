@@ -4,7 +4,7 @@
 		"name": "Gran_Data_Testing",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
 		"_exporter_id": "39372052",
-		"_collection_link": "https://gran-data-team.postman.co/workspace/My-Workspace~cbd8b794-bac2-45da-8821-3e095181ab7f/collection/39372052-4e9f9903-719b-475b-a7ee-bc0ce06425e8?action=share&source=collection_link&creator=39372052"
+		"_collection_link": "https://gran-data-team.postman.co/workspace/Gran-Data-Team-Workspace~cbd8b794-bac2-45da-8821-3e095181ab7f/collection/39372052-4e9f9903-719b-475b-a7ee-bc0ce06425e8?action=share&source=collection_link&creator=39372052"
 	},
 	"item": [
 		{
@@ -58,7 +58,7 @@
 							}
 						},
 						"url": {
-							"raw": "{{URLbase}}/usuario?nombre={{nombre}}&apellido={{apellido}}&mail={{nombre}}{{apellido}}@gmail.com&contrase%C3%B1a=1234",
+							"raw": "{{URLbase}}/usuario?nombre={{nombre}}&apellido={{apellido}}&mail={{nombre}}{{apellido}}@gmail.com&contrase%C3%B1a=1234&rol_id=1",
 							"host": [
 								"{{URLbase}}"
 							],
@@ -86,6 +86,83 @@
 									"key": "telefono",
 									"value": "1165366611",
 									"disabled": true
+								},
+								{
+									"key": "rol_id",
+									"value": "1"
+								}
+							]
+						},
+						"description": "Generated from cURL: curl -X 'POST' \\\r\n  'http://127.0.0.1:5000/usuario?nombre=Federico&apellido=Martinez&mail=fedemart%40gmail.com&contrase%C3%B1a=1234' \\\r\n  -H 'accept: application/json' \\\r\n  -d ''"
+					},
+					"response": []
+				},
+				{
+					"name": "POST usuario ya registrado",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 409\", function () {\r",
+									"    pm.response.to.have.status(409);\r",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "accept",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{URLbase}}/usuario?nombre={{nombre}}&apellido={{apellido}}&mail={{nombre}}{{apellido}}@gmail.com&contrase%C3%B1a=1234&rol_id=1",
+							"host": [
+								"{{URLbase}}"
+							],
+							"path": [
+								"usuario"
+							],
+							"query": [
+								{
+									"key": "nombre",
+									"value": "{{nombre}}"
+								},
+								{
+									"key": "apellido",
+									"value": "{{apellido}}"
+								},
+								{
+									"key": "mail",
+									"value": "{{nombre}}{{apellido}}@gmail.com"
+								},
+								{
+									"key": "contrase%C3%B1a",
+									"value": "1234"
+								},
+								{
+									"key": "telefono",
+									"value": "1165366611",
+									"disabled": true
+								},
+								{
+									"key": "rol_id",
+									"value": "1"
 								}
 							]
 						},
@@ -104,8 +181,7 @@
 									"    pm.response.to.have.status(200);\r",
 									"});"
 								],
-								"type": "text/javascript",
-								"packages": {}
+								"type": "text/javascript"
 							}
 						}
 					],
@@ -113,13 +189,13 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{URLbase}}/usuario/4",
+							"raw": "{{URLbase}}/usuario/{{user_id}}",
 							"host": [
 								"{{URLbase}}"
 							],
 							"path": [
 								"usuario",
-								"4"
+								"{{user_id}}"
 							]
 						}
 					},
@@ -185,12 +261,318 @@
 						}
 					},
 					"response": []
+				},
+				{
+					"name": "menu",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "{{URLbase}}/menu/{{user_id}}",
+							"host": [
+								"{{URLbase}}"
+							],
+							"path": [
+								"menu",
+								"{{user_id}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "login contraseña erronea",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"// Verifica que el código de estado sea 200\r",
+									"pm.test(\"Status code is 401\", function () {\r",
+									"    pm.response.to.have.status(401);\r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{URLbase}}/login?mail={{user_mail}}&contraseña=123hola",
+							"host": [
+								"{{URLbase}}"
+							],
+							"path": [
+								"login"
+							],
+							"query": [
+								{
+									"key": "mail",
+									"value": "{{user_mail}}"
+								},
+								{
+									"key": "contraseña",
+									"value": "123hola"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "login usuario no registrado",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"// Verifica que el código de estado sea 200\r",
+									"pm.test(\"Status code is 404\", function () {\r",
+									"    pm.response.to.have.status(404);\r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{URLbase}}/login?mail=hola@gmail.com&contraseña=1234",
+							"host": [
+								"{{URLbase}}"
+							],
+							"path": [
+								"login"
+							],
+							"query": [
+								{
+									"key": "mail",
+									"value": "hola@gmail.com"
+								},
+								{
+									"key": "contraseña",
+									"value": "1234"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Prode",
+			"item": [
+				{
+					"name": "POST prode",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Successful POST request\", function () {\r",
+									"    pm.expect(pm.response.code).to.be.oneOf([201, 202]);\r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"fecha\": 1,\r\n    \"resultados\": [\r\n        {\r\n            \"partido_id\": 1,\r\n            \"goles_local\": 0,\r\n            \"goles_visitante\": 0\r\n        },\r\n        {\r\n            \"partido_id\": 2,\r\n            \"goles_local\": 0,\r\n            \"goles_visitante\": 0\r\n        },\r\n        {\r\n            \"partido_id\": 3,\r\n            \"goles_local\": 0,\r\n            \"goles_visitante\": 0\r\n        },\r\n        {\r\n            \"partido_id\": 4,\r\n            \"goles_local\": 0,\r\n            \"goles_visitante\": 0\r\n        },\r\n        {\r\n            \"partido_id\": 5,\r\n            \"goles_local\": 0,\r\n            \"goles_visitante\": 0\r\n        },\r\n        {\r\n            \"partido_id\": 6,\r\n            \"goles_local\": 0,\r\n            \"goles_visitante\": 0\r\n        },\r\n        {\r\n            \"partido_id\": 7,\r\n            \"goles_local\": 0,\r\n            \"goles_visitante\": 0\r\n        },\r\n        {\r\n            \"partido_id\": 8,\r\n            \"goles_local\": 0,\r\n            \"goles_visitante\": 0\r\n        },\r\n        {\r\n            \"partido_id\": 9,\r\n            \"goles_local\": 0,\r\n            \"goles_visitante\": 0\r\n        },\r\n        {\r\n            \"partido_id\": 10,\r\n            \"goles_local\": 0,\r\n            \"goles_visitante\": 0\r\n        },\r\n        {\r\n            \"partido_id\": 11,\r\n            \"goles_local\": 0,\r\n            \"goles_visitante\": 0\r\n        },\r\n        {\r\n            \"partido_id\": 12,\r\n            \"goles_local\": 0,\r\n            \"goles_visitante\": 0\r\n        },\r\n        {\r\n            \"partido_id\": 13,\r\n            \"goles_local\": 0,\r\n            \"goles_visitante\": 0\r\n        },\r\n        {\r\n            \"partido_id\": 14,\r\n            \"goles_local\": 0,\r\n            \"goles_visitante\": 0\r\n        }\r\n    ]\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{URLbase}}/prode",
+							"host": [
+								"{{URLbase}}"
+							],
+							"path": [
+								"prode"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GET prode",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{URLbase}}/prode/1",
+							"host": [
+								"{{URLbase}}"
+							],
+							"path": [
+								"prode",
+								"1"
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"auth": {
+				"type": "bearer",
+				"bearer": [
+					{
+						"key": "token",
+						"value": "{{token}}",
+						"type": "string"
+					}
+				]
+			},
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"type": "text/javascript",
+						"packages": {},
+						"exec": [
+							""
+						]
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"packages": {},
+						"exec": [
+							""
+						]
+					}
 				}
 			]
 		},
 		{
 			"name": "Equipo",
 			"item": [
+				{
+					"name": "GET formaciones",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{URLbase}}/formaciones",
+							"host": [
+								"{{URLbase}}"
+							],
+							"path": [
+								"formaciones"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GET equipo not found",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 404\", function () {\r",
+									"    pm.response.to.have.status(404);\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "text"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{URLbase}}/equipo/0",
+							"host": [
+								"{{URLbase}}"
+							],
+							"path": [
+								"equipo",
+								"0"
+							]
+						}
+					},
+					"response": []
+				},
 				{
 					"name": "POST equipo",
 					"event": [
@@ -221,6 +603,355 @@
 						"body": {
 							"mode": "raw",
 							"raw": "{\r\n    \"jugadores_id\": {\r\n        \"titulares\": [19, 10, 91, 205, 303, 470, 584, 4, 176, 41, 3],\r\n        \"suplentes\": [5, 549, 226, 895],\r\n        \"capitan\": 3\r\n        }\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{URLbase}}/equipo?usuario_id={{user_id}}&formacion=4-4-2",
+							"host": [
+								"{{URLbase}}"
+							],
+							"path": [
+								"equipo"
+							],
+							"query": [
+								{
+									"key": "usuario_id",
+									"value": "{{user_id}}"
+								},
+								{
+									"key": "formacion",
+									"value": "4-4-2"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "POST equipo ya existe equipo",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 400\", function () {\r",
+									"    pm.response.to.have.status(400);\r",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"jugadores_id\": {\r\n        \"titulares\": [19, 10, 91, 205, 303, 470, 584, 4, 176, 41, 3],\r\n        \"suplentes\": [5, 549, 226, 895],\r\n        \"capitan\": 3\r\n        }\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{URLbase}}/equipo?usuario_id={{user_id}}&formacion=4-4-2",
+							"host": [
+								"{{URLbase}}"
+							],
+							"path": [
+								"equipo"
+							],
+							"query": [
+								{
+									"key": "usuario_id",
+									"value": "{{user_id}}"
+								},
+								{
+									"key": "formacion",
+									"value": "4-4-2"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "POST equipo formacion erronea",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 400\", function () {\r",
+									"    pm.response.to.have.status(400);\r",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"jugadores_id\": {\r\n        \"titulares\": [19, 10, 91, 205, 303, 470, 584, 4, 176, 41, 3],\r\n        \"suplentes\": [5, 549, 226, 895],\r\n        \"capitan\": 3\r\n        }\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{URLbase}}/equipo?usuario_id={{user_id}}&formacion=4-3-3",
+							"host": [
+								"{{URLbase}}"
+							],
+							"path": [
+								"equipo"
+							],
+							"query": [
+								{
+									"key": "usuario_id",
+									"value": "{{user_id}}"
+								},
+								{
+									"key": "formacion",
+									"value": "4-3-3"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "POST equipo formacion not found",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 404\", function () {\r",
+									"    pm.response.to.have.status(400);\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"jugadores_id\": {\r\n        \"titulares\": [19, 10, 91, 205, 303, 470, 584, 4, 176, 41, 3],\r\n        \"suplentes\": [5, 549, 226, 895],\r\n        \"capitan\": 3\r\n        }\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{URLbase}}/equipo?usuario_id={{user_id}}&formacion=4-4-3",
+							"host": [
+								"{{URLbase}}"
+							],
+							"path": [
+								"equipo"
+							],
+							"query": [
+								{
+									"key": "usuario_id",
+									"value": "{{user_id}}"
+								},
+								{
+									"key": "formacion",
+									"value": "4-4-3"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "POST equipo falta cap",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 400\", function () {\r",
+									"    pm.response.to.have.status(400);\r",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"jugadores_id\": {\r\n        \"titulares\": [19, 10, 91, 205, 303, 470, 584, 4, 176, 41, 3],\r\n        \"suplentes\": [5, 549, 226, 895]\r\n        }\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{URLbase}}/equipo?usuario_id={{user_id}}&formacion=4-4-2",
+							"host": [
+								"{{URLbase}}"
+							],
+							"path": [
+								"equipo"
+							],
+							"query": [
+								{
+									"key": "usuario_id",
+									"value": "{{user_id}}"
+								},
+								{
+									"key": "formacion",
+									"value": "4-4-2"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "POST equipo falta cap no titular",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 400\", function () {\r",
+									"    pm.response.to.have.status(400);\r",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"jugadores_id\": {\r\n        \"titulares\": [19, 10, 91, 205, 303, 470, 584, 4, 176, 41, 3],\r\n        \"suplentes\": [5, 549, 226, 895]\r\n        }\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{URLbase}}/equipo?usuario_id={{user_id}}&formacion=4-4-2",
+							"host": [
+								"{{URLbase}}"
+							],
+							"path": [
+								"equipo"
+							],
+							"query": [
+								{
+									"key": "usuario_id",
+									"value": "{{user_id}}"
+								},
+								{
+									"key": "formacion",
+									"value": "4-4-2"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "POST equipo cant erronea",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 400\", function () {\r",
+									"    pm.response.to.have.status(400);\r",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"jugadores_id\": {\r\n        \"titulares\": [19, 10, 91, 205, 303, 470, 584, 4, 176, 3],\r\n        \"suplentes\": [5, 549, 226, 895],\r\n        \"capitan\": 3\r\n        }\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{URLbase}}/equipo?usuario_id={{user_id}}&formacion=4-4-2",
+							"host": [
+								"{{URLbase}}"
+							],
+							"path": [
+								"equipo"
+							],
+							"query": [
+								{
+									"key": "usuario_id",
+									"value": "{{user_id}}"
+								},
+								{
+									"key": "formacion",
+									"value": "4-4-2"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "POST equipo cant erronea Copy",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 400\", function () {\r",
+									"    pm.response.to.have.status(400);\r",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"jugadores_id\": {\r\n        \"titulares\": [19, 10, 91, 205, 303, 470, 584, 4, 176, 41, 3],\r\n        \"suplentes\": [5, 549, 226],\r\n        \"capitan\": 3\r\n        }\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -294,6 +1025,102 @@
 					"response": []
 				},
 				{
+					"name": "GET equipo sin id",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 404\", function () {\r",
+									"    pm.response.to.have.status(404);\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJmcmVzaCI6ZmFsc2UsImlhdCI6MTczMjc2MTc1MCwianRpIjoiNWU0ZmUzYzgtZTNkNC00MjlkLTliYmMtNGMwOTY2NGY0MjExIiwidHlwZSI6ImFjY2VzcyIsInN1YiI6MywibmJmIjoxNzMyNzYxNzUwLCJjc3JmIjoiOTJlMmE0YTEtYWMwOC00MzllLTljNzgtNmFkOTk1Zjc5N2I4IiwiZXhwIjoxNzMyNzYyNjUwfQ.uqwIKFCwpzxWSdfrD-Uht6De7hr2ePSJS2fv0hed94s",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "text"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{URLbase}}/equipo",
+							"host": [
+								"{{URLbase}}"
+							],
+							"path": [
+								"equipo"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GET equipo id erroneo",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 404\", function () {\r",
+									"    pm.response.to.have.status(404);\r",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "text"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{URLbase}}/equipo/0",
+							"host": [
+								"{{URLbase}}"
+							],
+							"path": [
+								"equipo",
+								"0"
+							]
+						}
+					},
+					"response": []
+				},
+				{
 					"name": "cambio titular x suplente",
 					"event": [
 						{
@@ -315,6 +1142,187 @@
 						"body": {
 							"mode": "raw",
 							"raw": "{\r\n    \"accion\": \"cambio\",\r\n    \"jugador_entrante_id\": 5,\r\n    \"jugador_saliente_id\": 19\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://127.0.0.1:5000/equipo/{{equipo_id}}",
+							"protocol": "http",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "5000",
+							"path": [
+								"equipo",
+								"{{equipo_id}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "cambio titular x suplente id erroneo",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 404\", function () {\r",
+									"    pm.response.to.have.status(404);\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "PATCH",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"accion\": \"cambio\",\r\n    \"jugador_entrante_id\": 5,\r\n    \"jugador_saliente_id\": 19\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://127.0.0.1:5000/equipo/1",
+							"protocol": "http",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "5000",
+							"path": [
+								"equipo",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "cambio titular x suplente distinta pos",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 400\", function () {\r",
+									"    pm.response.to.have.status(400);\r",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "PATCH",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"accion\": \"cambio\",\r\n    \"jugador_entrante_id\": 19,\r\n    \"jugador_saliente_id\": 4\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://127.0.0.1:5000/equipo/{{equipo_id}}",
+							"protocol": "http",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "5000",
+							"path": [
+								"equipo",
+								"{{equipo_id}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "cambio titular x suplente titular not found",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 404\", function () {\r",
+									"    pm.response.to.have.status(400);\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "PATCH",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"accion\": \"cambio\",\r\n    \"jugador_entrante_id\": 5,\r\n    \"jugador_saliente_id\": 199\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://127.0.0.1:5000/equipo/{{equipo_id}}",
+							"protocol": "http",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "5000",
+							"path": [
+								"equipo",
+								"{{equipo_id}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "cambio titular x suplente suplente not found",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 404\", function () {\r",
+									"    pm.response.to.have.status(400);\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "PATCH",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"accion\": \"cambio\",\r\n    \"jugador_entrante_id\": 500,\r\n    \"jugador_saliente_id\": 19\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -396,6 +1404,61 @@
 					"response": []
 				},
 				{
+					"name": "cambio capitan not found",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 404\", function () {\r",
+									"    pm.response.to.have.status(404);\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJmcmVzaCI6ZmFsc2UsImlhdCI6MTczMjY4MDAyMywianRpIjoiOTBiMTc4ODktMzVkYy00ZTBmLTk4ZmItZGI2NDdlYzU5MjI4IiwidHlwZSI6ImFjY2VzcyIsInN1YiI6MSwibmJmIjoxNzMyNjgwMDIzLCJjc3JmIjoiMDc0ODUwY2ItMTcyZC00NzY0LThmYzQtNWJiMzRhZTFmODY0IiwiZXhwIjoxNzMyNjgwOTIzfQ.UdYtdoENd9NYEiAw4gLOXn48Qa7oR6clFplON9XrDvU",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PATCH",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"accion\": \"cambio capitan\",\r\n    \"jugador_capitan_id\": 400\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://127.0.0.1:5000/equipo/{{equipo_id}}",
+							"protocol": "http",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "5000",
+							"path": [
+								"equipo",
+								"{{equipo_id}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
 					"name": "transferencia",
 					"event": [
 						{
@@ -417,6 +1480,97 @@
 						"body": {
 							"mode": "raw",
 							"raw": "{\r\n    \"accion\": \"transferencia\",\r\n    \"jugador_entrante_id\": 40,\r\n    \"jugador_saliente_id\": 41\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://127.0.0.1:5000/equipo/{{equipo_id}}",
+							"protocol": "http",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "5000",
+							"path": [
+								"equipo",
+								"{{equipo_id}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "transferencia saliente not found",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 404\", function () {\r",
+									"    pm.response.to.have.status(404);\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "PATCH",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"accion\": \"transferencia\",\r\n    \"jugador_entrante_id\": 40,\r\n    \"jugador_saliente_id\": 410\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://127.0.0.1:5000/equipo/{{equipo_id}}",
+							"protocol": "http",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "5000",
+							"path": [
+								"equipo",
+								"{{equipo_id}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "transferencia entrante not found",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 404\", function () {\r",
+									"    pm.response.to.have.status(404);\r",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "PATCH",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"accion\": \"transferencia\",\r\n    \"jugador_entrante_id\": 0,\r\n    \"jugador_saliente_id\": 41\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -474,6 +1628,1009 @@
 					}
 				}
 			]
+		},
+		{
+			"name": "Admin",
+			"item": [
+				{
+					"name": "POST usuario Admin",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Successful POST request\", function () {\r",
+									"    pm.expect(pm.response.code).to.be.oneOf([201,202]);\r",
+									"});\r",
+									"\r",
+									"let responseJson = pm.response.json();\r",
+									"if (responseJson.mail) {\r",
+									"    pm.collectionVariables.set(\"admin_mail\", responseJson.mail);\r",
+									"    console.log(\"Mail actualizado: \" + responseJson.mail);\r",
+									"} else {\r",
+									"    console.error(\"No se encontró mail en la respuesta\");\r",
+									"}\r",
+									"if (responseJson.usuario_id) {\r",
+									"    pm.collectionVariables.set(\"admin_id\", responseJson.usuario_id);\r",
+									"    console.log(\"Usuario ID actualizado: \" + responseJson.usuario_id)\r",
+									"} else {\r",
+									"    console.error(\"No se encontró id\")\r",
+									"}"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "accept",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{URLbase}}/usuario?nombre={{nombre_admin}}&apellido={{apellido_admin}}&mail={{nombre_admin}}{{apellido_admin}}@gmail.com&contrase%C3%B1a=1234&rol_id=2",
+							"host": [
+								"{{URLbase}}"
+							],
+							"path": [
+								"usuario"
+							],
+							"query": [
+								{
+									"key": "nombre",
+									"value": "{{nombre_admin}}"
+								},
+								{
+									"key": "apellido",
+									"value": "{{apellido_admin}}"
+								},
+								{
+									"key": "mail",
+									"value": "{{nombre_admin}}{{apellido_admin}}@gmail.com"
+								},
+								{
+									"key": "contrase%C3%B1a",
+									"value": "1234"
+								},
+								{
+									"key": "rol_id",
+									"value": "2"
+								}
+							]
+						},
+						"description": "Generated from cURL: curl -X 'POST' \\\r\n  'http://127.0.0.1:5000/usuario?nombre=Federico&apellido=Martinez&mail=fedemart%40gmail.com&contrase%C3%B1a=1234' \\\r\n  -H 'accept: application/json' \\\r\n  -d ''"
+					},
+					"response": []
+				},
+				{
+					"name": "Admin login",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"let responseJson = pm.response.json();\r",
+									"if (responseJson.access_token) {\r",
+									"    pm.collectionVariables.set(\"admin_token\", responseJson.access_token);\r",
+									"    console.log(\"Token actualizado: \" + responseJson.access_token);\r",
+									"} else {\r",
+									"    console.error(\"No se encontró access_token en la respuesta\");\r",
+									"}\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "{{URLbase}}/login?mail={{admin_mail}}&contraseña=1234",
+							"host": [
+								"{{URLbase}}"
+							],
+							"path": [
+								"login"
+							],
+							"query": [
+								{
+									"key": "mail",
+									"value": "{{admin_mail}}"
+								},
+								{
+									"key": "contraseña",
+									"value": "1234"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"type": "text/javascript",
+						"packages": {},
+						"exec": [
+							""
+						]
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"packages": {},
+						"exec": [
+							""
+						]
+					}
+				}
+			]
+		},
+		{
+			"name": "Veda",
+			"item": [
+				{
+					"name": "GET fecha",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{URLbase}}/fecha",
+							"host": [
+								"{{URLbase}}"
+							],
+							"path": [
+								"fecha"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "setear veda",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "PATCH",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"final\": \"30-11-2024 15:00:00\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{URLbase}}/fecha",
+							"host": [
+								"{{URLbase}}"
+							],
+							"path": [
+								"fecha"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "setear veda otra vez",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 400\", function () {\r",
+									"    pm.response.to.have.status(400);\r",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "PATCH",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"final\": \"30-11-2024 15:00:00\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{URLbase}}/fecha",
+							"host": [
+								"{{URLbase}}"
+							],
+							"path": [
+								"fecha"
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"auth": {
+				"type": "bearer",
+				"bearer": [
+					{
+						"key": "token",
+						"value": "{{admin_token}}",
+						"type": "string"
+					}
+				]
+			},
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"type": "text/javascript",
+						"packages": {},
+						"exec": [
+							""
+						]
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"packages": {},
+						"exec": [
+							""
+						]
+					}
+				}
+			]
+		},
+		{
+			"name": "Jugadores",
+			"item": [
+				{
+					"name": "cambiar estado",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{admin_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PATCH",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{URLbase}}/jugadores/40?estado=No Juega",
+							"host": [
+								"{{URLbase}}"
+							],
+							"path": [
+								"jugadores",
+								"40"
+							],
+							"query": [
+								{
+									"key": "estado",
+									"value": "No Juega"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GET jugadores",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{URLbase}}/jugadores?posicion=DEL",
+							"host": [
+								"{{URLbase}}"
+							],
+							"path": [
+								"jugadores"
+							],
+							"query": [
+								{
+									"key": "posicion",
+									"value": "DEL"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"auth": {
+				"type": "bearer",
+				"bearer": [
+					{
+						"key": "token",
+						"value": "{{token}}",
+						"type": "string"
+					}
+				]
+			},
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"type": "text/javascript",
+						"packages": {},
+						"exec": [
+							""
+						]
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"packages": {},
+						"exec": [
+							""
+						]
+					}
+				}
+			]
+		},
+		{
+			"name": "Notificaciones",
+			"item": [
+				{
+					"name": "GET notificaciones",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{URLbase}}/notificaciones",
+							"host": [
+								"{{URLbase}}"
+							],
+							"path": [
+								"notificaciones"
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"auth": {
+				"type": "bearer",
+				"bearer": [
+					{
+						"key": "token",
+						"value": "{{token}}",
+						"type": "string"
+					}
+				]
+			},
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"type": "text/javascript",
+						"packages": {},
+						"exec": [
+							""
+						]
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"packages": {},
+						"exec": [
+							""
+						]
+					}
+				}
+			]
+		},
+		{
+			"name": "Fecha",
+			"item": [
+				{
+					"name": "finalizar veda",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{URLbase}}/fecha",
+							"host": [
+								"{{URLbase}}"
+							],
+							"path": [
+								"fecha"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "cargar fecha",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{URLbase}}/fecha",
+							"host": [
+								"{{URLbase}}"
+							],
+							"path": [
+								"fecha"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GET fecha 2",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"fecha = 2\", function () {\r",
+									"    pm.expect(pm.response.json().fecha).to.eql(2);\r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{URLbase}}/fecha",
+							"host": [
+								"{{URLbase}}"
+							],
+							"path": [
+								"fecha"
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"auth": {
+				"type": "bearer",
+				"bearer": [
+					{
+						"key": "token",
+						"value": "{{admin_token}}",
+						"type": "string"
+					}
+				]
+			},
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"type": "text/javascript",
+						"packages": {},
+						"exec": [
+							""
+						]
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"packages": {},
+						"exec": [
+							""
+						]
+					}
+				}
+			]
+		},
+		{
+			"name": "Estadisticas",
+			"item": [
+				{
+					"name": "GET tabla de posiciones",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "inherit"
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{URLbase}}/posiciones",
+							"host": [
+								"{{URLbase}}"
+							],
+							"path": [
+								"posiciones"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GET fixture",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{URLbase}}/fixture",
+							"host": [
+								"{{URLbase}}"
+							],
+							"path": [
+								"fixture"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GET estadisticas jugadores",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{URLbase}}/estadisticas-principales",
+							"host": [
+								"{{URLbase}}"
+							],
+							"path": [
+								"estadisticas-principales"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Puntaje",
+			"item": [
+				{
+					"name": "GET puntaje",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{URLbase}}/puntaje/{{equipo_id}}/1",
+							"host": [
+								"{{URLbase}}"
+							],
+							"path": [
+								"puntaje",
+								"{{equipo_id}}",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GET puntaje total",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{URLbase}}/puntaje/{{equipo_id}}",
+							"host": [
+								"{{URLbase}}"
+							],
+							"path": [
+								"puntaje",
+								"{{equipo_id}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GET puntaje prode",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{URLbase}}/puntaje_prode/{{user_id}}/1",
+							"host": [
+								"{{URLbase}}"
+							],
+							"path": [
+								"puntaje_prode",
+								"{{user_id}}",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GET puntaje prode total",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{URLbase}}/puntaje_prode/{{user_id}}",
+							"host": [
+								"{{URLbase}}"
+							],
+							"path": [
+								"puntaje_prode",
+								"{{user_id}}"
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"type": "text/javascript",
+						"packages": {},
+						"exec": [
+							""
+						]
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"packages": {},
+						"exec": [
+							""
+						]
+					}
+				}
+			]
+		},
+		{
+			"name": "logout",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{token}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"url": {
+					"raw": "{{URLbase}}/logout",
+					"host": [
+						"{{URLbase}}"
+					],
+					"path": [
+						"logout"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "logout admin",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{admin_token}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"url": {
+					"raw": "{{URLbase}}/logout",
+					"host": [
+						"{{URLbase}}"
+					],
+					"path": [
+						"logout"
+					]
+				}
+			},
+			"response": []
 		}
 	],
 	"auth": {
@@ -521,6 +2678,18 @@
 		},
 		{
 			"key": "equipo_id",
+			"value": ""
+		},
+		{
+			"key": "admin_mail",
+			"value": ""
+		},
+		{
+			"key": "admin_id",
+			"value": ""
+		},
+		{
+			"key": "admin_token",
 			"value": ""
 		}
 	]
