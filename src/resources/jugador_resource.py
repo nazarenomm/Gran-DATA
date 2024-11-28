@@ -1,8 +1,8 @@
 from flask_restx import Resource, reqparse, fields, marshal_with, abort, reqparse
-from models import JugadorModel, UsuarioModel
+from models import JugadorModel
 from extensiones import jugador_ns
-from decoradores import requiere_admin
-from flask_jwt_extended import jwt_required, get_jwt_identity
+from services import requiere_admin
+from flask_jwt_extended import jwt_required
 from services.jugador import JugadorService
 
 patch_args = reqparse.RequestParser()
@@ -54,17 +54,8 @@ class JugadoresResource(Resource):
 @jugador_ns.route('/<int:jugador_id>')
 class JugadorResource(Resource):
     @jwt_required()
-    # @requiere_admin
-    def patch(self, jugador_id):
-        usuario_id = get_jwt_identity()
-        usuario = UsuarioModel.query.filter_by(usuario_id=usuario_id).first()
-
-        if not usuario:
-            return {'message': 'Usuario no encontrado.'}, 404
-        
-        if not usuario.es_admin:
-            return {'message': 'No tiene permisos para finalizar la veda.'}, 400
-        
+    @requiere_admin
+    def patch(self, jugador_id):    
         args = patch_args.parse_args()
 
         if args['precio'] is None and args['estado'] is None:

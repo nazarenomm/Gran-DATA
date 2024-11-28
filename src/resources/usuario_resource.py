@@ -1,6 +1,7 @@
 from flask_restx import Resource, reqparse, abort, fields, marshal_with
 from models import UsuarioModel, RolesUsuarioModel
 from extensiones import db, usuario_ns
+from services.usuario import UsuarioComunCreador, UsuarioAdminCreador
 
 user_post_args = reqparse.RequestParser()
 user_post_args.add_argument("nombre", type=str, help="Nombre Requerido", required=True)
@@ -70,17 +71,13 @@ class UsuarioPostResource(Resource):
     @usuario_ns.doc(params={'nombre': 'Nombre del usuario', 'apellido': 'Apellido del usuario', 'mail': 'Correo Electrónico del usuario', 'contraseña': 'Contraseña del usuario', 'telefono': 'Teléfono del usuario'},
                     responses={201: 'Creado', 409: 'Usuario ya registrado'})
     def post(self):
-        args = user_post_args.parse_args()  # Extrae los datos de la solicitud
+        args = user_post_args.parse_args()
         if UsuarioModel.query.filter_by(mail=args['mail']).first(): # mail es unique
             return {"message": "Usuario ya registrado"}, 409
         
-        rol_usuario = RolesUsuarioModel.query.filter_by(nombre="Usuario").first()
-        if not rol_usuario:
-            return {"message": "El rol 'Usuario' no está configurado en la base de datos."}, 500
-        
-        usuario = UsuarioModel(nombre=args['nombre'], apellido=args['apellido'], mail=args['mail'],
-                               telefono=args['telefono'], rol_id=rol_usuario.rol_id)
-        usuario.set_contraseña(args['contraseña'])
-        db.session.add(usuario)
-        db.session.commit()
+        if args['rol_id'] == 1:
+            creador_usuario = UsuarioComunCreador()
+        elif args['rol_id'] == 2:
+            creador_usuario = UsuarioAdminCreador()
+        usuario = creador_usuario.crear_usuario(args['nombre'], args['apellido'], args['mail'], args['contraseña'], args['telefono'])
         return usuario, 201
