@@ -12,6 +12,8 @@ services:
       - mysql-db
     volumes:
       - ./src:/app
+    networks:
+      - app-network
 
   mysql-db:
     image: mysql:8
