@@ -1,6 +1,12 @@
 from extensiones import db
 from werkzeug.security import generate_password_hash, check_password_hash
 
+class RolesUsuarioModel(db.Model):
+    __tablename__ = 'roles_usuario'
+
+    rol_id = db.Column(db.Integer, primary_key=True)
+    nombre = db.Column(db.String(80), unique=True, nullable=False)
+
 class UsuarioModel(db.Model):
     __tablename__ = 'usuarios'
 
@@ -10,6 +16,9 @@ class UsuarioModel(db.Model):
     mail = db.Column(db.String(256), unique=True, nullable=False)
     contraseña = db.Column(db.String(256), nullable=False)
     telefono = db.Column(db.Integer, unique=True)
+
+    rol_id = db.Column(db.Integer, db.ForeignKey('roles_usuario.rol_id'), nullable=False)
+    rol = db.relationship('RolesUsuarioModel', backref='usuarios')
 
     def set_contraseña(self, contraseña):
         self.contraseña = generate_password_hash(contraseña)

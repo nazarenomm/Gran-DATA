@@ -2,13 +2,20 @@ create database gran_data_test;
 
 use gran_data_test;
 
-create table usuarios (
-	usuario_id int auto_increment primary key,
-    nombre varchar(80) not null,
-    apellido varchar(80) not null,
-    mail varchar(256) not null unique,
-    contraseña varchar(256) not null,
-    telefono int
+CREATE TABLE roles_usuario (
+    rol_id INT AUTO_INCREMENT PRIMARY KEY,
+    nombre VARCHAR(80) UNIQUE NOT NULL
+);
+
+CREATE TABLE usuarios (
+    usuario_id INT AUTO_INCREMENT PRIMARY KEY,
+    nombre VARCHAR(80) NOT NULL,
+    apellido VARCHAR(80) NOT NULL,
+    mail VARCHAR(256) UNIQUE NOT NULL,
+    contraseña VARCHAR(256) NOT NULL,
+    telefono INT UNIQUE,
+    rol_id INT NOT NULL,
+    FOREIGN KEY (rol_id) REFERENCES roles_usuario(rol_id)
 );
 CREATE TABLE notificaciones (
     notificacion_id INT AUTO_INCREMENT PRIMARY KEY,
@@ -106,7 +113,7 @@ CREATE TABLE prodes (
     goles_visitante INT,
     FOREIGN KEY (usuario_id) REFERENCES usuarios(usuario_id),
     FOREIGN KEY (partido_id) REFERENCES partidos(partido_id)
-)
+);
 
 CREATE TABLE puntajes_prode (
     puntaje_id INT AUTO_INCREMENT PRIMARY KEY,

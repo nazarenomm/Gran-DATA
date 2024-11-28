@@ -1,5 +1,5 @@
 from extensiones import db
-from models import ClubModel, EstadoModel, FormacionModel, JugadorModel, PartidoModel, RolModel
+from models import ClubModel, EstadoModel, FormacionModel, JugadorModel, PartidoModel, RolModel, RolesUsuarioModel
 from app import app
 import pandas as pd
 
@@ -71,6 +71,13 @@ def cargar_roles():
             db.session.add(rol_model)
     db.session.commit()
 
+def cargar_usuario_roles_iniciales():
+    if not RolesUsuarioModel.query.first():
+        roles = [RolesUsuarioModel(nombre="Usuario"), RolesUsuarioModel(nombre="Admin")]
+        db.session.bulk_save_objects(roles)
+        db.session.commit()
+
+
 
 if __name__ == '__main__':
     jugadores = pd.read_csv('modelo_puntajes/data/jugadores.csv')
@@ -91,3 +98,5 @@ if __name__ == '__main__':
             cargar_jugador(jugador)
         
         cargar_roles()
+
+        cargar_usuario_roles_iniciales()
