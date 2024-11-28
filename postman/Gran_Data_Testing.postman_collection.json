@@ -1,0 +1,527 @@
+{
+	"info": {
+		"_postman_id": "4e9f9903-719b-475b-a7ee-bc0ce06425e8",
+		"name": "Gran_Data_Testing",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "39372052",
+		"_collection_link": "https://gran-data-team.postman.co/workspace/My-Workspace~cbd8b794-bac2-45da-8821-3e095181ab7f/collection/39372052-4e9f9903-719b-475b-a7ee-bc0ce06425e8?action=share&source=collection_link&creator=39372052"
+	},
+	"item": [
+		{
+			"name": "Usuarios",
+			"item": [
+				{
+					"name": "POST usuario",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Successful POST request\", function () {\r",
+									"    pm.expect(pm.response.code).to.be.oneOf([201,202]);\r",
+									"});\r",
+									"\r",
+									"let responseJson = pm.response.json();\r",
+									"if (responseJson.mail) {\r",
+									"    pm.collectionVariables.set(\"user_mail\", responseJson.mail);\r",
+									"    console.log(\"Mail actualizado: \" + responseJson.mail);\r",
+									"} else {\r",
+									"    console.error(\"No se encontró mail en la respuesta\");\r",
+									"}\r",
+									"if (responseJson.usuario_id) {\r",
+									"    pm.collectionVariables.set(\"user_id\", responseJson.usuario_id);\r",
+									"    console.log(\"Usuario ID actualizado: \" + responseJson.usuario_id)\r",
+									"} else {\r",
+									"    console.error(\"No se encontró id\")\r",
+									"}"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "accept",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{URLbase}}/usuario?nombre={{nombre}}&apellido={{apellido}}&mail={{nombre}}{{apellido}}@gmail.com&contrase%C3%B1a=1234",
+							"host": [
+								"{{URLbase}}"
+							],
+							"path": [
+								"usuario"
+							],
+							"query": [
+								{
+									"key": "nombre",
+									"value": "{{nombre}}"
+								},
+								{
+									"key": "apellido",
+									"value": "{{apellido}}"
+								},
+								{
+									"key": "mail",
+									"value": "{{nombre}}{{apellido}}@gmail.com"
+								},
+								{
+									"key": "contrase%C3%B1a",
+									"value": "1234"
+								},
+								{
+									"key": "telefono",
+									"value": "1165366611",
+									"disabled": true
+								}
+							]
+						},
+						"description": "Generated from cURL: curl -X 'POST' \\\r\n  'http://127.0.0.1:5000/usuario?nombre=Federico&apellido=Martinez&mail=fedemart%40gmail.com&contrase%C3%B1a=1234' \\\r\n  -H 'accept: application/json' \\\r\n  -d ''"
+					},
+					"response": []
+				},
+				{
+					"name": "GET usuario",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{URLbase}}/usuario/4",
+							"host": [
+								"{{URLbase}}"
+							],
+							"path": [
+								"usuario",
+								"4"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "login",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"// Verifica que el código de estado sea 200\r",
+									"pm.test(\"Status code is 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"// Intenta obtener el token del cuerpo de la respuesta\r",
+									"let responseJson = pm.response.json();\r",
+									"if (responseJson.access_token) {\r",
+									"    pm.collectionVariables.set(\"token\", responseJson.access_token);\r",
+									"    console.log(\"Token actualizado: \" + responseJson.access_token);\r",
+									"} else {\r",
+									"    console.error(\"No se encontró access_token en la respuesta\");\r",
+									"}\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{URLbase}}/login?mail={{user_mail}}&contraseña=1234",
+							"host": [
+								"{{URLbase}}"
+							],
+							"path": [
+								"login"
+							],
+							"query": [
+								{
+									"key": "mail",
+									"value": "{{user_mail}}"
+								},
+								{
+									"key": "contraseña",
+									"value": "1234"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Equipo",
+			"item": [
+				{
+					"name": "POST equipo",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Successful POST request\", function () {\r",
+									"    pm.expect(pm.response.code).to.be.oneOf([201, 202]);\r",
+									"});\r",
+									"\r",
+									"let responseJson = pm.response.json();\r",
+									"if (responseJson.equipo_id) {\r",
+									"    pm.collectionVariables.set(\"equipo_id\", responseJson.equipo_id);\r",
+									"    console.log(\"Equipo ID actualizado: \" + responseJson.equipo_id);\r",
+									"} else {\r",
+									"    console.error(\"No se encontró equipo_id en la respuesta\");\r",
+									"}"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"jugadores_id\": {\r\n        \"titulares\": [19, 10, 91, 205, 303, 470, 584, 4, 176, 41, 3],\r\n        \"suplentes\": [5, 549, 226, 895],\r\n        \"capitan\": 3\r\n        }\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{URLbase}}/equipo?usuario_id={{user_id}}&formacion=4-4-2",
+							"host": [
+								"{{URLbase}}"
+							],
+							"path": [
+								"equipo"
+							],
+							"query": [
+								{
+									"key": "usuario_id",
+									"value": "{{user_id}}"
+								},
+								{
+									"key": "formacion",
+									"value": "4-4-2"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GET equipo",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "text"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{URLbase}}/equipo/{{equipo_id}}",
+							"host": [
+								"{{URLbase}}"
+							],
+							"path": [
+								"equipo",
+								"{{equipo_id}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "cambio titular x suplente",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "PATCH",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"accion\": \"cambio\",\r\n    \"jugador_entrante_id\": 5,\r\n    \"jugador_saliente_id\": 19\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://127.0.0.1:5000/equipo/{{equipo_id}}",
+							"protocol": "http",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "5000",
+							"path": [
+								"equipo",
+								"{{equipo_id}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "cambio capitan",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJmcmVzaCI6ZmFsc2UsImlhdCI6MTczMjY4MDAyMywianRpIjoiOTBiMTc4ODktMzVkYy00ZTBmLTk4ZmItZGI2NDdlYzU5MjI4IiwidHlwZSI6ImFjY2VzcyIsInN1YiI6MSwibmJmIjoxNzMyNjgwMDIzLCJjc3JmIjoiMDc0ODUwY2ItMTcyZC00NzY0LThmYzQtNWJiMzRhZTFmODY0IiwiZXhwIjoxNzMyNjgwOTIzfQ.UdYtdoENd9NYEiAw4gLOXn48Qa7oR6clFplON9XrDvU",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PATCH",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"accion\": \"cambio capitan\",\r\n    \"jugador_capitan_id\": 4\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://127.0.0.1:5000/equipo/{{equipo_id}}",
+							"protocol": "http",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "5000",
+							"path": [
+								"equipo",
+								"{{equipo_id}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "transferencia",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "PATCH",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"accion\": \"transferencia\",\r\n    \"jugador_entrante_id\": 40,\r\n    \"jugador_saliente_id\": 41\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://127.0.0.1:5000/equipo/{{equipo_id}}",
+							"protocol": "http",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "5000",
+							"path": [
+								"equipo",
+								"{{equipo_id}}"
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"auth": {
+				"type": "bearer",
+				"bearer": [
+					{
+						"key": "token",
+						"value": "{{token}}",
+						"type": "string"
+					}
+				]
+			},
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"type": "text/javascript",
+						"packages": {},
+						"exec": [
+							""
+						]
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"packages": {},
+						"exec": [
+							""
+						]
+					}
+				}
+			]
+		}
+	],
+	"auth": {
+		"type": "inherit"
+	},
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "URLbase",
+			"value": "http://127.0.0.1:5000",
+			"type": "string"
+		},
+		{
+			"key": "token",
+			"value": ""
+		},
+		{
+			"key": "user_mail",
+			"value": ""
+		},
+		{
+			"key": "user_id",
+			"value": ""
+		},
+		{
+			"key": "equipo_id",
+			"value": ""
+		}
+	]
+}
