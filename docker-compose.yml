@@ -1,5 +1,3 @@
-version: '3.8'
-
 services:
   flask-app:
     build:
@@ -11,7 +9,7 @@ services:
     environment:
       - FLASK_ENV=development
       - FLASK_APP=app.py
-      - SQLALCHEMY_DATABASE_URI=mysql+pymysql://root:Odisea123@mysql-db:3306/gran_data_test
+      - SQLALCHEMY_DATABASE_URI=mysql+pymysql://root:@mysql-db:3306/gran_data_test
     depends_on:
       - mysql-db
     volumes:
@@ -21,10 +19,11 @@ services:
     image: mysql:8.0
     container_name: mysql-db
     environment:
-      MYSQL_ROOT_PASSWORD: Odisea123
+      MYSQL_ROOT_PASSWORD: 
       MYSQL_DATABASE: gran_data_test
+      MYSQL_ALLOW_EMPTY_PASSWORD: "yes"
     ports:
-      - "3307:3306"
+      - "3306:3306"
     volumes:
       - mysql-data:/var/lib/mysql
 
