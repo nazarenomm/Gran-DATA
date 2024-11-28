@@ -1,6 +1,13 @@
-from flask_restx import Resource, reqparse, fields, marshal_with, abort
+from flask_restx import Resource, reqparse, fields, marshal_with, abort, reqparse
 from models import JugadorModel
 from extensiones import jugador_ns
+from services import requiere_admin
+from flask_jwt_extended import jwt_required
+from services.jugador import JugadorService
+
+patch_args = reqparse.RequestParser()
+patch_args.add_argument('precio', type=int, help='Precio del jugador')
+patch_args.add_argument('estado', type=str, help='Estado del jugador')
 
 jugador_fields = {
     'jugador_id': fields.Integer,
@@ -12,7 +19,7 @@ jugador_fields = {
 }
 
 @jugador_ns.route('')
-class JugadorResource(Resource):
+class JugadoresResource(Resource):
     @jugador_ns.doc(responses={200: 'OK', 400: 'Invalid Argument', 500: 'Mapping Key Error'},
                     params={'posicion': 'La posición del jugador', 'search': 'Filtro opcional por nombre o apellido'})
     @marshal_with(jugador_fields)
@@ -43,3 +50,24 @@ class JugadorResource(Resource):
 
         # Convertir jugadores en un formato JSON
         return jugadores, 200
+
+@jugador_ns.route('/<int:jugador_id>')
+class JugadorResource(Resource):
+    @jwt_required()
+    @requiere_admin
+    def patch(self, jugador_id):    
+        args = patch_args.parse_args()
+
+        if args['precio'] is None and args['estado'] is None:
+            return {'message': 'No se especificó ningún campo a modificar'}, 400
+
+        if args['precio'] is not None:
+            JugadorModel.query.filter_by(jugador_id=jugador_id).update({'precio': args['precio']})
+            return {'message': 'Precio actualizado correctamente'}, 200
+
+        if args['estado'] is not None:
+            jugador = JugadorModel.query.filter_by(jugador_id=jugador_id).first()
+            if not jugador:
+                return {'message': 'Jugador no encontrado'}, 404
+            JugadorService.cambiar_estado(jugador, args['estado'])
+            return {'message': 'Estado actualizado correctamente'}, 200

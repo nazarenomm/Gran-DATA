@@ -1,8 +1,7 @@
 from datetime import datetime
 from flask_restx import Resource, reqparse
-from services import fecha, notificador
+from services import fecha, notificador, requiere_admin
 from extensiones import fecha_ns
-from decoradores import requiere_admin
 from flask_jwt_extended import jwt_required
 
 patch_args = reqparse.RequestParser()
@@ -15,16 +14,21 @@ class FechaResource(Resource):
     @fecha_ns.doc(responses={200: 'OK', 400: 'Error al cargar la fecha'})
     @jwt_required() 
     @requiere_admin
-    def post(self):
-        try:
-            fecha.cargar_fecha()
-            return {'message': 'Fecha cargada correctamente'}, 200
+    def post(self):    
+        # en realidad deberia terminar la veda si estamos en una
+        if fecha.verificar_veda():
+            return {'message': 'No se puede cargar la fecha en veda.'}, 400
+        
+        fecha.cargar_fecha()
+        
+        fecha.fecha_actual += 1
 
-        except Exception as e:
-            return {'message': str(e)}, 400
+        return {'message': 'Fecha cargada correctamente'}, 200
     
     # setea la veda
     @fecha_ns.doc(responses={200: 'OK', 400: 'Ya estamos en veda'})
+    @jwt_required()
+    @requiere_admin
     def patch(self):
         if fecha.verificar_veda():
             return {'message': 'Ya estamos en veda.'}, 400
@@ -50,13 +54,10 @@ class FechaResource(Resource):
     
     # finaliza la veda
     @fecha_ns.doc(responses={200: 'OK', 400: 'No estamos en veda'})
+    @jwt_required()
+    @requiere_admin
     def delete(self):
         if not fecha.verificar_veda():
             return {'message': 'No estamos en veda.'}, 400
         fecha.finalizar_veda()
         return {'message': 'Veda finalizada correctamente.'}, 200
-    
-    @fecha_ns.doc(responses={200: 'Fecha actualizada correctamente'})
-    def put(self):
-        fecha.fecha_actual += 1
-        return {'message': 'Fecha actualizada correctamente.'}, 200

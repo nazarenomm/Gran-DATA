@@ -81,7 +81,8 @@ def cargar_usuario_roles_iniciales():
 
 
 if __name__ == '__main__':
-    jugadores = pd.read_csv('services/modelo_puntajes/data/jugadores.csv')
+    # jugadores = pd.read_csv('services/modelo_puntajes/data/jugadores.csv')
+    jugadores = pd.read_csv('modelo_puntajes/data/jugadores.csv')
     clubes = jugadores['Equipo'].unique()
     formaciones = ['4-4-2', '4-3-3', '3-4-3', '4-5-1', '3-5-2', '5-3-2', '3-3-4', '4-2-4', '5-2-3']
 
