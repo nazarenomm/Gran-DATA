@@ -67,6 +67,7 @@ source env/bin/activate
 # Windows:
 .\env\Scripts\activate
 pip install -r requirements.txt
+```
 
 * Para la base de datos: Usando las [tablas](./database/tablas.sql), cree su base de datos localmente mediante MySQL o el servicio que use. 
 
