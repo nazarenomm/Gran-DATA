@@ -9,6 +9,7 @@ user_post_args.add_argument("apellido", type=str, help="Apellido Requerido", req
 user_post_args.add_argument('mail', type=str, help='Correo Electrónico Requerido', required=True)
 user_post_args.add_argument('contraseña', type=str, help='Contraseña Requerida', required=True)
 user_post_args.add_argument('telefono', type=int)
+user_post_args.add_argument('rol_id', type=int, help="ID del rol es requerido", required=True)
 
 user_patch_args = reqparse.RequestParser()
 user_patch_args.add_argument('rol_id', type=int, help="ID del rol es requerido", required=True)
@@ -68,7 +69,7 @@ class UsuarioResource(Resource):
 class UsuarioPostResource(Resource):
     @marshal_with(user_fields)
     @usuario_ns.expect(user_post_args)
-    @usuario_ns.doc(params={'nombre': 'Nombre del usuario', 'apellido': 'Apellido del usuario', 'mail': 'Correo Electrónico del usuario', 'contraseña': 'Contraseña del usuario', 'telefono': 'Teléfono del usuario'},
+    @usuario_ns.doc(params={'nombre': 'Nombre del usuario', 'apellido': 'Apellido del usuario', 'mail': 'Correo Electrónico del usuario', 'contraseña': 'Contraseña del usuario', 'telefono': 'Teléfono del usuario', 'rol_id': 'ID del rol'},
                     responses={201: 'Creado', 409: 'Usuario ya registrado'})
     def post(self):
         args = user_post_args.parse_args()
